@@ -7,10 +7,41 @@ import java.util.List;
  */
 public interface IInsertQuery {
 
+    /**
+     * Sets the table to insert rows into.
+     *
+     * @param table
+     * @return
+     */
     IInsertQuery table(String table);
 
+    /**
+     * Sets the columns.
+     *
+     * @param cols
+     * @return
+     */
     IInsertQuery columns(List<String> cols);
 
-    IInsertQuery add(List<Object> values);
+    /**
+     * Add one values(...) clause.
+     *
+     * @param values
+     * @return
+     */
+    IInsertQuery addOne(List<Object> values);
+
+    /**
+     * Add many values(...) clauses.
+     *
+     * @param values
+     * @return
+     */
+    IInsertQuery addMany(List<List<Object>> values);
+
+    /**
+     * Executes the (batch) statement.
+     */
+    void execute();
 
 }

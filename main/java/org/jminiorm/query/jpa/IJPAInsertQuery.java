@@ -15,7 +15,7 @@ public interface IJPAInsertQuery<T> {
      * @param obj
      * @return
      */
-    IJPAInsertQuery<T> add(T obj);
+    IJPAInsertQuery<T> addOne(T obj);
 
     /**
      * Add a collection of objects to those to be inserted.
@@ -23,7 +23,7 @@ public interface IJPAInsertQuery<T> {
      * @param objs
      * @return
      */
-    IJPAInsertQuery<T> add(Collection<T> objs);
+    IJPAInsertQuery<T> addMany(Collection<T> objs);
 
     /**
      * Inserts the objects collected so far.
