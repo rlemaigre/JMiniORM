@@ -1,5 +1,6 @@
 package org.jminiorm;
 
+import org.jminiorm.query.IDeleteQuery;
 import org.jminiorm.query.IInsertQuery;
 import org.jminiorm.query.ISelectQuery;
 import org.jminiorm.query.IUpdateQuery;
@@ -10,15 +11,9 @@ import java.util.Collection;
 
 public interface IDatabase {
 
-    /**
-     * Executes an arbitrary SQL statement that returns nothing (UPDATE, DELETE, INSERT, CREATE TABLE, etc.) when other
-     * provided methods are not sufficient.
-     *
-     * @param sql
-     * @param params
-     * @throws SQLException
-     */
-    void sql(String sql, Object... params) throws SQLException;
+    /************************************************************************************/
+    /************************************ SELECT ****************************************/
+    /************************************************************************************/
 
     /**
      * Returns the instance of the JPA annotated class T of given id.
@@ -50,6 +45,10 @@ public interface IDatabase {
      */
     ISelectQuery select(String sql, Object... params);
 
+    /************************************************************************************/
+    /************************************ INSERT ****************************************/
+    /************************************************************************************/
+
     /**
      * Insert an instance of JPA annotated class into its table. Generated id is set if any.
      *
@@ -74,6 +73,10 @@ public interface IDatabase {
      * @throws SQLException
      */
     IInsertQuery insert(String table) throws SQLException;
+
+    /************************************************************************************/
+    /************************************ UPDATE ****************************************/
+    /************************************************************************************/
 
     /**
      * Updates an instance of JPA annotated class.
@@ -100,5 +103,58 @@ public interface IDatabase {
      * @throws SQLException
      */
     IUpdateQuery update(String table, String idColumn) throws SQLException;
+
+    /************************************************************************************/
+    /************************************ DELETE ****************************************/
+    /************************************************************************************/
+
+    /**
+     * Deletes an instance of JPA annotated class.
+     *
+     * @param obj
+     * @throws SQLException
+     */
+    <T> void delete(T obj) throws SQLException;
+
+    /**
+     * Deletes instances of JPA annotated class.
+     *
+     * @param objs
+     * @throws SQLException
+     */
+    <T> void delete(Collection<T> objs) throws SQLException;
+
+    /**
+     * Begins a generic delete query on the given table.
+     *
+     * @param table
+     * @param idColumn
+     * @return
+     * @throws SQLException
+     */
+    IDeleteQuery delete(String table, String idColumn) throws SQLException;
+
+    /************************************************************************************/
+    /************************************* OTHER ****************************************/
+    /************************************************************************************/
+
+    /**
+     * Creates the table for the given JPA annotated class.
+     *
+     * @param clazz
+     * @param <T>
+     * @throws SQLException
+     */
+    <T> void createTable(Class<T> clazz) throws SQLException;
+
+    /**
+     * Executes an arbitrary SQL statement that returns nothing (UPDATE, DELETE, INSERT, CREATE TABLE, etc.) when other
+     * provided methods are not sufficient.
+     *
+     * @param sql
+     * @param params
+     * @throws SQLException
+     */
+    void sql(String sql, Object... params) throws SQLException;
 
 }

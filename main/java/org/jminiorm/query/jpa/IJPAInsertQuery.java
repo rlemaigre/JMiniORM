@@ -1,5 +1,7 @@
 package org.jminiorm.query.jpa;
 
+import org.jminiorm.query.IQuery;
+
 import java.util.Collection;
 
 /**
@@ -7,7 +9,7 @@ import java.util.Collection;
  *
  * @param <T>
  */
-public interface IJPAInsertQuery<T> {
+public interface IJPAInsertQuery<T> extends IQuery {
 
     /**
      * Add an object to those to be inserted.

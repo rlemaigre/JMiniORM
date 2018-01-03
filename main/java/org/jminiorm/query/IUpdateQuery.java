@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Represents a generic update query, that is, one that updates rows in an arbitrary table.
  */
-public interface IUpdateQuery {
+public interface IUpdateQuery extends IQuery {
 
     /**
      * Sets the table and the primary key column.

@@ -5,15 +5,16 @@ import java.util.List;
 /**
  * Represents a generic delete query, that is, one that deletes rows from an arbitrary table.
  */
-public interface IDeleteQuery {
+public interface IDeleteQuery extends IQuery {
 
     /**
      * Sets the table.
      *
      * @param table
+     * @param idColumn
      * @return
      */
-    IDeleteQuery table(String table);
+    IDeleteQuery table(String table, String idColumn);
 
     /**
      * Add one id.

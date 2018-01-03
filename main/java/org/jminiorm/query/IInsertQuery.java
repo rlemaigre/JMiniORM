@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Represents a generic insert query, that is, one that insert rows in an arbitrary table.
  */
-public interface IInsertQuery {
+public interface IInsertQuery extends IQuery {
 
     /**
      * Sets the table.
