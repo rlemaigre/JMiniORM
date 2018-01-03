@@ -1,15 +1,17 @@
 package org.jminiorm.mapping;
 
+import java.beans.PropertyDescriptor;
+
 /**
- * Represent the mapping between a java property and a database column.
+ * Represents the mapping between a java property and a database column.
  */
 public class ColumnMapping {
 
-    private String javaProperty;
+    private PropertyDescriptor propertyDescriptor;
     private String columnDefinition;
     private boolean insertable;
     private int length;
-    private String name;
+    private String column;
     private boolean nullable;
     private int precision;
     private int scale;
@@ -18,12 +20,12 @@ public class ColumnMapping {
     public ColumnMapping() {
     }
 
-    public String getJavaProperty() {
-        return javaProperty;
+    public PropertyDescriptor getPropertyDescriptor() {
+        return propertyDescriptor;
     }
 
-    public void setJavaProperty(String javaProperty) {
-        this.javaProperty = javaProperty;
+    public void setPropertyDescriptor(PropertyDescriptor propertyDescriptor) {
+        this.propertyDescriptor = propertyDescriptor;
     }
 
     public String getColumnDefinition() {
@@ -50,12 +52,12 @@ public class ColumnMapping {
         this.length = length;
     }
 
-    public String getName() {
-        return name;
+    public String getColumn() {
+        return column;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setColumn(String column) {
+        this.column = column;
     }
 
     public boolean isNullable() {
