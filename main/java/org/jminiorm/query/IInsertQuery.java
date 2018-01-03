@@ -8,7 +8,7 @@ import java.util.List;
 public interface IInsertQuery {
 
     /**
-     * Sets the table to insert rows into.
+     * Sets the table.
      *
      * @param table
      * @return

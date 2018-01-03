@@ -2,6 +2,7 @@ package org.jminiorm;
 
 import org.jminiorm.query.IInsertQuery;
 import org.jminiorm.query.ISelectQuery;
+import org.jminiorm.query.IUpdateQuery;
 import org.jminiorm.query.jpa.IJPASelectQuery;
 
 import java.sql.SQLException;
@@ -10,7 +11,8 @@ import java.util.Collection;
 public interface IDatabase {
 
     /**
-     * Executes an arbitrary SQL statement that returns nothing (UPDATE, DELETE, CREATE TABLE, etc.).
+     * Executes an arbitrary SQL statement that returns nothing (UPDATE, DELETE, INSERT, CREATE TABLE, etc.) when other
+     * provided methods are not sufficient.
      *
      * @param sql
      * @param params
@@ -59,10 +61,10 @@ public interface IDatabase {
     /**
      * Insert instances of JPA annotated class into their table. Generated ids are set if any.
      *
-     * @param obj
+     * @param objs
      * @throws SQLException
      */
-    <T> void insert(Collection<T> obj) throws SQLException;
+    <T> void insert(Collection<T> objs) throws SQLException;
 
     /**
      * Begins a generic insert query into the given table.
@@ -72,5 +74,31 @@ public interface IDatabase {
      * @throws SQLException
      */
     IInsertQuery insert(String table) throws SQLException;
+
+    /**
+     * Updates an instance of JPA annotated class.
+     *
+     * @param obj
+     * @throws SQLException
+     */
+    <T> void update(T obj) throws SQLException;
+
+    /**
+     * Updates instances of JPA annotated class.
+     *
+     * @param objs
+     * @throws SQLException
+     */
+    <T> void update(Collection<T> objs) throws SQLException;
+
+    /**
+     * Begins a generic update query on the given table.
+     *
+     * @param table
+     * @param idColumn
+     * @return
+     * @throws SQLException
+     */
+    IUpdateQuery update(String table, String idColumn) throws SQLException;
 
 }
