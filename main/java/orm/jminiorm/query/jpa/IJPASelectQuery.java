@@ -1,6 +1,7 @@
-package orm.jminiorm.query;
+package orm.jminiorm.query.jpa;
 
 import org.jminiorm.resultset.IResultSet;
+import orm.jminiorm.query.IQuery;
 
 /**
  * Represents a select query that returns objects of a JPA annotated class. The select and from clauses are infered from
