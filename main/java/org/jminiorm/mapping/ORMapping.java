@@ -15,6 +15,7 @@ public class ORMapping {
     private List<ColumnMapping> columnMappings;
     private Map<String, ColumnMapping> columnMappingsIndexedByProperty;
     private Map<String, ColumnMapping> columnMappingsIndexedByColumn;
+    private ColumnMapping idColumnMapping;
 
     public ORMapping() {
     }
@@ -91,5 +92,24 @@ public class ORMapping {
             mappings.put(mapping.getColumn().toLowerCase(), mapping);
         }
         return mappings;
+    }
+
+    /**
+     * Returns the column mapping for the property marked as id.
+     *
+     * @return
+     */
+    public ColumnMapping getIdColumnMapping() {
+        if (idColumnMapping == null) {
+            for (ColumnMapping mapping : getColumnMappings()) {
+                if (mapping.isId()) {
+                    idColumnMapping = mapping;
+                    break;
+                }
+            }
+            if (idColumnMapping == null)
+                throw new RuntimeException("No ID column defined in class " + getJavaClass().getName());
+        }
+        return idColumnMapping;
     }
 }

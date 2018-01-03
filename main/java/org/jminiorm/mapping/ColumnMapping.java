@@ -9,12 +9,13 @@ public class ColumnMapping {
 
     private PropertyDescriptor propertyDescriptor;
     private String columnDefinition;
+    private boolean isId;
     private boolean insertable;
-    private int length;
+    private Integer length;
     private String column;
     private boolean nullable;
-    private int precision;
-    private int scale;
+    private Integer precision;
+    private Integer scale;
     private boolean updatable;
 
     public ColumnMapping() {
@@ -44,11 +45,11 @@ public class ColumnMapping {
         this.insertable = insertable;
     }
 
-    public int getLength() {
+    public Integer getLength() {
         return length;
     }
 
-    public void setLength(int length) {
+    public void setLength(Integer length) {
         this.length = length;
     }
 
@@ -68,19 +69,19 @@ public class ColumnMapping {
         this.nullable = nullable;
     }
 
-    public int getPrecision() {
+    public Integer getPrecision() {
         return precision;
     }
 
-    public void setPrecision(int precision) {
+    public void setPrecision(Integer precision) {
         this.precision = precision;
     }
 
-    public int getScale() {
+    public Integer getScale() {
         return scale;
     }
 
-    public void setScale(int scale) {
+    public void setScale(Integer scale) {
         this.scale = scale;
     }
 
@@ -90,5 +91,13 @@ public class ColumnMapping {
 
     public void setUpdatable(boolean updatable) {
         this.updatable = updatable;
+    }
+
+    public boolean isId() {
+        return isId;
+    }
+
+    public void setId(boolean id) {
+        isId = id;
     }
 }

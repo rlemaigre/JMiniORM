@@ -1,9 +1,14 @@
 package org.jminiorm.mapping.provider;
 
+import org.jminiorm.mapping.ColumnMapping;
 import org.jminiorm.mapping.ORMapping;
 
-import javax.persistence.Index;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,9 +41,66 @@ public class JPAORMappingProvider extends AbstractORMappingProvider {
         mapping.setIndexes(indexes);
 
         // Columns :
-
+        List<ColumnMapping> columnMappings = new ArrayList<>();
+        BeanInfo beanInfo;
+        try {
+            beanInfo = Introspector.getBeanInfo(clazz);
+        } catch (IntrospectionException e) {
+            throw new RuntimeException(e);
+        }
+        for (PropertyDescriptor descriptor : beanInfo.getPropertyDescriptors()) {
+            ColumnMapping columnMapping = new ColumnMapping();
+            columnMapping.setPropertyDescriptor(descriptor);
+            Field field = getField(clazz, descriptor.getName());
+            Id idAnn = field.getAnnotation(Id.class);
+            Lob lobAnn = field.getAnnotation(Lob.class);
+            Column columnAnn = field.getAnnotation(Column.class);
+            columnMapping.setId(idAnn != null);
+            if (columnAnn != null) {
+                columnMapping.setColumn(columnAnn.name());
+                columnMapping.setColumnDefinition(columnAnn.columnDefinition());
+                columnMapping.setInsertable(columnAnn.insertable());
+                columnMapping.setLength(lobAnn != null ? null : columnAnn.length());
+                columnMapping.setScale(columnAnn.scale());
+                columnMapping.setNullable(columnAnn.nullable());
+                columnMapping.setUpdatable(columnAnn.updatable());
+                columnMapping.setPrecision(columnAnn.precision());
+            } else {
+                columnMapping.setColumn(descriptor.getName());
+                columnMapping.setColumnDefinition(null);
+                columnMapping.setInsertable(true);
+                columnMapping.setLength(null);
+                columnMapping.setScale(null);
+                columnMapping.setNullable(true);
+                columnMapping.setUpdatable(true);
+                columnMapping.setPrecision(null);
+            }
+            columnMappings.add(columnMapping);
+        }
+        mapping.setColumnMappings(columnMappings);
 
         return mapping;
+    }
+
+    /**
+     * Returns the Field object corresponding of the given property name or null if none was found.
+     *
+     * @param clazz
+     * @param name
+     * @return
+     */
+    protected static Field getField(Class<?> clazz, String name) {
+        Field f;
+        Class<?> current = clazz;
+        while (current.getSuperclass() != null) {
+            try {
+                f = current.getDeclaredField(name);
+                return f;
+            } catch (NoSuchFieldException ex) {
+            }
+            current = current.getSuperclass();
+        }
+        return null;
     }
 
 }
