@@ -15,6 +15,11 @@ public class Index {
      */
     private String columns;
 
+    /**
+     * Whether this index is unique or not.
+     */
+    private boolean unique;
+
     public Index() {
     }
 
@@ -34,4 +39,11 @@ public class Index {
         this.columns = columns;
     }
 
+    public boolean isUnique() {
+        return unique;
+    }
+
+    public void setUnique(boolean unique) {
+        this.unique = unique;
+    }
 }
