@@ -1,7 +1,7 @@
 package org.jminiorm;
 
-import orm.jminiorm.query.jpa.IJPASelectQuery;
-import orm.jminiorm.query.ISelectQuery;
+import org.jminiorm.query.jpa.IJPASelectQuery;
+import org.jminiorm.query.ISelectQuery;
 
 import java.sql.SQLException;
 

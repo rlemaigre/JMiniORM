@@ -1,6 +1,6 @@
 package org.jminiorm.resultset;
 
-import orm.jminiorm.exception.UnexpectedNumberOfItemsException;
+import org.jminiorm.exception.UnexpectedNumberOfItemsException;
 
 import java.sql.SQLException;
 import java.util.List;

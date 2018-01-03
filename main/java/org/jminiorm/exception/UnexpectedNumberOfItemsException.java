@@ -1,4 +1,4 @@
-package orm.jminiorm.exception;
+package org.jminiorm.exception;
 
 /**
  * The ORM throws this exception with exactly one element is expected to be returned by a select query, but zero or more

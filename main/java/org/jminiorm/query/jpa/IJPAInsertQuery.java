@@ -1,4 +1,4 @@
-package orm.jminiorm.query.jpa;
+package org.jminiorm.query.jpa;
 
 import java.util.Collection;
 

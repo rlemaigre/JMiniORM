@@ -1,4 +1,4 @@
-package orm.jminiorm.query;
+package org.jminiorm.query;
 
 public interface IQuery {
 }
