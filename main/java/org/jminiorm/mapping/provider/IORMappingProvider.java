@@ -9,7 +9,7 @@ import org.jminiorm.mapping.ORMapping;
 public interface IORMappingProvider {
 
     /**
-     * Returns the mapping for the given class.
+     * Returns the mapping for the given class. Returns null if no mapping exists for it.
      *
      * @param clazz
      * @return

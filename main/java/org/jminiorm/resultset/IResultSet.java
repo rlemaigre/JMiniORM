@@ -13,6 +13,13 @@ import java.util.List;
 public interface IResultSet<T> {
 
     /**
+     * Defines into which class the rows retrieved from the database must be casted.
+     *
+     * @param clazz
+     */
+    void forClass(Class<T> clazz);
+
+    /**
      * Extracts the first result of the result set. Throws an exception if there is more than or less than one element
      * in the result set.
      *
