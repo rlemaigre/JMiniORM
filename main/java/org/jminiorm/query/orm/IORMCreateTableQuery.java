@@ -1,5 +1,7 @@
 package org.jminiorm.query.orm;
 
+import org.jminiorm.exception.DBException;
+
 import java.sql.SQLException;
 
 /**
@@ -20,6 +22,6 @@ public interface IORMCreateTableQuery<T> {
      *
      * @throws SQLException
      */
-    void execute() throws SQLException;
+    void execute() throws DBException;
 
 }

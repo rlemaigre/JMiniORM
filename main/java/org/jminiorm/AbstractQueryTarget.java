@@ -6,6 +6,7 @@ import org.jminiorm.query.generic.IInsertQuery;
 import org.jminiorm.query.generic.ISelectQuery;
 import org.jminiorm.query.generic.IUpdateQuery;
 import org.jminiorm.query.orm.IORMSelectQuery;
+import org.jminiorm.query.orm.ORMCreateTableQuery;
 
 import java.util.Collection;
 
@@ -78,7 +79,7 @@ public abstract class AbstractQueryTarget implements IQueryTarget {
 
     @Override
     public <T> void createTable(Class<T> clazz) throws DBException {
-
+        new ORMCreateTableQuery<T>(this).forClass(clazz).execute();
     }
 
     @Override

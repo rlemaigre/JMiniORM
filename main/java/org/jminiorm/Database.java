@@ -86,7 +86,7 @@ public class Database extends AbstractQueryTarget implements IDatabase {
 
     @Override
     public ITransaction createTransaction() throws DBException {
-        return null;
+        return new Transaction(this);
     }
 
 }
