@@ -13,11 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Populates the mapping using JPA annotation.
+ * Populates the mapping using JPA annotations.
  */
 public class JPAORMapping extends ORMapping {
 
-   public JPAORMapping(Class<?> clazz) {
+    public JPAORMapping(Class<?> clazz) {
+        super();
+
         // Java class :
         setJavaClass(clazz);
 
@@ -46,6 +48,7 @@ public class JPAORMapping extends ORMapping {
             throw new RuntimeException(e);
         }
         for (PropertyDescriptor descriptor : beanInfo.getPropertyDescriptors()) {
+            if (descriptor.getName().equals("class")) continue;
             ColumnMapping columnMapping = new ColumnMapping();
             columnMapping.setPropertyDescriptor(descriptor);
             Field field = getField(clazz, descriptor.getName());
@@ -85,12 +88,10 @@ public class JPAORMapping extends ORMapping {
      * @return
      */
     protected static Field getField(Class<?> clazz, String name) {
-        Field f;
         Class<?> current = clazz;
-        while (current.getSuperclass() != null) {
+        while (current != null) {
             try {
-                f = current.getDeclaredField(name);
-                return f;
+                return current.getDeclaredField(name);
             } catch (NoSuchFieldException ex) {
             }
             current = current.getSuperclass();

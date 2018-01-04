@@ -11,7 +11,7 @@ public class ColumnMapping {
     private String columnDefinition;
     private boolean isId;
     private boolean insertable;
-    private Integer length;
+    private Integer length; // Null means no limit.
     private String column;
     private boolean nullable;
     private Integer precision;
