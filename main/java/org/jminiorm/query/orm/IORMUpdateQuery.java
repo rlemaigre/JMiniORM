@@ -1,4 +1,4 @@
-package org.jminiorm.query.jpa;
+package org.jminiorm.query.orm;
 
 import org.jminiorm.query.IQuery;
 
@@ -9,7 +9,7 @@ import java.util.Collection;
  *
  * @param <T>
  */
-public interface IJPAUpdateQuery<T> extends IQuery {
+public interface IORMUpdateQuery<T> extends IQuery {
 
     /**
      * Add an object to those to be updated.
@@ -17,7 +17,7 @@ public interface IJPAUpdateQuery<T> extends IQuery {
      * @param obj
      * @return
      */
-    IJPAUpdateQuery<T> addOne(T obj);
+    IORMUpdateQuery<T> addOne(T obj);
 
     /**
      * Add a collection of objects to those to be updated.
@@ -25,7 +25,7 @@ public interface IJPAUpdateQuery<T> extends IQuery {
      * @param objs
      * @return
      */
-    IJPAUpdateQuery<T> addMany(Collection<T> objs);
+    IORMUpdateQuery<T> addMany(Collection<T> objs);
 
     /**
      * Updates the objects collected so far.

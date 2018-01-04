@@ -1,5 +1,6 @@
-package org.jminiorm.query;
+package org.jminiorm.query.generic;
 
+import org.jminiorm.query.IQuery;
 import org.jminiorm.resultset.IResultSet;
 
 /**

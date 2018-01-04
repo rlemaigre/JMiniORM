@@ -1,13 +1,12 @@
 package org.jminiorm;
 
 import org.jminiorm.exception.DBException;
-import org.jminiorm.query.IDeleteQuery;
-import org.jminiorm.query.IInsertQuery;
-import org.jminiorm.query.ISelectQuery;
-import org.jminiorm.query.IUpdateQuery;
-import org.jminiorm.query.jpa.IJPASelectQuery;
+import org.jminiorm.query.generic.IDeleteQuery;
+import org.jminiorm.query.generic.IInsertQuery;
+import org.jminiorm.query.generic.ISelectQuery;
+import org.jminiorm.query.generic.IUpdateQuery;
+import org.jminiorm.query.orm.IORMSelectQuery;
 
-import java.sql.SQLException;
 import java.util.Collection;
 
 public interface IDatabase {
@@ -35,7 +34,7 @@ public interface IDatabase {
      * @return
      * @throws DBException
      */
-    <T> IJPASelectQuery<T> select(Class<T> clazz);
+    <T> IORMSelectQuery<T> select(Class<T> clazz);
 
     /**
      * Begins a generic select query.

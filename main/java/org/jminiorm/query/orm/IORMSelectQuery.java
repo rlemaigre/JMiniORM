@@ -1,7 +1,7 @@
-package org.jminiorm.query.jpa;
+package org.jminiorm.query.orm;
 
-import org.jminiorm.resultset.IResultSet;
 import org.jminiorm.query.IQuery;
+import org.jminiorm.resultset.IResultSet;
 
 /**
  * Represents a select query that returns objects of a JPA annotated class. The select and from clauses are infered from
@@ -9,7 +9,7 @@ import org.jminiorm.query.IQuery;
  *
  * @param <T>
  */
-public interface IJPASelectQuery<T> extends IQuery, IResultSet<T> {
+public interface IORMSelectQuery<T> extends IQuery, IResultSet<T> {
 
     /**
      * Sets the JPA annotated class to select from and returns this. Required.
@@ -17,7 +17,7 @@ public interface IJPASelectQuery<T> extends IQuery, IResultSet<T> {
      * @param clazz
      * @return this
      */
-    IJPASelectQuery<T> from(Class<T> clazz);
+    IORMSelectQuery<T> from(Class<T> clazz);
 
     /**
      * Sets the where clause and returns this. Optional.
@@ -26,7 +26,7 @@ public interface IJPASelectQuery<T> extends IQuery, IResultSet<T> {
      * @param params
      * @return this
      */
-    IJPASelectQuery<T> where(String where, Object... params);
+    IORMSelectQuery<T> where(String where, Object... params);
 
     /**
      * Sets the limit and returns this.
@@ -34,7 +34,7 @@ public interface IJPASelectQuery<T> extends IQuery, IResultSet<T> {
      * @param limit
      * @return
      */
-    IJPASelectQuery<T> limit(long limit);
+    IORMSelectQuery<T> limit(long limit);
 
     /**
      * Sets the offset and returns this.
@@ -42,7 +42,7 @@ public interface IJPASelectQuery<T> extends IQuery, IResultSet<T> {
      * @param offset
      * @return
      */
-    IJPASelectQuery<T> offset(long offset);
+    IORMSelectQuery<T> offset(long offset);
 
     /**
      * Sets the order by clause and returns this. Optional.
@@ -50,6 +50,6 @@ public interface IJPASelectQuery<T> extends IQuery, IResultSet<T> {
      * @param orderBy
      * @return this
      */
-    IJPASelectQuery<T> orderBy(String orderBy);
+    IORMSelectQuery<T> orderBy(String orderBy);
 
 }
