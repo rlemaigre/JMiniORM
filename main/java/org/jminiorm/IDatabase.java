@@ -7,8 +7,7 @@ import org.jminiorm.query.generic.ISelectQuery;
 import org.jminiorm.query.generic.IUpdateQuery;
 import org.jminiorm.query.orm.IORMSelectQuery;
 
-import java.sql.PreparedStatement;
-import java.sql.Statement;
+import java.sql.Connection;
 import java.util.Collection;
 
 public interface IDatabase {
@@ -168,20 +167,21 @@ public interface IDatabase {
     void sql(String sql, Object... params) throws DBException;
 
     /**
-     * Creates a new JDBC statement on this database.
+     * Get a (or THE for a transaction) connection to the current database. For a database this connection is in
+     * auto-commit mode, for a transaction it's not.
      *
      * @return
      * @throws DBException
      */
-    Statement createStatement() throws DBException;
+    Connection getConnection() throws DBException;
 
     /**
-     * Creates a new JDBC prepared statement on this database.
+     * This should ALWAYS be called after a connection is no longer in use. For a database, this closes the connection
+     * and returns it to the pool. For a transaction, does nothing (the connection is closed when the transaction is).
      *
-     * @param sql
-     * @return
+     * @param con
      * @throws DBException
      */
-    PreparedStatement prepareStatement(String sql) throws DBException;
+    void releaseConnection(Connection con) throws DBException;
 
 }
