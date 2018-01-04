@@ -34,7 +34,7 @@ public interface IORMSelectQuery<T> extends IQuery, IResultSet<T> {
      * @param limit
      * @return
      */
-    IORMSelectQuery<T> limit(long limit);
+    IORMSelectQuery<T> limit(Long limit);
 
     /**
      * Sets the offset and returns this.
@@ -42,7 +42,7 @@ public interface IORMSelectQuery<T> extends IQuery, IResultSet<T> {
      * @param offset
      * @return
      */
-    IORMSelectQuery<T> offset(long offset);
+    IORMSelectQuery<T> offset(Long offset);
 
     /**
      * Sets the order by clause and returns this. Optional.

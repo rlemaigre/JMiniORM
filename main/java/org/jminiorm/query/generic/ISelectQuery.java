@@ -25,7 +25,7 @@ public interface ISelectQuery extends IQuery {
      * @param limit
      * @return
      */
-    ISelectQuery limit(long limit);
+    ISelectQuery limit(Long limit);
 
     /**
      * Sets the offset and returns this.
@@ -33,7 +33,7 @@ public interface ISelectQuery extends IQuery {
      * @param offset
      * @return
      */
-    ISelectQuery offset(long offset);
+    ISelectQuery offset(Long offset);
 
     /**
      * Turns this query into a result set of objects of the given type (which may or may not be a JPA annotated class,

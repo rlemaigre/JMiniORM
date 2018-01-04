@@ -1,8 +1,23 @@
 package org.jminiorm.dialect;
 
+import org.jminiorm.mapping.ORMapping;
+
+import java.util.List;
+
 /**
- * Interface of objects responsible for turing OO queries into executable SQL statements. The implementation is
- * database-specific.
+ * Interface of objects responsible for turing the data that defines queries into executable SQL statements. The
+ * implementation is database-specific.
  */
 public interface ISQLDialect {
+
+    String sqlForDelete(String table, String idColumn);
+
+    String sqlForInsert(String table, List<String> columns);
+
+    String sqlForUpdate(String table, String idColumn, List<String> columns);
+
+    String sqlForSelect(String sql, Long limit, Long offset);
+
+    String sqlForCreateTable(ORMapping mapping);
+
 }

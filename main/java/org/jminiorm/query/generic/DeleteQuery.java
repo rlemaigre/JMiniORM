@@ -30,7 +30,7 @@ public class DeleteQuery extends AbstractQuery implements IDeleteQuery {
 
     @Override
     public IDeleteQuery addOne(Object id) {
-        ids.add(id);
+        this.ids.add(id);
         return this;
     }
 

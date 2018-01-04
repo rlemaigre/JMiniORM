@@ -1,8 +1,8 @@
 package org.jminiorm.resultset;
 
+import org.jminiorm.exception.DBException;
 import org.jminiorm.exception.UnexpectedNumberOfItemsException;
 
-import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -18,24 +18,24 @@ public interface IResultSet<T> {
      *
      * @return
      * @throws UnexpectedNumberOfItemsException when there are more than one or zero items in the result set.
-     * @throws SQLException
+     * @throws DBException
      */
-    T one() throws UnexpectedNumberOfItemsException, SQLException;
+    T one() throws UnexpectedNumberOfItemsException, DBException;
 
     /**
      * Extracts the first result of the result set.
      *
      * @return
-     * @throws SQLException
+     * @throws DBException
      */
-    T first() throws SQLException;
+    T first() throws DBException;
 
     /**
      * Returns all the items in the result set.
      *
      * @return
-     * @throws SQLException
+     * @throws DBException
      */
-    List<T> list() throws SQLException;
+    List<T> list() throws DBException;
 
 }
