@@ -1,5 +1,6 @@
 package org.jminiorm.query.generic;
 
+import org.jminiorm.exception.DBException;
 import org.jminiorm.query.IQuery;
 
 import java.util.List;
@@ -42,8 +43,8 @@ public interface IInsertQuery extends IQuery {
     IInsertQuery addMany(List<List<Object>> values);
 
     /**
-     * Executes the (batch) statement.
+     * Executes the (batch) statement and returns the generated ids.
      */
-    void execute();
+    List<Object> execute() throws DBException;
 
 }

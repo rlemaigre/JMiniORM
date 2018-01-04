@@ -1,5 +1,6 @@
 package org.jminiorm.query.generic;
 
+import org.jminiorm.exception.DBException;
 import org.jminiorm.query.IQuery;
 
 import java.util.List;
@@ -45,6 +46,6 @@ public interface IDeleteQuery extends IQuery {
     /**
      * Executes the (batch) statement.
      */
-    void execute();
+    void execute() throws DBException;
 
 }

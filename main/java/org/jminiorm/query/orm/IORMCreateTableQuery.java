@@ -7,15 +7,7 @@ import java.sql.SQLException;
 /**
  * Represents a create table statement that creates the table for a JPA annotated class.
  */
-public interface IORMCreateTableQuery<T> {
-
-    /**
-     * Sets the class to create the table for.
-     *
-     * @param clazz
-     * @return
-     */
-    IORMCreateTableQuery<T> forClass(Class<T> clazz);
+public interface IORMCreateTableQuery<T> extends IORMQuery<T> {
 
     /**
      * Creates the table.

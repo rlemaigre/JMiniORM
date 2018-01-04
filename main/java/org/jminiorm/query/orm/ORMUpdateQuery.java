@@ -1,6 +1,8 @@
 package org.jminiorm.query.orm;
 
 import org.jminiorm.IQueryTarget;
+import org.jminiorm.exception.DBException;
+import org.jminiorm.mapping.ColumnMapping;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,8 +29,34 @@ public class ORMUpdateQuery<T> extends AbstractORMQuery<T> implements IORMUpdate
     }
 
     @Override
-    public void execute() {
-        // TODO
+    public void execute() throws DBException {
+        if (!objs.isEmpty()) {
+            String table = getMapping().getTable();
+            String idColumn = getMapping().getIdColumnMapping().getColumn();
+            List<String> columns = new ArrayList<>();
+            List<ColumnMapping> relevantColumnMappings = new ArrayList<>();
+            for (ColumnMapping columnMapping : getMapping().getColumnMappings()) {
+                if (!columnMapping.isId() && columnMapping.isUpdatable()) {
+                    relevantColumnMappings.add(columnMapping);
+                    columns.add(columnMapping.getColumn());
+                }
+            }
+            List<Object> ids = new ArrayList<>();
+            List<List<Object>> values = new ArrayList<>();
+            for (T obj : objs) {
+                ids.add(getMapping().getIdColumnMapping().readProperty(obj));
+                List<Object> vals = new ArrayList<>();
+                for (ColumnMapping columnMapping : relevantColumnMappings) {
+                    vals.add(columnMapping.readProperty(obj));
+                }
+                values.add(vals);
+            }
+            getQueryTarget().update(table)
+                    .idColumn(idColumn)
+                    .columns(columns)
+                    .addMany(ids, values)
+                    .execute();
+        }
     }
 
 }

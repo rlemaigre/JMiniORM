@@ -41,7 +41,7 @@ public class InsertQuery extends AbstractQuery implements IInsertQuery {
     }
 
     @Override
-    public void execute() {
+    public List<Object> execute() {
         // TODO
     }
 }

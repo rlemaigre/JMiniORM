@@ -1,7 +1,6 @@
 package org.jminiorm.query.orm;
 
 import org.jminiorm.exception.DBException;
-import org.jminiorm.query.IQuery;
 
 import java.util.Collection;
 
@@ -10,7 +9,7 @@ import java.util.Collection;
  *
  * @param <T>
  */
-public interface IORMInsertQuery<T> extends IQuery {
+public interface IORMInsertQuery<T> extends IORMQuery<T> {
 
     /**
      * Add an object to those to be inserted.
