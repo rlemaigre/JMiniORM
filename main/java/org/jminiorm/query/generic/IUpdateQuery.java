@@ -23,7 +23,7 @@ public interface IUpdateQuery extends IQuery {
      * @param idColumn
      * @return
      */
-    IDeleteQuery idColumn(String idColumn);
+    IUpdateQuery idColumn(String idColumn);
 
     /**
      * Sets the columns.
