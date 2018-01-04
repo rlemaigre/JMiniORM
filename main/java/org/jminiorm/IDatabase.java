@@ -7,6 +7,8 @@ import org.jminiorm.query.generic.ISelectQuery;
 import org.jminiorm.query.generic.IUpdateQuery;
 import org.jminiorm.query.orm.IORMSelectQuery;
 
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.util.Collection;
 
 public interface IDatabase {
@@ -58,7 +60,7 @@ public interface IDatabase {
     <T> void insert(T obj) throws DBException;
 
     /**
-     * Insert instances of JPA annotated class into their table. Generated ids are set if any.
+     * Insert instances of a JPA annotated class into their table. Generated ids are set if any.
      *
      * @param objs
      * @throws DBException
@@ -98,15 +100,24 @@ public interface IDatabase {
      * Begins a generic update query on the given table.
      *
      * @param table
-     * @param idColumn
      * @return
      * @throws DBException
      */
-    IUpdateQuery update(String table, String idColumn) throws DBException;
+    IUpdateQuery update(String table) throws DBException;
 
     /************************************************************************************/
     /************************************ DELETE ****************************************/
     /************************************************************************************/
+
+    /**
+     * Deletes an instance of a JPA annotated class by given id.
+     *
+     * @param clazz
+     * @param id
+     * @param <T>
+     * @throws DBException
+     */
+    <T> void delete(Class<T> clazz, Object id) throws DBException;
 
     /**
      * Deletes an instance of JPA annotated class.
@@ -128,11 +139,10 @@ public interface IDatabase {
      * Begins a generic delete query on the given table.
      *
      * @param table
-     * @param idColumn
      * @return
      * @throws DBException
      */
-    IDeleteQuery delete(String table, String idColumn) throws DBException;
+    IDeleteQuery delete(String table) throws DBException;
 
     /************************************************************************************/
     /************************************* OTHER ****************************************/
@@ -156,5 +166,22 @@ public interface IDatabase {
      * @throws DBException
      */
     void sql(String sql, Object... params) throws DBException;
+
+    /**
+     * Creates a new JDBC statement on this database.
+     *
+     * @return
+     * @throws DBException
+     */
+    Statement createStatement() throws DBException;
+
+    /**
+     * Creates a new JDBC prepared statement on this database.
+     *
+     * @param sql
+     * @return
+     * @throws DBException
+     */
+    PreparedStatement prepareStatement(String sql) throws DBException;
 
 }

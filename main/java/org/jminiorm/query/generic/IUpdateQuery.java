@@ -13,10 +13,17 @@ public interface IUpdateQuery extends IQuery {
      * Sets the table and the primary key column.
      *
      * @param table
-     * @param idColummn
      * @return
      */
-    IUpdateQuery table(String table, String idColummn);
+    IUpdateQuery table(String table);
+
+    /**
+     * Sets the column containing the id.
+     *
+     * @param idColumn
+     * @return
+     */
+    IDeleteQuery idColumn(String idColumn);
 
     /**
      * Sets the columns.

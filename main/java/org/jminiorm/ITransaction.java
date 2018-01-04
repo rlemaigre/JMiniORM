@@ -2,15 +2,16 @@ package org.jminiorm;
 
 import org.jminiorm.exception.DBException;
 
+import java.io.Closeable;
+
 /**
- * Represents a database transaction. The interface is the same as IDatabase + commit, rollback, close.
+ * Represents a database transaction. The interface is the same as IDatabase + commit, rollback, close. Transactions
+ * should be closed after use to reset and return the Connection to the pool.
  */
-public interface ITransaction extends IDatabase {
+public interface ITransaction extends IDatabase, Closeable {
 
     void commit() throws DBException;
 
     void rollback() throws DBException;
-
-    void close() throws DBException;
 
 }
