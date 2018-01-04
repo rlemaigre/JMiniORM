@@ -1,13 +1,13 @@
 package org.jminiorm.query.orm;
 
 import org.jminiorm.IQueryTarget;
-import org.jminiorm.query.AbstractQuery;
+import org.jminiorm.exception.DBException;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class ORMInsertQuery<T> extends AbstractQuery implements IORMInsertQuery<T> {
+public class ORMInsertQuery<T> extends AbstractORMQuery<T> implements IORMInsertQuery<T> {
 
     private List<T> objs = new ArrayList<>();
 
@@ -28,7 +28,7 @@ public class ORMInsertQuery<T> extends AbstractQuery implements IORMInsertQuery<
     }
 
     @Override
-    public void execute() {
+    public void execute() throws DBException {
         // TODO
     }
 

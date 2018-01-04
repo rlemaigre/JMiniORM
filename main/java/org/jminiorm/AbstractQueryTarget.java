@@ -64,7 +64,6 @@ public abstract class AbstractQueryTarget implements IQueryTarget {
 
     @Override
     public <T> void delete(T obj) throws DBException {
-
     }
 
     @Override

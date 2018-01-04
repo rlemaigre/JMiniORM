@@ -1,13 +1,12 @@
 package org.jminiorm.query.orm;
 
 import org.jminiorm.IQueryTarget;
-import org.jminiorm.query.AbstractQuery;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class ORMUpdateQuery<T> extends AbstractQuery implements IORMUpdateQuery<T> {
+public class ORMUpdateQuery<T> extends AbstractORMQuery<T> implements IORMUpdateQuery<T> {
 
     private List<T> objs = new ArrayList<>();
 

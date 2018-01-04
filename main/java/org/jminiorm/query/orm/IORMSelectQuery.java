@@ -12,14 +12,6 @@ import org.jminiorm.resultset.IResultSet;
 public interface IORMSelectQuery<T> extends IQuery, IResultSet<T> {
 
     /**
-     * Sets the JPA annotated class to select from and returns this. Required.
-     *
-     * @param clazz
-     * @return this
-     */
-    IORMSelectQuery<T> from(Class<T> clazz);
-
-    /**
      * Sets the where clause and returns this. Optional.
      *
      * @param where

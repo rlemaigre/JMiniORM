@@ -3,14 +3,12 @@ package org.jminiorm.query.orm;
 import org.jminiorm.IQueryTarget;
 import org.jminiorm.exception.DBException;
 import org.jminiorm.exception.UnexpectedNumberOfItemsException;
-import org.jminiorm.query.AbstractQuery;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class ORMSelectQuery<T> extends AbstractQuery implements IORMSelectQuery<T> {
+public class ORMSelectQuery<T> extends AbstractORMQuery<T> implements IORMSelectQuery<T> {
 
-    private Class<T> from;
     private String where;
     private List<Object> params;
     private Long limit;
@@ -19,12 +17,6 @@ public class ORMSelectQuery<T> extends AbstractQuery implements IORMSelectQuery<
 
     public ORMSelectQuery(IQueryTarget target) {
         super(target);
-    }
-
-    @Override
-    public IORMSelectQuery<T> from(Class<T> clazz) {
-        this.from = from;
-        return this;
     }
 
     @Override

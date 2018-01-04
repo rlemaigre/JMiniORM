@@ -1,6 +1,7 @@
 package org.jminiorm.mapping;
 
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Represents the mapping between a java property and a database column.
@@ -100,4 +101,33 @@ public class ColumnMapping {
     public void setId(boolean id) {
         isId = id;
     }
+
+    /**
+     * Utility method that reads the value of the property this mapping is about.
+     *
+     * @param bean
+     * @return
+     */
+    public Object readProperty(Object bean) {
+        try {
+            return getPropertyDescriptor().getReadMethod().invoke(bean);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Utility method that writes the value of the property this mapping is about.
+     *
+     * @param bean
+     * @return
+     */
+    public void writeProperty(Object bean, Object value) {
+        try {
+            getPropertyDescriptor().getWriteMethod().invoke(bean, value);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

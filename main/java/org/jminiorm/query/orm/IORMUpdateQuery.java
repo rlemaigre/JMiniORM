@@ -1,5 +1,6 @@
 package org.jminiorm.query.orm;
 
+import org.jminiorm.exception.DBException;
 import org.jminiorm.query.IQuery;
 
 import java.util.Collection;
@@ -30,6 +31,6 @@ public interface IORMUpdateQuery<T> extends IQuery {
     /**
      * Updates the objects collected so far.
      */
-    void execute();
+    void execute() throws DBException;
 
 }
