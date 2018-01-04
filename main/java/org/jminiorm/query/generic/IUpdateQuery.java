@@ -4,6 +4,7 @@ import org.jminiorm.exception.DBException;
 import org.jminiorm.query.IQuery;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Represents a generic update query, that is, one that updates rows in an arbitrary table.
@@ -27,28 +28,22 @@ public interface IUpdateQuery extends IQuery {
     IUpdateQuery idColumn(String idColumn);
 
     /**
-     * Sets the columns.
-     *
-     * @param cols
-     * @return
-     */
-    IUpdateQuery columns(List<String> cols);
-
-    /**
-     * Add one set of values.
+     * Add one map of columns to update and their corresponding values. The map must contain the value for the idColumn
+     * key.
      *
      * @param values
      * @return
      */
-    IUpdateQuery addOne(Object id, List<Object> values);
+    IUpdateQuery addOne(Map<String, Object> values);
 
     /**
-     * Add many "values(...) clauses".
+     * Add serveral maps of columns to update and their corresponding values. Each map must contain the value for the idColumn
+     * key. All the map must have the same set of keys.
      *
      * @param values
      * @return
      */
-    IUpdateQuery addMany(List<Object> ids, List<List<Object>> values);
+    IUpdateQuery addMany(List<Map<String, Object>> values);
 
     /**
      * Executes the (batch) statement.

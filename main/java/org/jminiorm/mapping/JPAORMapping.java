@@ -1,9 +1,6 @@
 package org.jminiorm.mapping;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -55,7 +52,9 @@ public class JPAORMapping extends ORMapping {
             Id idAnn = field.getAnnotation(Id.class);
             Lob lobAnn = field.getAnnotation(Lob.class);
             Column columnAnn = field.getAnnotation(Column.class);
+            GeneratedValue generatedValueAnn = field.getAnnotation(GeneratedValue.class);
             columnMapping.setId(idAnn != null);
+            columnMapping.setGenerated(generatedValueAnn != null);
             if (columnAnn != null) {
                 columnMapping.setColumn(columnAnn.name());
                 columnMapping.setColumnDefinition(columnAnn.columnDefinition());

@@ -18,6 +18,7 @@ public class ColumnMapping {
     private Integer precision;
     private Integer scale;
     private boolean updatable;
+    private boolean generated;
 
     public ColumnMapping() {
     }
@@ -100,6 +101,14 @@ public class ColumnMapping {
 
     public void setId(boolean id) {
         isId = id;
+    }
+
+    public boolean isGenerated() {
+        return generated;
+    }
+
+    public void setGenerated(boolean generated) {
+        this.generated = generated;
     }
 
     /**

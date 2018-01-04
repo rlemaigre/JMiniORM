@@ -4,9 +4,7 @@ import org.jminiorm.IQueryTarget;
 import org.jminiorm.exception.DBException;
 import org.jminiorm.mapping.ColumnMapping;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class ORMUpdateQuery<T> extends AbstractORMQuery<T> implements IORMUpdateQuery<T> {
 
@@ -31,30 +29,33 @@ public class ORMUpdateQuery<T> extends AbstractORMQuery<T> implements IORMUpdate
     @Override
     public void execute() throws DBException {
         if (!objs.isEmpty()) {
+            // The table to update :
             String table = getMapping().getTable();
-            String idColumn = getMapping().getIdColumnMapping().getColumn();
-            List<String> columns = new ArrayList<>();
+
+            // The column mappings for all updatable columns other than the id :
             List<ColumnMapping> relevantColumnMappings = new ArrayList<>();
             for (ColumnMapping columnMapping : getMapping().getColumnMappings()) {
                 if (!columnMapping.isId() && columnMapping.isUpdatable()) {
                     relevantColumnMappings.add(columnMapping);
-                    columns.add(columnMapping.getColumn());
                 }
             }
-            List<Object> ids = new ArrayList<>();
-            List<List<Object>> values = new ArrayList<>();
+
+            // The maps column => value to update :
+            ColumnMapping idColumnMapping = getMapping().getIdColumnMapping();
+            List<Map<String, Object>> rows = new ArrayList<>();
             for (T obj : objs) {
-                ids.add(getMapping().getIdColumnMapping().readProperty(obj));
-                List<Object> vals = new ArrayList<>();
+                Map<String, Object> row = new HashMap<>();
+                row.put(idColumnMapping.getColumn(), idColumnMapping.readProperty(obj));
                 for (ColumnMapping columnMapping : relevantColumnMappings) {
-                    vals.add(columnMapping.readProperty(obj));
+                    row.put(columnMapping.getColumn(), columnMapping.readProperty(obj));
                 }
-                values.add(vals);
+                rows.add(row);
             }
+
+            // Update rows :
             getQueryTarget().update(table)
-                    .idColumn(idColumn)
-                    .columns(columns)
-                    .addMany(ids, values)
+                    .idColumn(idColumnMapping.getColumn())
+                    .addMany(rows)
                     .execute();
         }
     }

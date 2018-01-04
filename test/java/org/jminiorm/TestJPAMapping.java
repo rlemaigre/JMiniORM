@@ -5,10 +5,7 @@ import org.jminiorm.mapping.JPAORMapping;
 import org.jminiorm.mapping.ORMapping;
 import org.junit.jupiter.api.Test;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,6 +28,7 @@ public class TestJPAMapping {
 
         ColumnMapping idColumnMapping = mapping.getIdColumnMapping();
         assertTrue(idColumnMapping.isId());
+        assertTrue(idColumnMapping.isGenerated());
 
         ColumnMapping loginColumnMapping = mapping.getColumnMappingByProperty("login");
         assertNotNull(loginColumnMapping);
@@ -67,6 +65,7 @@ public class TestJPAMapping {
     class User {
 
         @Id
+        @GeneratedValue
         private Integer id;
         @Column(name = "login_column", columnDefinition = "definition", insertable = false, length = 123, nullable =
                 false, precision = 1, scale = 2, updatable = false)

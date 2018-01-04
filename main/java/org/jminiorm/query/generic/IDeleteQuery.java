@@ -14,7 +14,6 @@ public interface IDeleteQuery extends IQuery {
      * Sets the table.
      *
      * @param table
-     * @param idColumn
      * @return
      */
     IDeleteQuery table(String table);

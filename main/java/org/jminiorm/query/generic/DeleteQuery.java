@@ -1,6 +1,7 @@
 package org.jminiorm.query.generic;
 
 import org.jminiorm.IQueryTarget;
+import org.jminiorm.exception.DBException;
 import org.jminiorm.query.AbstractQuery;
 
 import java.util.ArrayList;
@@ -41,7 +42,7 @@ public class DeleteQuery extends AbstractQuery implements IDeleteQuery {
     }
 
     @Override
-    public void execute() {
+    public void execute() throws DBException {
         // TODO
     }
 }

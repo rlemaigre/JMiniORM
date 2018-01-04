@@ -4,9 +4,7 @@ import org.jminiorm.IQueryTarget;
 import org.jminiorm.exception.DBException;
 import org.jminiorm.mapping.ColumnMapping;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class ORMInsertQuery<T> extends AbstractORMQuery<T> implements IORMInsertQuery<T> {
 
@@ -31,31 +29,39 @@ public class ORMInsertQuery<T> extends AbstractORMQuery<T> implements IORMInsert
     @Override
     public void execute() throws DBException {
         if (!objs.isEmpty()) {
+            // The table to insert the rows into :
             String table = getMapping().getTable();
+
+            // The column mappings for all insertable columns that are not generated :
             List<ColumnMapping> relevantColumnMappings = new ArrayList<>();
             for (ColumnMapping columnMapping : getMapping().getColumnMappings()) {
-                if (columnMapping.isInsertable()) {
+                if (columnMapping.isInsertable() && !columnMapping.isGenerated()) {
                     relevantColumnMappings.add(columnMapping);
                 }
             }
-            List<String> columns = new ArrayList<>();
-            for (ColumnMapping columnMapping : relevantColumnMappings) {
-                columns.add(columnMapping.getColumn());
-            }
-            List<List<Object>> values = new ArrayList<>();
+
+            // The maps with the column => value pairs to insert :
+            List<Map<String, Object>> rows = new ArrayList<>();
             for (T obj : objs) {
-                List<Object> vals = new ArrayList<>();
+                Map<String, Object> row = new HashMap<>();
                 for (ColumnMapping columnMapping : relevantColumnMappings) {
-                    vals.add(columnMapping.readProperty(obj));
+                    row.put(columnMapping.getColumn(), columnMapping.readProperty(obj));
                 }
-                values.add(vals);
+                rows.add(row);
             }
-            List<Object> ids = getQueryTarget().insert(table)
-                    .columns(columns)
-                    .addMany(values)
+
+            // Insert rows :
+            ColumnMapping idColumnMapping = getMapping().getIdColumnMapping();
+            getQueryTarget().insert(table)
+                    .generatedColumn(idColumnMapping.isGenerated() ? idColumnMapping.getColumn() : null)
+                    .addMany(rows)
                     .execute();
-            for (int i = 0; i < objs.size(); i++) {
-                getMapping().getIdColumnMapping().writeProperty(objs.get(i), ids.get(i));
+
+            // Assign generated ids if any :
+            if (idColumnMapping.isGenerated()) {
+                for (int i = 0; i < objs.size(); i++) {
+                    idColumnMapping.writeProperty(objs.get(i), rows.get(i).get(idColumnMapping.getColumn()));
+                }
             }
         }
     }
