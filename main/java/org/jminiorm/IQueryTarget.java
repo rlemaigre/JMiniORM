@@ -2,6 +2,7 @@ package org.jminiorm;
 
 import org.jminiorm.dialect.ISQLDialect;
 import org.jminiorm.exception.DBException;
+import org.jminiorm.executor.IStatementExecutor;
 import org.jminiorm.mapping.provider.IORMappingProvider;
 import org.jminiorm.query.generic.IDeleteQuery;
 import org.jminiorm.query.generic.IInsertQuery;
@@ -10,7 +11,9 @@ import org.jminiorm.query.generic.IUpdateQuery;
 import org.jminiorm.query.orm.IORMSelectQuery;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.util.Collection;
+import java.util.List;
 
 public interface IQueryTarget {
 
@@ -169,6 +172,26 @@ public interface IQueryTarget {
     void sql(String sql, Object... params) throws DBException;
 
     /**
+     * Executes the given SQL statement once for every set of parameters. Returns the generated keys if any.
+     *
+     * @param sql
+     * @param params
+     * @return
+     * @throws DBException
+     */
+    List<Object> executeUpdate(String sql, List<List<Object>> params) throws DBException;
+
+    /**
+     * Executes the given SQL statement with the given set of parameters and returns the result set.
+     *
+     * @param sql
+     * @param params
+     * @return
+     * @throws DBException
+     */
+    ResultSet executeQuery(String sql, List<Object> params) throws DBException;
+
+    /**
      * Returns a connection to the current database. Close, commit and rollback shouldn't be called on this connection.
      * Instead, call releaseConnection(con) when you're finished using it.
      *
@@ -199,5 +222,12 @@ public interface IQueryTarget {
      * @return
      */
     IORMappingProvider getORMappingProvider();
+
+    /**
+     * Returns the statement executor for this database.
+     *
+     * @return
+     */
+    IStatementExecutor getStatementExecutor();
 
 }

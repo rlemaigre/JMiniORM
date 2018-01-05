@@ -5,6 +5,8 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.jminiorm.dialect.ANSISQLDialect;
 import org.jminiorm.dialect.ISQLDialect;
 import org.jminiorm.exception.DBException;
+import org.jminiorm.executor.DefaultStatementExecutor;
+import org.jminiorm.executor.IStatementExecutor;
 import org.jminiorm.mapping.provider.IORMappingProvider;
 import org.jminiorm.mapping.provider.JPAORMappingProvider;
 
@@ -17,12 +19,14 @@ public class Database extends AbstractQueryTarget implements IDatabase {
     private DataSource dataSource;
     private ISQLDialect dialect;
     private IORMappingProvider mappingProvider;
+    private IStatementExecutor statementExecutor;
 
     public Database() {
     }
 
     /**
-     * Creates a new database with a Hikary connection pool, ANSI SQL dialect and JPA mapping provider.
+     * Creates a new database with a Hikary connection pool, ANSI SQL dialect, JPA mapping provider and default
+     * statement executor.
      *
      * @param url
      * @param username
@@ -38,6 +42,7 @@ public class Database extends AbstractQueryTarget implements IDatabase {
         setDataSource(new HikariDataSource(config));
         setDialect(new ANSISQLDialect());
         setORMappingProvider(new JPAORMappingProvider());
+        setStatementExecutor(new DefaultStatementExecutor());
     }
 
     public DataSource getDataSource() {
@@ -64,6 +69,14 @@ public class Database extends AbstractQueryTarget implements IDatabase {
 
     public void setORMappingProvider(IORMappingProvider mappingProvider) {
         this.mappingProvider = mappingProvider;
+    }
+
+    public IStatementExecutor getStatementExecutor() {
+        return statementExecutor;
+    }
+
+    public void setStatementExecutor(IStatementExecutor statementExecutor) {
+        this.statementExecutor = statementExecutor;
     }
 
     @Override

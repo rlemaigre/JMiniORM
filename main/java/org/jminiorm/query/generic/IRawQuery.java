@@ -10,7 +10,7 @@ public interface IRawQuery extends IQuery {
      *
      * @param sql
      */
-    void sql(String sql);
+    IRawQuery sql(String sql, Object... params);
 
     /**
      * Executes the query.
