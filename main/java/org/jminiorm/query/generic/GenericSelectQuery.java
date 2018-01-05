@@ -5,8 +5,7 @@ import org.jminiorm.exception.DBException;
 import org.jminiorm.exception.UnexpectedNumberOfItemsException;
 import org.jminiorm.query.AbstractQuery;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class GenericSelectQuery extends AbstractQuery implements IGenericSelectQuery {
 
@@ -40,20 +39,48 @@ public class GenericSelectQuery extends AbstractQuery implements IGenericSelectQ
 
     @Override
     public <T> T one() throws UnexpectedNumberOfItemsException, DBException {
-        // TODO
-        return null;
+        List<Map<String, Object>> rs = getResultSet();
+        if (rs.size() != 1) throw new UnexpectedNumberOfItemsException();
+        else rowToObject(rs.get(0));
     }
 
     @Override
     public <T> T first() throws DBException {
-        // TODO
-        return null;
+        List<Map<String, Object>> rs = getResultSet();
+        if (rs.isEmpty()) return null;
+        else rowToObject(rs.get(0));
     }
 
     @Override
     public <T> List<T> list() throws DBException {
-        // TODO
-        return null;
+        List<T> result = new ArrayList<>();
+        List<Map<String, Object>> rs = getResultSet();
+        for (Map<String, Object> row : rs) {
+            result.add(rowToObject(row));
+        }
+        return result;
+    }
+
+    /**
+     * Converts the row into an object. If there is only one pair in the map, the value is returned, otherwise the map
+     * is returned.
+     *
+     * @param <T>
+     * @return
+     */
+    protected <T> T rowToObject(Map<String, Object> row) {
+        if (row.size() == 1)
+            return (T) row.entrySet().iterator().next().getValue();
+        else
+            return (T) row;
+    }
+
+    protected List<Map<String, Object>> getResultSet() throws DBException {
+        return getQueryTarget().executeQuery(getSQL(), params, Collections.emptyMap());
+    }
+
+    protected String getSQL() {
+        return getQueryTarget().getDialect().sqlForSelect(sql, limit, offset);
     }
 
 }

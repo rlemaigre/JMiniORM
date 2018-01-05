@@ -4,6 +4,7 @@ import org.jminiorm.IQueryTarget;
 import org.jminiorm.exception.DBException;
 import org.jminiorm.query.AbstractQuery;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -11,7 +12,7 @@ public class GenericUpdateQuery extends AbstractQuery implements IGenericUpdateQ
 
     private String table;
     private String idColumn;
-    private List<Map<String,Object>> values;
+    private List<Map<String, Object>> values;
 
     public GenericUpdateQuery(IQueryTarget target) {
         super(target);
@@ -43,6 +44,28 @@ public class GenericUpdateQuery extends AbstractQuery implements IGenericUpdateQ
 
     @Override
     public void execute() throws DBException {
-        // TODO
+        if (values.isEmpty()) return;
+
+        // Columns (x in "SET x = ...") :
+        List<String> columns = new ArrayList<>(values.get(0).keySet());
+        columns.remove(idColumn);
+
+        // SQL :
+        String sql = getQueryTarget().getDialect().sqlForUpdate(table, idColumn, columns);
+
+        // Parameters :
+        List<List<Object>> params = new ArrayList<>();
+        for (Map<String, Object> val : values) {
+            List<Object> curParams = new ArrayList<>();
+            for (String col : columns) {
+                curParams.add(val.get(col));
+            }
+            curParams.add(val.get(idColumn))
+            params.add(curParams);
+        }
+
+        // Execute query :
+        getQueryTarget().executeUpdate(sql, params);
     }
+
 }

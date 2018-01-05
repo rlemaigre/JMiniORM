@@ -42,6 +42,19 @@ public class GenericDeleteQuery extends AbstractGenericQuery implements IGeneric
 
     @Override
     public void execute() throws DBException {
-        // TODO
+        if (ids.isEmpty()) return;
+
+        // SQL :
+        String sql = getQueryTarget().getDialect().sqlForDelete(table, idColumn);
+
+        // Parameters :
+        List<List<Object>> params = new ArrayList<>();
+        for (Object id : ids) {
+            List<Object> curParams = new ArrayList<>();
+            curParams.add(id);
+            params.add(curParams);
+        }
+
+        getQueryTarget().executeUpdate(sql, params);
     }
 }

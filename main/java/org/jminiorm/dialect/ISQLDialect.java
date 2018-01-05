@@ -18,6 +18,8 @@ public interface ISQLDialect {
 
     String sqlForSelect(String sql, Long limit, Long offset);
 
+    String sqlForSelect(List<String> columns, String table, String where, String orderBy);
+
     String sqlForCreateTable(ORMapping mapping);
 
 }

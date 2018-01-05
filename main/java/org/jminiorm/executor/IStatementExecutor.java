@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Interface of objects responsible for executing SQL statements.
+ * Interface of objects responsible for executing SQL statements. A default implementation is provided, subclass as
+ * needed to add custom behavior (logging...).
  */
 public interface IStatementExecutor {
 

@@ -26,7 +26,7 @@ public class GenericInsertQuery extends AbstractQuery implements IGenericInsertQ
 
     @Override
     public IGenericInsertQuery generatedColumn(String column) {
-        this.generatedColumn = column;
+        generatedColumn = column;
         return this;
     }
 
@@ -44,6 +44,25 @@ public class GenericInsertQuery extends AbstractQuery implements IGenericInsertQ
 
     @Override
     public void execute() throws DBException {
-        // TODO
+        if (values.isEmpty()) return;
+
+        // Columns :
+        List<String> columns = new ArrayList<>(values.get(0).keySet());
+
+        // SQL :
+        String sql = getQueryTarget().getDialect().sqlForInsert(table, columns);
+
+        // Parameters :
+        List<List<Object>> params = new ArrayList<>();
+        for (Map<String, Object> val : values) {
+            List<Object> curParams = new ArrayList<>();
+            for (String col : columns) {
+                curParams.add(val.get(col));
+            }
+            params.add(curParams);
+        }
+
+        // Execute query :
+        getQueryTarget().executeUpdate(sql, params);
     }
 }

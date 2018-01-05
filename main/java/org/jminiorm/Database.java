@@ -2,7 +2,7 @@ package org.jminiorm;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import org.jminiorm.dialect.ANSISQLDialect;
+import org.jminiorm.dialect.GenericSQLDialect;
 import org.jminiorm.dialect.ISQLDialect;
 import org.jminiorm.exception.DBException;
 import org.jminiorm.executor.DefaultStatementExecutor;
@@ -40,7 +40,7 @@ public class Database extends AbstractQueryTarget implements IDatabase {
         config.setUsername(username);
         config.setPassword(password);
         setDataSource(new HikariDataSource(config));
-        setDialect(new ANSISQLDialect());
+        setDialect(new GenericSQLDialect());
         setORMappingProvider(new JPAORMappingProvider());
         setStatementExecutor(new DefaultStatementExecutor());
     }

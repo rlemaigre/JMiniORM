@@ -112,12 +112,7 @@ public class ORMSelectQuery<T> extends AbstractORMQuery<T> implements IORMSelect
         }
 
         // Generate sql :
-        String sql = "SELECT " + String.join(", ", columns) + "\n" +
-                "FROM " + table + "\n" +
-                (where == null ? "" : ("WHERE " + where + "\n")) +
-                (orderBy == null ? "" : ("ORDER BY " + orderBy + "\n"));
-
-        return sql;
+        return getQueryTarget().getDialect().sqlForSelect(columns, table, where, orderBy);
     }
 
     /**
