@@ -16,12 +16,36 @@ import java.util.Map;
 public class DefaultStatementExecutor implements IStatementExecutor {
 
     @Override
-    public List<Object> executeUpdate(IQueryTarget target, String sql, List<List<Object>> params) throws DBException {
-        Connection con = target.getConnection();
+    public List<Long> executeUpdate(IQueryTarget target, String sql, List<List<Object>> params) throws DBException {
+        Connection con = null;
+        PreparedStatement stmt = null;
         try {
-
+            List<Long> generatedKeys = new ArrayList<>();
+            con = target.getConnection();
+            stmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            for (List<Object> curParams : params) {
+                setParameters(stmt, curParams);
+                stmt.executeUpdate();
+                try (ResultSet rs = stmt.getGeneratedKeys()) {
+                    Long key = null;
+                    if (rs != null && rs.next()) {
+                        key = rs.getLong(1);
+                    }
+                    generatedKeys.add(key);
+                }
+            }
+            return generatedKeys;
+        } catch (SQLException e) {
+            throw new DBException(e);
         } finally {
-            target.releaseConnection(con);
+            try {
+                if (con != null) target.releaseConnection(con);
+            } catch (Exception e) {
+            }
+            try {
+                if (stmt != null) stmt.close();
+            } catch (Exception e) {
+            }
         }
     }
 
@@ -36,9 +60,7 @@ public class DefaultStatementExecutor implements IStatementExecutor {
             // Get raw ResultSet :
             con = target.getConnection();
             stmt = con.prepareStatement(sql);
-            for (int i = 0; i < params.size(); i++) {
-                stmt.setObject(i, params.get(i));
-            }
+            setParameters(stmt, params);
             rs = stmt.executeQuery();
 
             // Convert ResultSet to a list of maps :
@@ -72,6 +94,12 @@ public class DefaultStatementExecutor implements IStatementExecutor {
                 if (rs != null) rs.close();
             } catch (Exception e) {
             }
+        }
+    }
+
+    protected void setParameters(PreparedStatement stmt, List<Object> params) throws SQLException {
+        for (int i = 0; i < params.size(); i++) {
+            stmt.setObject(i, params.get(i));
         }
     }
 

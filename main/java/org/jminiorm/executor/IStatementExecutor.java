@@ -19,7 +19,7 @@ public interface IStatementExecutor {
      * @return
      * @throws DBException
      */
-    List<Object> executeUpdate(IQueryTarget target, String sql, List<List<Object>> params) throws DBException;
+    List<Long> executeUpdate(IQueryTarget target, String sql, List<List<Object>> params) throws DBException;
 
     /**
      * Executes the given SQL statement with the given set of parameters and returns the rows. Column values for each
