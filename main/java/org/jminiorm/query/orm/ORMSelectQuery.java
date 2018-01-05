@@ -36,6 +36,18 @@ public class ORMSelectQuery<T> extends AbstractORMQuery<T> implements IORMSelect
     }
 
     @Override
+    public IORMSelectQuery<T> id(Object id) {
+        // Sets the parameters as the id :
+        params = new ArrayList<>();
+        params.add(id);
+
+        // Sets the where clause for the id column :
+        where = getMapping().getIdColumnMapping().getColumn() + " = ?";
+
+        return this;
+    }
+
+    @Override
     public IORMSelectQuery<T> limit(Long limit) {
         this.limit = limit;
         return this;

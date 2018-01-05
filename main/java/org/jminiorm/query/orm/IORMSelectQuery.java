@@ -13,16 +13,25 @@ import java.util.List;
  */
 public interface IORMSelectQuery<T> extends IORMQuery<T> {
 
+    @Override
     IORMSelectQuery<T> forClass(Class<T> clazz);
 
     /**
-     * Sets the where clause and returns this. Optional.
+     * Sets the where clause and returns this.
      *
      * @param where
      * @param params
      * @return this
      */
     IORMSelectQuery<T> where(String where, Object... params);
+
+    /**
+     * Sets the id of the object to return.
+     *
+     * @param id
+     * @return this
+     */
+    IORMSelectQuery<T> id(Object id);
 
     /**
      * Sets the limit and returns this.

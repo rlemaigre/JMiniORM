@@ -1,12 +1,8 @@
 package org.jminiorm;
 
 import org.jminiorm.exception.DBException;
-import org.jminiorm.query.generic.IDeleteQuery;
-import org.jminiorm.query.generic.IInsertQuery;
-import org.jminiorm.query.generic.ISelectQuery;
-import org.jminiorm.query.generic.IUpdateQuery;
-import org.jminiorm.query.orm.IORMSelectQuery;
-import org.jminiorm.query.orm.ORMCreateTableQuery;
+import org.jminiorm.query.generic.*;
+import org.jminiorm.query.orm.*;
 
 import java.util.Collection;
 import java.util.List;
@@ -16,66 +12,70 @@ public abstract class AbstractQueryTarget implements IQueryTarget {
 
     @Override
     public <T> T select(Class<T> clazz, Object id) throws DBException {
-        return null;
+        return select(clazz).id(id).first();
     }
 
     @Override
     public <T> IORMSelectQuery<T> select(Class<T> clazz) {
-        return null;
+        return new ORMSelectQuery<T>(this).forClass(clazz);
     }
 
     @Override
     public ISelectQuery select(String sql, Object... params) {
-        return null;
+        return new SelectQuery(this).sql(sql, params);
     }
 
     @Override
     public <T> void insert(T obj) throws DBException {
-
+        new ORMInsertQuery<T>(this).forClass((Class<T>) obj.getClass()).addOne(obj).execute();
     }
 
     @Override
     public <T> void insert(Collection<T> objs) throws DBException {
-
+        if (objs.isEmpty()) return;
+        new ORMInsertQuery<T>(this).forClass((Class<T>) objs.iterator().next().getClass()).addMany(objs).execute();
     }
 
     @Override
     public IInsertQuery insert(String table) throws DBException {
-        return null;
+        return new InsertQuery(this).table(table);
     }
 
     @Override
     public <T> void update(T obj) throws DBException {
-
+        new ORMUpdateQuery<T>(this).forClass((Class<T>) obj.getClass()).addOne(obj).execute();
     }
 
     @Override
     public <T> void update(Collection<T> objs) throws DBException {
-
+        if (objs.isEmpty()) return;
+        new ORMUpdateQuery<T>(this).forClass((Class<T>) objs.iterator().next().getClass()).addMany(objs).execute();
     }
 
     @Override
     public IUpdateQuery update(String table) throws DBException {
-        return null;
+        return new UpdateQuery(this).table(table);
     }
 
     @Override
     public <T> void delete(Class<T> clazz, Object id) throws DBException {
-
+        new ORMDeleteQuery<T>(this).forClass(clazz).id(id).execute();
     }
 
     @Override
     public <T> void delete(T obj) throws DBException {
+        new ORMDeleteQuery<T>(this).forClass((Class<T>) obj.getClass()).addOne(obj).execute();
     }
 
     @Override
     public <T> void delete(Collection<T> objs) throws DBException {
-
+        if (objs.isEmpty()) return;
+        new ORMDeleteQuery<T>(this).forClass((Class<T>) objs.iterator().next().getClass()).addMany(objs).execute();
     }
 
     @Override
     public IDeleteQuery delete(String table) throws DBException {
-        return null;
+        return new DeleteQuery(this).table(table);
     }
 
     @Override
@@ -85,7 +85,7 @@ public abstract class AbstractQueryTarget implements IQueryTarget {
 
     @Override
     public void sql(String sql, Object... params) throws DBException {
-
+        new RawQuery(this).sql(sql, params).execute();
     }
 
     @Override

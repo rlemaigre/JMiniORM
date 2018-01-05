@@ -11,7 +11,16 @@ import java.util.Collection;
  */
 public interface IORMDeleteQuery<T> extends IORMQuery<T> {
 
+    @Override
     IORMDeleteQuery<T> forClass(Class<T> clazz);
+
+    /**
+     * Add an object id to those to be deleted.
+     *
+     * @param id
+     * @return
+     */
+    IORMDeleteQuery<T> id(Object id);
 
     /**
      * Add an object to those to be deleted.
