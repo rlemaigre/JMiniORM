@@ -8,9 +8,9 @@ import org.jminiorm.query.generic.IUpdateQuery;
 import org.jminiorm.query.orm.IORMSelectQuery;
 import org.jminiorm.query.orm.ORMCreateTableQuery;
 
-import java.sql.ResultSet;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 public abstract class AbstractQueryTarget implements IQueryTarget {
 
@@ -89,12 +89,13 @@ public abstract class AbstractQueryTarget implements IQueryTarget {
     }
 
     @Override
-    public List<Object> executeUpdate(String sql, List<List<Object>> params) throws DBException {
+    public List<Long> executeUpdate(String sql, List<List<Object>> params) throws DBException {
         return getStatementExecutor().executeUpdate(this, sql, params);
     }
 
     @Override
-    public ResultSet executeQuery(String sql, List<Object> params) throws DBException {
-        return null;
+    public List<Map<String, Object>> executeQuery(String sql, List<Object> params,
+                                                  Map<String, Class<?>> typeOverrides) throws DBException {
+        return getStatementExecutor().executeQuery(this, sql, params, typeOverrides);
     }
 }

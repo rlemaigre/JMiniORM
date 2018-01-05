@@ -11,9 +11,9 @@ import org.jminiorm.query.generic.IUpdateQuery;
 import org.jminiorm.query.orm.IORMSelectQuery;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 public interface IQueryTarget {
 
@@ -179,17 +179,22 @@ public interface IQueryTarget {
      * @return
      * @throws DBException
      */
-    List<Object> executeUpdate(String sql, List<List<Object>> params) throws DBException;
+    List<Long> executeUpdate(String sql, List<List<Object>> params) throws DBException;
 
     /**
-     * Executes the given SQL statement with the given set of parameters and returns the result set.
+     * Executes the given SQL statement with the given set of parameters and returns the rows. Column values for each
+     * row are those returned by the JDBC driver as-is, unless a specific Java type is provided. In that case a
+     * conversion will be attempted. If the conversion isn't supported by the driver, a DBException occurs. See {@link
+     * java.sql.ResultSet#getObject(String, Class)}. The rows are returned as case-insensitive linked hash maps.
      *
      * @param sql
      * @param params
+     * @param typeOverrides
      * @return
      * @throws DBException
      */
-    ResultSet executeQuery(String sql, List<Object> params) throws DBException;
+    List<Map<String, Object>> executeQuery(String sql, List<Object> params,
+                                           Map<String, Class<?>> typeOverrides) throws DBException;
 
     /**
      * Returns a connection to the current database. Close, commit and rollback shouldn't be called on this connection.
