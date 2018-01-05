@@ -11,71 +11,86 @@ import java.util.Map;
 public abstract class AbstractQueryTarget implements IQueryTarget {
 
     @Override
-    public <T> T select(Class<T> clazz, Object id) throws DBException {
-        return select(clazz).id(id).first();
-    }
-
-    @Override
     public <T> IORMSelectQuery<T> select(Class<T> clazz) {
         return new ORMSelectQuery<T>(this).forClass(clazz);
     }
 
     @Override
-    public ISelectQuery select(String sql, Object... params) {
-        return new SelectQuery(this).sql(sql, params);
+    public <T> T select(Class<T> clazz, Object id) throws DBException {
+        return select(clazz).id(id).first();
+    }
+
+    @Override
+    public IGenericSelectQuery select(String sql, Object... params) {
+        return new GenericSelectQuery(this).sql(sql, params);
+    }
+
+    @Override
+    public <T> IORMInsertQuery<T> insert(Class<T> clazz) {
+        return new ORMInsertQuery<T>(this).forClass(clazz);
     }
 
     @Override
     public <T> void insert(T obj) throws DBException {
-        new ORMInsertQuery<T>(this).forClass((Class<T>) obj.getClass()).addOne(obj).execute();
+        insert((Class<T>) obj.getClass()).addOne(obj).execute();
     }
 
     @Override
     public <T> void insert(Collection<T> objs) throws DBException {
         if (objs.isEmpty()) return;
-        new ORMInsertQuery<T>(this).forClass((Class<T>) objs.iterator().next().getClass()).addMany(objs).execute();
+        insert((Class<T>) objs.iterator().next().getClass()).addMany(objs).execute();
     }
 
     @Override
-    public IInsertQuery insert(String table) throws DBException {
-        return new InsertQuery(this).table(table);
+    public IGenericInsertQuery insert(String table) throws DBException {
+        return new GenericInsertQuery(this).table(table);
+    }
+
+    @Override
+    public <T> IORMUpdateQuery<T> update(Class<T> clazz) {
+        return new ORMUpdateQuery<T>(this).forClass(clazz);
     }
 
     @Override
     public <T> void update(T obj) throws DBException {
-        new ORMUpdateQuery<T>(this).forClass((Class<T>) obj.getClass()).addOne(obj).execute();
+        update((Class<T>) obj.getClass()).addOne(obj).execute();
     }
 
     @Override
     public <T> void update(Collection<T> objs) throws DBException {
         if (objs.isEmpty()) return;
-        new ORMUpdateQuery<T>(this).forClass((Class<T>) objs.iterator().next().getClass()).addMany(objs).execute();
+        update((Class<T>) objs.iterator().next().getClass()).addMany(objs).execute();
     }
 
     @Override
-    public IUpdateQuery update(String table) throws DBException {
-        return new UpdateQuery(this).table(table);
+    public IGenericUpdateQuery update(String table) throws DBException {
+        return new GenericUpdateQuery(this).table(table);
+    }
+
+    @Override
+    public <T> IORMDeleteQuery<T> delete(Class<T> clazz) {
+        return new ORMDeleteQuery<T>(this).forClass(clazz);
     }
 
     @Override
     public <T> void delete(Class<T> clazz, Object id) throws DBException {
-        new ORMDeleteQuery<T>(this).forClass(clazz).id(id).execute();
+        delete(clazz).id(id).execute();
     }
 
     @Override
     public <T> void delete(T obj) throws DBException {
-        new ORMDeleteQuery<T>(this).forClass((Class<T>) obj.getClass()).addOne(obj).execute();
+        delete((Class<T>) obj.getClass()).addOne(obj).execute();
     }
 
     @Override
     public <T> void delete(Collection<T> objs) throws DBException {
         if (objs.isEmpty()) return;
-        new ORMDeleteQuery<T>(this).forClass((Class<T>) objs.iterator().next().getClass()).addMany(objs).execute();
+        delete((Class<T>) objs.iterator().next().getClass()).addMany(objs).execute();
     }
 
     @Override
-    public IDeleteQuery delete(String table) throws DBException {
-        return new DeleteQuery(this).table(table);
+    public IGenericDeleteQuery delete(String table) throws DBException {
+        return new GenericDeleteQuery(this).table(table);
     }
 
     @Override
@@ -85,7 +100,7 @@ public abstract class AbstractQueryTarget implements IQueryTarget {
 
     @Override
     public void sql(String sql, Object... params) throws DBException {
-        new RawQuery(this).sql(sql, params).execute();
+        new GenericRawQuery(this).sql(sql, params).execute();
     }
 
     @Override

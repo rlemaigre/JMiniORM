@@ -7,17 +7,17 @@ import org.jminiorm.query.AbstractQuery;
 import java.util.Arrays;
 import java.util.List;
 
-public class RawQuery extends AbstractQuery implements IRawQuery {
+public class GenericRawQuery extends AbstractQuery implements IGenericRawQuery {
 
     private String sql;
     private List<Object> params;
 
-    public RawQuery(IQueryTarget target) {
+    public GenericRawQuery(IQueryTarget target) {
         super(target);
     }
 
     @Override
-    public IRawQuery sql(String sql, Object... params) {
+    public IGenericRawQuery sql(String sql, Object... params) {
         this.sql = sql;
         this.params = Arrays.asList(params);
         return this;

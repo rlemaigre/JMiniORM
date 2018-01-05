@@ -1,16 +1,15 @@
 package org.jminiorm.query.generic;
 
 import org.jminiorm.exception.DBException;
-import org.jminiorm.query.IQuery;
 
-public interface IRawQuery extends IQuery {
+public interface IGenericRawQuery extends IGenericQuery {
 
     /**
      * Sets the raw SQL string.
      *
      * @param sql
      */
-    IRawQuery sql(String sql, Object... params);
+    IGenericRawQuery sql(String sql, Object... params);
 
     /**
      * Executes the query.

@@ -2,41 +2,40 @@ package org.jminiorm.query.generic;
 
 import org.jminiorm.IQueryTarget;
 import org.jminiorm.exception.DBException;
-import org.jminiorm.query.AbstractQuery;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DeleteQuery extends AbstractQuery implements IDeleteQuery {
+public class GenericDeleteQuery extends AbstractGenericQuery implements IGenericDeleteQuery {
 
     private String table;
     private String idColumn;
     private List<Object> ids = new ArrayList<>();
 
-    public DeleteQuery(IQueryTarget target) {
+    public GenericDeleteQuery(IQueryTarget target) {
         super(target);
     }
 
     @Override
-    public IDeleteQuery table(String table) {
+    public IGenericDeleteQuery table(String table) {
         this.table = table;
         return this;
     }
 
     @Override
-    public IDeleteQuery idColumn(String idColumn) {
+    public IGenericDeleteQuery idColumn(String idColumn) {
         this.idColumn = idColumn;
         return this;
     }
 
     @Override
-    public IDeleteQuery addOne(Object id) {
-        this.ids.add(id);
+    public IGenericDeleteQuery addOne(Object id) {
+        ids.add(id);
         return this;
     }
 
     @Override
-    public IDeleteQuery addMany(List<Object> ids) {
+    public IGenericDeleteQuery addMany(List<Object> ids) {
         this.ids.addAll(ids);
         return this;
     }

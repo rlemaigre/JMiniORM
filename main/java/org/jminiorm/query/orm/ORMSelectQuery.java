@@ -4,7 +4,7 @@ import org.jminiorm.IQueryTarget;
 import org.jminiorm.exception.DBException;
 import org.jminiorm.exception.UnexpectedNumberOfItemsException;
 import org.jminiorm.mapping.ColumnMapping;
-import org.jminiorm.query.generic.ISelectQuery;
+import org.jminiorm.query.generic.IGenericSelectQuery;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -92,7 +92,7 @@ public class ORMSelectQuery<T> extends AbstractORMQuery<T> implements IORMSelect
      *
      * @return
      */
-    protected ISelectQuery getGenericQuery() {
+    protected IGenericSelectQuery getGenericQuery() {
         return getQueryTarget().select(getSQL(), params).limit(limit).offset(offset);
     }
 

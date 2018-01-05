@@ -2,7 +2,6 @@ package org.jminiorm.query.generic;
 
 import org.jminiorm.exception.DBException;
 import org.jminiorm.exception.UnexpectedNumberOfItemsException;
-import org.jminiorm.query.IQuery;
 
 import java.util.List;
 
@@ -11,7 +10,7 @@ import java.util.List;
  * class). Since the return type may be anything, the from and select clauses cannot be infered from JPA annotations and
  * the whole SQL statement must be specified.
  */
-public interface ISelectQuery extends IQuery {
+public interface IGenericSelectQuery extends IGenericQuery {
 
     /**
      * Sets the whole select statement and returns this.
@@ -20,7 +19,7 @@ public interface ISelectQuery extends IQuery {
      * @param params
      * @return this
      */
-    ISelectQuery sql(String sql, Object... params);
+    IGenericSelectQuery sql(String sql, Object... params);
 
     /**
      * Sets the limit and returns this.
@@ -28,7 +27,7 @@ public interface ISelectQuery extends IQuery {
      * @param limit
      * @return
      */
-    ISelectQuery limit(Long limit);
+    IGenericSelectQuery limit(Long limit);
 
     /**
      * Sets the offset and returns this.
@@ -36,7 +35,7 @@ public interface ISelectQuery extends IQuery {
      * @param offset
      * @return
      */
-    ISelectQuery offset(Long offset);
+    IGenericSelectQuery offset(Long offset);
 
     /**
      * Extracts the first result of the result set. Throws an exception if there is more than or less than one element

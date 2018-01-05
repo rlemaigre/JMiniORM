@@ -8,36 +8,36 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class InsertQuery extends AbstractQuery implements IInsertQuery {
+public class GenericInsertQuery extends AbstractQuery implements IGenericInsertQuery {
 
     private String table;
     private String generatedColumn;
     private List<Map<String, Object>> values = new ArrayList<>();
 
-    public InsertQuery(IQueryTarget target) {
+    public GenericInsertQuery(IQueryTarget target) {
         super(target);
     }
 
     @Override
-    public IInsertQuery table(String table) {
+    public IGenericInsertQuery table(String table) {
         this.table = table;
         return this;
     }
 
     @Override
-    public IInsertQuery generatedColumn(String column) {
+    public IGenericInsertQuery generatedColumn(String column) {
         this.generatedColumn = column;
         return this;
     }
 
     @Override
-    public IInsertQuery addOne(Map<String, Object> values) {
+    public IGenericInsertQuery addOne(Map<String, Object> values) {
         this.values.add(values);
         return this;
     }
 
     @Override
-    public IInsertQuery addMany(List<Map<String, Object>> values) {
+    public IGenericInsertQuery addMany(List<Map<String, Object>> values) {
         this.values.addAll(values);
         return this;
     }

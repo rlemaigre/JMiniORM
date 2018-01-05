@@ -4,11 +4,14 @@ import org.jminiorm.dialect.ISQLDialect;
 import org.jminiorm.exception.DBException;
 import org.jminiorm.executor.IStatementExecutor;
 import org.jminiorm.mapping.provider.IORMappingProvider;
-import org.jminiorm.query.generic.IDeleteQuery;
-import org.jminiorm.query.generic.IInsertQuery;
-import org.jminiorm.query.generic.ISelectQuery;
-import org.jminiorm.query.generic.IUpdateQuery;
+import org.jminiorm.query.generic.IGenericDeleteQuery;
+import org.jminiorm.query.generic.IGenericInsertQuery;
+import org.jminiorm.query.generic.IGenericSelectQuery;
+import org.jminiorm.query.generic.IGenericUpdateQuery;
+import org.jminiorm.query.orm.IORMDeleteQuery;
+import org.jminiorm.query.orm.IORMInsertQuery;
 import org.jminiorm.query.orm.IORMSelectQuery;
+import org.jminiorm.query.orm.IORMUpdateQuery;
 
 import java.sql.Connection;
 import java.util.Collection;
@@ -22,6 +25,16 @@ public interface IQueryTarget {
     /************************************************************************************/
 
     /**
+     * Begins a JPA select query.
+     *
+     * @param clazz
+     * @param <T>
+     * @return
+     * @throws DBException
+     */
+    <T> IORMSelectQuery<T> select(Class<T> clazz);
+
+    /**
      * Returns the instance of the JPA annotated class T of given id.
      *
      * @param clazz
@@ -33,27 +46,27 @@ public interface IQueryTarget {
     <T> T select(Class<T> clazz, Object id) throws DBException;
 
     /**
-     * Begins a JPA select query.
-     *
-     * @param clazz
-     * @param <T>
-     * @return
-     * @throws DBException
-     */
-    <T> IORMSelectQuery<T> select(Class<T> clazz);
-
-    /**
      * Begins a generic select query.
      *
      * @param sql    The whole SQL, except limit and offset.
      * @param params
      * @return
      */
-    ISelectQuery select(String sql, Object... params);
+    IGenericSelectQuery select(String sql, Object... params);
 
     /************************************************************************************/
     /************************************ INSERT ****************************************/
     /************************************************************************************/
+
+    /**
+     * Begins a JPA insert query.
+     *
+     * @param clazz
+     * @param <T>
+     * @return
+     * @throws DBException
+     */
+    <T> IORMInsertQuery<T> insert(Class<T> clazz);
 
     /**
      * Insert an instance of JPA annotated class into its table. Generated id is set if any.
@@ -78,11 +91,21 @@ public interface IQueryTarget {
      * @return
      * @throws DBException
      */
-    IInsertQuery insert(String table) throws DBException;
+    IGenericInsertQuery insert(String table) throws DBException;
 
     /************************************************************************************/
     /************************************ UPDATE ****************************************/
     /************************************************************************************/
+
+    /**
+     * Begins a JPA update query.
+     *
+     * @param clazz
+     * @param <T>
+     * @return
+     * @throws DBException
+     */
+    <T> IORMUpdateQuery<T> update(Class<T> clazz);
 
     /**
      * Updates an instance of JPA annotated class.
@@ -107,11 +130,21 @@ public interface IQueryTarget {
      * @return
      * @throws DBException
      */
-    IUpdateQuery update(String table) throws DBException;
+    IGenericUpdateQuery update(String table) throws DBException;
 
     /************************************************************************************/
     /************************************ DELETE ****************************************/
     /************************************************************************************/
+
+    /**
+     * Begins a JPA delete query.
+     *
+     * @param clazz
+     * @param <T>
+     * @return
+     * @throws DBException
+     */
+    <T> IORMDeleteQuery<T> delete(Class<T> clazz);
 
     /**
      * Deletes an instance of a JPA annotated class by given id.
@@ -146,7 +179,7 @@ public interface IQueryTarget {
      * @return
      * @throws DBException
      */
-    IDeleteQuery delete(String table) throws DBException;
+    IGenericDeleteQuery delete(String table) throws DBException;
 
     /************************************************************************************/
     /************************************* OTHER ****************************************/

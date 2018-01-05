@@ -1,14 +1,13 @@
 package org.jminiorm.query.generic;
 
 import org.jminiorm.exception.DBException;
-import org.jminiorm.query.IQuery;
 
 import java.util.List;
 
 /**
  * Represents a generic delete query, that is, one that deletes rows from an arbitrary table.
  */
-public interface IDeleteQuery extends IQuery {
+public interface IGenericDeleteQuery extends IGenericQuery {
 
     /**
      * Sets the table.
@@ -16,7 +15,7 @@ public interface IDeleteQuery extends IQuery {
      * @param table
      * @return
      */
-    IDeleteQuery table(String table);
+    IGenericDeleteQuery table(String table);
 
     /**
      * Sets the column containing the id.
@@ -24,7 +23,7 @@ public interface IDeleteQuery extends IQuery {
      * @param idColumn
      * @return
      */
-    IDeleteQuery idColumn(String idColumn);
+    IGenericDeleteQuery idColumn(String idColumn);
 
     /**
      * Add one id.
@@ -32,7 +31,7 @@ public interface IDeleteQuery extends IQuery {
      * @param id
      * @return
      */
-    IDeleteQuery addOne(Object id);
+    IGenericDeleteQuery addOne(Object id);
 
     /**
      * Add many ids.
@@ -40,7 +39,7 @@ public interface IDeleteQuery extends IQuery {
      * @param ids
      * @return
      */
-    IDeleteQuery addMany(List<Object> ids);
+    IGenericDeleteQuery addMany(List<Object> ids);
 
     /**
      * Executes the (batch) statement.

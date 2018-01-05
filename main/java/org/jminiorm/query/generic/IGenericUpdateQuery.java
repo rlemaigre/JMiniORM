@@ -1,7 +1,6 @@
 package org.jminiorm.query.generic;
 
 import org.jminiorm.exception.DBException;
-import org.jminiorm.query.IQuery;
 
 import java.util.List;
 import java.util.Map;
@@ -9,7 +8,7 @@ import java.util.Map;
 /**
  * Represents a generic update query, that is, one that updates rows in an arbitrary table.
  */
-public interface IUpdateQuery extends IQuery {
+public interface IGenericUpdateQuery extends IGenericQuery {
 
     /**
      * Sets the table and the primary key column.
@@ -17,7 +16,7 @@ public interface IUpdateQuery extends IQuery {
      * @param table
      * @return
      */
-    IUpdateQuery table(String table);
+    IGenericUpdateQuery table(String table);
 
     /**
      * Sets the column containing the id.
@@ -25,7 +24,7 @@ public interface IUpdateQuery extends IQuery {
      * @param idColumn
      * @return
      */
-    IUpdateQuery idColumn(String idColumn);
+    IGenericUpdateQuery idColumn(String idColumn);
 
     /**
      * Add one map of columns to update and their corresponding values. The map must contain the value for the idColumn
@@ -34,7 +33,7 @@ public interface IUpdateQuery extends IQuery {
      * @param values
      * @return
      */
-    IUpdateQuery addOne(Map<String, Object> values);
+    IGenericUpdateQuery addOne(Map<String, Object> values);
 
     /**
      * Add serveral maps of columns to update and their corresponding values. Each map must contain the value for the idColumn
@@ -43,7 +42,7 @@ public interface IUpdateQuery extends IQuery {
      * @param values
      * @return
      */
-    IUpdateQuery addMany(List<Map<String, Object>> values);
+    IGenericUpdateQuery addMany(List<Map<String, Object>> values);
 
     /**
      * Executes the (batch) statement.
