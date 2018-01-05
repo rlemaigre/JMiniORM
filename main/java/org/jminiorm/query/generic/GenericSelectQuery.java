@@ -40,15 +40,15 @@ public class GenericSelectQuery extends AbstractQuery implements IGenericSelectQ
     @Override
     public <T> T one() throws UnexpectedNumberOfItemsException, DBException {
         List<Map<String, Object>> rs = getResultSet();
-        if (rs.size() != 1) throw new UnexpectedNumberOfItemsException();
-        else rowToObject(rs.get(0));
+        if (rs.size() != 1) throw new UnexpectedNumberOfItemsException(rs.size());
+        else return rowToObject(rs.get(0));
     }
 
     @Override
     public <T> T first() throws DBException {
         List<Map<String, Object>> rs = getResultSet();
         if (rs.isEmpty()) return null;
-        else rowToObject(rs.get(0));
+        else return rowToObject(rs.get(0));
     }
 
     @Override

@@ -60,7 +60,7 @@ public class GenericUpdateQuery extends AbstractQuery implements IGenericUpdateQ
             for (String col : columns) {
                 curParams.add(val.get(col));
             }
-            curParams.add(val.get(idColumn))
+            curParams.add(val.get(idColumn));
             params.add(curParams);
         }
 
