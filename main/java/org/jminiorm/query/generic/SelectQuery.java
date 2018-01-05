@@ -1,8 +1,9 @@
 package org.jminiorm.query.generic;
 
 import org.jminiorm.IQueryTarget;
+import org.jminiorm.exception.DBException;
+import org.jminiorm.exception.UnexpectedNumberOfItemsException;
 import org.jminiorm.query.AbstractQuery;
-import org.jminiorm.resultset.IResultSet;
 
 import java.util.Arrays;
 import java.util.List;
@@ -38,8 +39,21 @@ public class SelectQuery extends AbstractQuery implements ISelectQuery {
     }
 
     @Override
-    public <T> IResultSet<T> as(Class<T> clazz) {
+    public <T> T one() throws UnexpectedNumberOfItemsException, DBException {
         // TODO
         return null;
     }
+
+    @Override
+    public <T> T first() throws DBException {
+        // TODO
+        return null;
+    }
+
+    @Override
+    public <T> List<T> list() throws DBException {
+        // TODO
+        return null;
+    }
+
 }

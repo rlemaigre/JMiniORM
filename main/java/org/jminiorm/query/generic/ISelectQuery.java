@@ -1,7 +1,10 @@
 package org.jminiorm.query.generic;
 
+import org.jminiorm.exception.DBException;
+import org.jminiorm.exception.UnexpectedNumberOfItemsException;
 import org.jminiorm.query.IQuery;
-import org.jminiorm.resultset.IResultSet;
+
+import java.util.List;
 
 /**
  * Represents a generic select query, that is, one that may return objects of any type (not necessarily a JPA annotated
@@ -36,14 +39,29 @@ public interface ISelectQuery extends IQuery {
     ISelectQuery offset(Long offset);
 
     /**
-     * Turns this query into a result set of objects of the given type (which may or may not be a JPA annotated class,
-     * for example a HashMap or an Integer). If the given type is a JPA annotated class, then JPA annotation are used to
-     * convert from columns aliases to Java properties.
+     * Extracts the first result of the result set. Throws an exception if there is more than or less than one element
+     * in the result set.
      *
-     * @param clazz
-     * @param <T>
      * @return
+     * @throws UnexpectedNumberOfItemsException when there are more than one or zero items in the result set.
+     * @throws DBException
      */
-    <T> IResultSet<T> as(Class<T> clazz);
+    <T> T one() throws UnexpectedNumberOfItemsException, DBException;
+
+    /**
+     * Extracts the first result of the result set.
+     *
+     * @return
+     * @throws DBException
+     */
+    <T> T first() throws DBException;
+
+    /**
+     * Returns all the items in the result set.
+     *
+     * @return
+     * @throws DBException
+     */
+    <T> List<T> list() throws DBException;
 
 }

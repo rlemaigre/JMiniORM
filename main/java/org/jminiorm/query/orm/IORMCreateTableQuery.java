@@ -9,6 +9,9 @@ import java.sql.SQLException;
  */
 public interface IORMCreateTableQuery<T> extends IORMQuery<T> {
 
+    @Override
+    IORMCreateTableQuery<T> forClass(Class<T> clazz);
+
     /**
      * Creates the table.
      *

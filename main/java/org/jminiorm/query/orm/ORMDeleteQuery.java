@@ -17,6 +17,11 @@ public class ORMDeleteQuery<T> extends AbstractORMQuery<T> implements IORMDelete
     }
 
     @Override
+    public IORMDeleteQuery<T> forClass(Class<T> clazz) {
+        return (IORMDeleteQuery<T>) super.forClass(clazz);
+    }
+
+    @Override
     public IORMDeleteQuery<T> addOne(T obj) {
         objs.add(obj);
         return this;

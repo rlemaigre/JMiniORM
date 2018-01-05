@@ -11,6 +11,8 @@ import java.util.Collection;
  */
 public interface IORMUpdateQuery<T> extends IORMQuery<T> {
 
+    IORMUpdateQuery<T> forClass(Class<T> clazz);
+
     /**
      * Add an object to those to be updated.
      *

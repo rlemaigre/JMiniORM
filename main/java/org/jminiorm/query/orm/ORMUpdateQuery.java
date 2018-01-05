@@ -15,6 +15,11 @@ public class ORMUpdateQuery<T> extends AbstractORMQuery<T> implements IORMUpdate
     }
 
     @Override
+    public IORMUpdateQuery<T> forClass(Class<T> clazz) {
+        return (IORMUpdateQuery<T>) super.forClass(clazz);
+    }
+
+    @Override
     public ORMUpdateQuery<T> addOne(T obj) {
         objs.add(obj);
         return this;

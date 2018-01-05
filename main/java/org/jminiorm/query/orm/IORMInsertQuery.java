@@ -11,6 +11,8 @@ import java.util.Collection;
  */
 public interface IORMInsertQuery<T> extends IORMQuery<T> {
 
+    IORMInsertQuery<T> forClass(Class<T> clazz);
+
     /**
      * Add an object to those to be inserted.
      *

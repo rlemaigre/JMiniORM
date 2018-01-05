@@ -1,7 +1,9 @@
 package org.jminiorm.query.orm;
 
-import org.jminiorm.query.IQuery;
-import org.jminiorm.resultset.IResultSet;
+import org.jminiorm.exception.DBException;
+import org.jminiorm.exception.UnexpectedNumberOfItemsException;
+
+import java.util.List;
 
 /**
  * Represents a select query that returns objects of a JPA annotated class. The select and from clauses are infered from
@@ -9,7 +11,9 @@ import org.jminiorm.resultset.IResultSet;
  *
  * @param <T>
  */
-public interface IORMSelectQuery<T> extends IQuery, IResultSet<T> {
+public interface IORMSelectQuery<T> extends IORMQuery<T> {
+
+    IORMSelectQuery<T> forClass(Class<T> clazz);
 
     /**
      * Sets the where clause and returns this. Optional.
@@ -43,5 +47,31 @@ public interface IORMSelectQuery<T> extends IQuery, IResultSet<T> {
      * @return this
      */
     IORMSelectQuery<T> orderBy(String orderBy);
+
+    /**
+     * Extracts the first result of the result set. Throws an exception if there is more than or less than one element
+     * in the result set.
+     *
+     * @return
+     * @throws UnexpectedNumberOfItemsException when there are more than one or zero items in the result set.
+     * @throws DBException
+     */
+    T one() throws UnexpectedNumberOfItemsException, DBException;
+
+    /**
+     * Extracts the first result of the result set.
+     *
+     * @return
+     * @throws DBException
+     */
+    T first() throws DBException;
+
+    /**
+     * Returns all the items in the result set.
+     *
+     * @return
+     * @throws DBException
+     */
+    List<T> list() throws DBException;
 
 }

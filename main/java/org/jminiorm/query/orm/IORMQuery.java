@@ -9,6 +9,6 @@ public interface IORMQuery<T> extends IQuery {
      *
      * @param clazz
      */
-    void forClass(Class<T> clazz);
+    IORMQuery<T> forClass(Class<T> clazz);
 
 }

@@ -13,8 +13,9 @@ public abstract class AbstractORMQuery<T> extends AbstractQuery implements IORMQ
     }
 
     @Override
-    public void forClass(Class<T> clazz) {
+    public IORMQuery<T> forClass(Class<T> clazz) {
         this.clazz = clazz;
+        return this;
     }
 
     protected Class<T> getTargetClass() {

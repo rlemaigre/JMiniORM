@@ -15,6 +15,11 @@ public class ORMInsertQuery<T> extends AbstractORMQuery<T> implements IORMInsert
     }
 
     @Override
+    public IORMInsertQuery<T> forClass(Class<T> clazz) {
+        return (IORMInsertQuery<T>) super.forClass(clazz);
+    }
+
+    @Override
     public ORMInsertQuery<T> addOne(T obj) {
         objs.add(obj);
         return this;

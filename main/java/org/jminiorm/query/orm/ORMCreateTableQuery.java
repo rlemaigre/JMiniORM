@@ -10,6 +10,11 @@ public class ORMCreateTableQuery<T> extends AbstractORMQuery<T> implements IORMC
     }
 
     @Override
+    public IORMCreateTableQuery<T> forClass(Class<T> clazz) {
+        return (IORMCreateTableQuery<T>) super.forClass(clazz);
+    }
+
+    @Override
     public void execute() throws DBException {
         String sql = getQueryTarget().getDialect().sqlForCreateTable(getMapping());
         getQueryTarget().sql(sql);

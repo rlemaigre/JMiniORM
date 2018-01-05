@@ -4,9 +4,12 @@ import org.jminiorm.IQueryTarget;
 import org.jminiorm.exception.DBException;
 import org.jminiorm.exception.UnexpectedNumberOfItemsException;
 import org.jminiorm.mapping.ColumnMapping;
-import org.jminiorm.resultset.IResultSet;
+import org.jminiorm.query.generic.ISelectQuery;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public class ORMSelectQuery<T> extends AbstractORMQuery<T> implements IORMSelectQuery<T> {
 
@@ -18,6 +21,11 @@ public class ORMSelectQuery<T> extends AbstractORMQuery<T> implements IORMSelect
 
     public ORMSelectQuery(IQueryTarget target) {
         super(target);
+    }
+
+    @Override
+    public IORMSelectQuery<T> forClass(Class<T> clazz) {
+        return (IORMSelectQuery<T>) super.forClass(clazz);
     }
 
     @Override
@@ -47,26 +55,40 @@ public class ORMSelectQuery<T> extends AbstractORMQuery<T> implements IORMSelect
 
     @Override
     public T one() throws UnexpectedNumberOfItemsException, DBException {
-        Map<String,Object> row = getResultSet().one();
+        Map<String, Object> row = getGenericQuery().one();
         return buildObject(row);
     }
 
     @Override
     public T first() throws DBException {
-        Map<String,Object> row = getResultSet().first();
+        Map<String, Object> row = getGenericQuery().first();
         return buildObject(row);
     }
 
     @Override
     public List<T> list() throws DBException {
-        List<Map> rows = getResultSet().list();
-        rows.get(0).get
+        List<T> list = new ArrayList<>();
+        List<Map<String, Object>> rows = getGenericQuery().list();
+        for (Map<String, Object> row : rows) {
+            list.add(buildObject(row));
+        }
+        return list;
     }
 
-    protected IResultSet<HashMap> getResultSet() throws DBException {
-        return getQueryTarget().select(getSQL(), params).limit(limit).offset(offset).as(HashMap.class);
+    /**
+     * Returns the generic query that gets the rows from the database.
+     *
+     * @return
+     */
+    protected ISelectQuery getGenericQuery() {
+        return getQueryTarget().select(getSQL(), params).limit(limit).offset(offset);
     }
 
+    /**
+     * Builds the SQL select to get the rows from the database.
+     *
+     * @return
+     */
     protected String getSQL() {
         // The table to select from :
         String table = getMapping().getTable();
@@ -86,5 +108,22 @@ public class ORMSelectQuery<T> extends AbstractORMQuery<T> implements IORMSelect
         return sql;
     }
 
+    /**
+     * Builds an instance of T from a database row.
+     *
+     * @param row
+     * @return
+     */
+    protected T buildObject(Map<String, Object> row) {
+        try {
+            T obj = getTargetClass().newInstance();
+            for (ColumnMapping columnMapping : getMapping().getColumnMappings()) {
+                columnMapping.writeProperty(obj, row.get(columnMapping.getColumn()));
+            }
+            return obj;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 }
