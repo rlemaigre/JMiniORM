@@ -1,9 +1,15 @@
 package org.jminiorm.dialect;
 
 import org.jminiorm.exception.DBException;
+import org.jminiorm.mapping.ColumnMapping;
+import org.jminiorm.mapping.Index;
 import org.jminiorm.mapping.ORMapping;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -62,15 +68,71 @@ public class GenericSQLDialect implements ISQLDialect {
 
     @Override
     public String sqlForCreateTable(ORMapping mapping) {
-        String sql = "CREATE TABLE " + identifier(mapping.getTable()) + " (" +
-                ")";
-        return sql;
+        StringBuilder sb = new StringBuilder();
+        sb.append("CREATE TABLE ").append(identifier(mapping.getTable())).append(" (");
+        List<String> columns = new ArrayList<>();
+        for (ColumnMapping columnMapping : mapping.getColumnMappings()) {
+            columns.add(sqlForColumnDefinition(columnMapping));
+        }
+        sb.append(String.join(", ", columns));
+        sb.append(", ");
+        sb.append(sqlForPrimaryKey(mapping.getIdColumnMapping()));
+        sb.append(")");
+        return sb.toString();
+    }
+
+    protected String sqlForColumnDefinition(ColumnMapping columnMapping) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(identifier(columnMapping.getColumn())).append(" ");
+        if (columnMapping.getColumnDefinition() != null)
+            sb.append(columnMapping.getColumnDefinition());
+        else {
+            sb.append(sqlForColumnType(columnMapping)).append(" ");
+            if (!columnMapping.isNullable()) sb.append("NOT NULL ");
+            if (columnMapping.isGenerated()) sb.append(sqlForAutoIncrement());
+        }
+        return sb.toString();
+    }
+
+    protected String sqlForAutoIncrement() {
+        return "AUTO_INCREMENT";
+    }
+
+    protected String sqlForColumnType(ColumnMapping columnMapping) {
+        Class<?> javaType = columnMapping.getPropertyDescriptor().getPropertyType();
+        Integer length = columnMapping.getLength();
+        Integer scale = columnMapping.getScale();
+        Integer precision = columnMapping.getPrecision();
+        if (javaType == Integer.class) return "INTEGER";
+        if (javaType == Long.class) return "BIGINT";
+        if (javaType == Float.class) return "REAL";
+        if (javaType == Double.class) return "DOUBLE";
+        if (javaType == Boolean.class) return "INTEGER";
+        if (javaType == String.class) {
+            if (length == null) return "TEXT";
+            else return "VARCHAR(" + length + ")";
+        }
+        if (javaType == Date.class || javaType == LocalDateTime.class || javaType == LocalDate.class)
+            return "TIMESTAMP";
+        if (javaType == BigDecimal.class) return "NUMERIC(" + precision + "," + scale + ")";
+        throw new RuntimeException("No SQL type defined for java type " + javaType.getName());
+    }
+
+    protected String sqlForPrimaryKey(ColumnMapping idColumnMapping) {
+        return "CONSTRAINT pk PRIMARY KEY (" + identifier(idColumnMapping.getColumn()) + ")";
     }
 
     @Override
-    public String sqlForCreateIndexes(ORMapping mapping) {
-        String sql = "CREATE TABLE " + identifier(mapping.getTable()) + " (";
-        return sql;
+    public List<String> sqlForCreateIndexes(ORMapping mapping) {
+        List<String> sqls = new ArrayList<>();
+        for (Index index : mapping.getIndexes()) {
+            sqls.add(sqlForIndex(index));
+        }
+        return sqls;
+    }
+
+    protected String sqlForIndex(Index index) {
+        return null;
     }
 
     /**

@@ -22,5 +22,5 @@ public interface ISQLDialect {
 
     String sqlForCreateTable(ORMapping mapping);
 
-    String sqlForCreateIndexes(ORMapping mapping);
+    List<String> sqlForCreateIndexes(ORMapping mapping);
 }

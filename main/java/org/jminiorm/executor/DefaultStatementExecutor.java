@@ -10,8 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The default implementation of IStatementExecutor. Subclass to provide your own functionality (e.g. logging of
- * statements and parameters...).
+ * The default implementation of IStatementExecutor.
  */
 public class DefaultStatementExecutor implements IStatementExecutor {
 
