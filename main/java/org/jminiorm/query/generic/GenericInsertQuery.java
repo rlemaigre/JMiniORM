@@ -63,6 +63,11 @@ public class GenericInsertQuery extends AbstractQuery implements IGenericInsertQ
         }
 
         // Execute query :
-        getQueryTarget().executeUpdate(sql, params);
+        List<Long> generatedKeys = getQueryTarget().executeUpdate(sql, params);
+        if (generatedColumn != null) {
+            for (int i = 0; i < generatedKeys.size(); i++) {
+                values.get(i).put(generatedColumn, generatedKeys.get(i));
+            }
+        }
     }
 }

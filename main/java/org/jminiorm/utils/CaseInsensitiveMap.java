@@ -26,8 +26,8 @@ public class CaseInsensitiveMap<T> extends LinkedHashMap<String, T> {
         return super.put(key.toLowerCase(), value);
     }
 
-    public T get(String key) {
-        return super.get(key.toLowerCase());
+    @Override
+    public T get(Object key) {
+        return super.get(((String) key).toLowerCase());
     }
-
 }

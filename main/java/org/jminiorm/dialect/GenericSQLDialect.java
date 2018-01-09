@@ -186,8 +186,8 @@ public class GenericSQLDialect implements ISQLDialect {
     }
 
     /**
-     * Quotes the identifier. Does nothing by default. To avoid problems with case sensitivity, this means you shouldn't
-     * quote identifiers in your statements either.
+     * Quotes the identifier. Does nothing by default, so that you can leave identifiers unquoted in your statements as
+     * well without having case-sensistivity problems with some databases.
      *
      * @param identifier
      * @return

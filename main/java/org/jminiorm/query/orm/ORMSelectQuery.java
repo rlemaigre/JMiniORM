@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public class ORMSelectQuery<T> extends AbstractORMQuery<T> implements IORMSelectQuery<T> {
 
     private String where;
-    private List<Object> params;
+    private List<Object> params = new ArrayList<>();
     private Long limit;
     private Long offset;
     private String orderBy;
@@ -83,14 +83,14 @@ public class ORMSelectQuery<T> extends AbstractORMQuery<T> implements IORMSelect
     }
 
     @Override
-    public <K> Map<K, List<T>> index(String property) throws DBException {
+    public <K> Map<K, List<T>> group(String property) throws DBException {
         List<T> rs = list();
         ColumnMapping columnMapping = getMapping().getColumnMappingByProperty(property);
         return rs.stream().collect(Collectors.groupingBy(obj -> (K) columnMapping.readProperty(obj)));
     }
 
     @Override
-    public <K> Map<K, T> uniqueIndex(String property) throws DBException {
+    public <K> Map<K, T> index(String property) throws DBException {
         List<T> rs = list();
         ColumnMapping columnMapping = getMapping().getColumnMappingByProperty(property);
         return rs.stream().collect(Collectors.toMap(obj -> (K) columnMapping.readProperty(obj), Function.identity()));
@@ -102,7 +102,7 @@ public class ORMSelectQuery<T> extends AbstractORMQuery<T> implements IORMSelect
      * @return
      */
     protected IGenericSelectQuery getGenericQuery() {
-        return getQueryTarget().select(getSQL(), params).limit(limit).offset(offset).types(getTypeMappings());
+        return getQueryTarget().select(getSQL(), params.toArray()).limit(limit).offset(offset).types(getTypeMappings());
     }
 
     /**
@@ -132,7 +132,8 @@ public class ORMSelectQuery<T> extends AbstractORMQuery<T> implements IORMSelect
     protected Map<String, Class<?>> getTypeMappings() {
         Map<String, Class<?>> typeMappings = new HashMap<>();
         for (ColumnMapping columnMapping : getMapping().getColumnMappings()) {
-            typeMappings.put(columnMapping.getColumn(), columnMapping.getPropertyDescriptor().getPropertyType());
+            Class<?> propertyType = columnMapping.getPropertyDescriptor().getPropertyType();
+            typeMappings.put(columnMapping.getColumn(), propertyType);
         }
         return typeMappings;
     }

@@ -85,20 +85,22 @@ public interface IORMSelectQuery<T> extends IORMQuery<T> {
     List<T> list() throws DBException;
 
     /**
-     * Returns all the items in the result set indexed by the given property.
+     * Returns all the items in the result set as a Map. For each distinct value of the given property in the result
+     * set, adds an entry to the map with that value as key and the list of objects that match it as value.
      *
      * @return
      * @throws DBException
      */
-    <K> Map<K, List<T>> index(String property) throws DBException;
+    <K> Map<K, List<T>> group(String property) throws DBException;
 
     /**
-     * Returns all the items in the result set indexed by the given property. Throws exception if the same value for the
-     * given column is found more than once.
+     * Returns all the items in the result set as a Map. Throws an exception if the same value for the given property is
+     * found more than once. Otherwise, adds an entry to the Map for each distinct value of the given property and the
+     * corresponding object as value.
      *
      * @return
      * @throws DBException
      */
-    <K> Map<K, T> uniqueIndex(String property) throws DBException;
+    <K> Map<K, T> index(String property) throws DBException;
 
 }

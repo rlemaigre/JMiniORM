@@ -6,6 +6,7 @@ import org.jminiorm.exception.UnexpectedNumberOfItemsException;
 import org.jminiorm.query.AbstractQuery;
 import org.jminiorm.utils.CaseInsensitiveMap;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -76,13 +77,13 @@ public class GenericSelectQuery extends AbstractQuery implements IGenericSelectQ
     }
 
     @Override
-    public <K> Map<K, List<Map<String, Object>>> index(String column) throws DBException {
+    public <K> Map<K, List<Map<String, Object>>> group(String column) throws DBException {
         List<Map<String, Object>> rs = list();
         return rs.stream().collect(Collectors.groupingBy(m -> (K) m.get(column)));
     }
 
     @Override
-    public <K> Map<K, Map<String, Object>> uniqueIndex(String column) throws DBException {
+    public <K> Map<K, Map<String, Object>> index(String column) throws DBException {
         List<Map<String, Object>> rs = list();
         return rs.stream().collect(Collectors.toMap(m -> (K) m.get(column), Function.identity()));
     }

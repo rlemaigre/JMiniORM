@@ -72,8 +72,12 @@ public class DefaultStatementExecutor implements IStatementExecutor {
                     Class<?> type = caseInsensitiveTypeOverrides.get(colName);
                     if (type == null)
                         row.put(colName, rs.getObject(i));
-                    else
-                        row.put(colName, rs.getObject(i, type));
+                    else {
+                        if (type == java.util.Date.class) {
+                            java.sql.Timestamp d = rs.getObject(i, java.sql.Timestamp.class);
+                            row.put(colName, new java.util.Date(d.getTime()));
+                        } else row.put(colName, rs.getObject(i, type));
+                    }
                 }
                 rows.add(row);
             }
@@ -97,8 +101,8 @@ public class DefaultStatementExecutor implements IStatementExecutor {
     }
 
     protected void setParameters(PreparedStatement stmt, List<Object> params) throws SQLException {
-        for (int i = 0; i < params.size(); i++) {
-            stmt.setObject(i, params.get(i));
+        for (int i = 1; i <= params.size(); i++) {
+            stmt.setObject(i, params.get(i - 1));
         }
     }
 

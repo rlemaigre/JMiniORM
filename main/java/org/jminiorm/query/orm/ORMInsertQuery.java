@@ -65,7 +65,11 @@ public class ORMInsertQuery<T> extends AbstractORMQuery<T> implements IORMInsert
             // Assign generated ids if any :
             if (idColumnMapping.isGenerated()) {
                 for (int i = 0; i < objs.size(); i++) {
-                    idColumnMapping.writeProperty(objs.get(i), rows.get(i).get(idColumnMapping.getColumn()));
+                    Long key = (Long) rows.get(i).get(idColumnMapping.getColumn());
+                    if (idColumnMapping.getPropertyDescriptor().getPropertyType() == Long.class)
+                        idColumnMapping.writeProperty(objs.get(i), key);
+                    else
+                        idColumnMapping.writeProperty(objs.get(i), key.intValue());
                 }
             }
         }
