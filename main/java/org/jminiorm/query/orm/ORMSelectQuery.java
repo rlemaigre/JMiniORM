@@ -6,10 +6,7 @@ import org.jminiorm.exception.UnexpectedNumberOfItemsException;
 import org.jminiorm.mapping.ColumnMapping;
 import org.jminiorm.query.generic.IGenericSelectQuery;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ORMSelectQuery<T> extends AbstractORMQuery<T> implements IORMSelectQuery<T> {
 
@@ -93,7 +90,7 @@ public class ORMSelectQuery<T> extends AbstractORMQuery<T> implements IORMSelect
      * @return
      */
     protected IGenericSelectQuery getGenericQuery() {
-        return getQueryTarget().select(getSQL(), params).limit(limit).offset(offset);
+        return getQueryTarget().select(getSQL(), params).limit(limit).offset(offset).types(getTypeMappings());
     }
 
     /**
@@ -113,6 +110,19 @@ public class ORMSelectQuery<T> extends AbstractORMQuery<T> implements IORMSelect
 
         // Generate sql :
         return getQueryTarget().getDialect().sqlForSelect(columns, table, where, orderBy);
+    }
+
+    /**
+     * Returns the column => java class mapping.
+     *
+     * @return
+     */
+    protected Map<String, Class<?>> getTypeMappings() {
+        Map<String, Class<?>> typeMappings = new HashMap<>();
+        for (ColumnMapping columnMapping : getMapping().getColumnMappings()) {
+            typeMappings.put(columnMapping.getColumn(), columnMapping.getPropertyDescriptor().getPropertyType());
+        }
+        return typeMappings;
     }
 
     /**

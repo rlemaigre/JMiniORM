@@ -4,6 +4,7 @@ import org.jminiorm.dialect.ISQLDialect;
 import org.jminiorm.exception.DBException;
 import org.jminiorm.executor.IStatementExecutor;
 import org.jminiorm.mapping.provider.IORMappingProvider;
+import org.jminiorm.mapping.type.IJDBCTypeMapper;
 import org.jminiorm.query.generic.IGenericDeleteQuery;
 import org.jminiorm.query.generic.IGenericInsertQuery;
 import org.jminiorm.query.generic.IGenericSelectQuery;
@@ -260,6 +261,13 @@ public interface IQueryTarget {
      * @return
      */
     IORMappingProvider getORMappingProvider();
+
+    /**
+     * Return the object responsible for mapping JDBC types to Java classes.
+     *
+     * @return
+     */
+    IJDBCTypeMapper getJDBCTypeMapper();
 
     /**
      * Returns the statement executor for this database.

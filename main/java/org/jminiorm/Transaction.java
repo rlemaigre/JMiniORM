@@ -4,6 +4,7 @@ import org.jminiorm.dialect.ISQLDialect;
 import org.jminiorm.exception.DBException;
 import org.jminiorm.executor.IStatementExecutor;
 import org.jminiorm.mapping.provider.IORMappingProvider;
+import org.jminiorm.mapping.type.IJDBCTypeMapper;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -58,6 +59,11 @@ public class Transaction extends AbstractQueryTarget implements ITransaction {
     @Override
     public ISQLDialect getDialect() {
         return database.getDialect();
+    }
+
+    @Override
+    public IJDBCTypeMapper getJDBCTypeMapper() {
+        return database.getJDBCTypeMapper();
     }
 
     @Override

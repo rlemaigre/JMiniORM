@@ -4,6 +4,7 @@ import org.jminiorm.exception.DBException;
 import org.jminiorm.exception.UnexpectedNumberOfItemsException;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Represents a generic select query, that is, one that may return objects of any type (not necessarily a JPA annotated
@@ -36,6 +37,21 @@ public interface IGenericSelectQuery extends IGenericQuery {
      * @return
      */
     IGenericSelectQuery offset(Long offset);
+
+    /**
+     * Adds a column name => Java class mapping.
+     *
+     * @param column
+     * @param javaClass
+     */
+    IGenericSelectQuery type(String column, Class<?> javaClass);
+
+    /**
+     * Specifies the column name => Java class mappings.
+     *
+     * @param typeMappings
+     */
+    IGenericSelectQuery types(Map<String, Class<?>> typeMappings);
 
     /**
      * Extracts the first result of the result set. Throws an exception if there is more than or less than one element

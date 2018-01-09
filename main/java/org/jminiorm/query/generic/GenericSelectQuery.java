@@ -4,8 +4,12 @@ import org.jminiorm.IQueryTarget;
 import org.jminiorm.exception.DBException;
 import org.jminiorm.exception.UnexpectedNumberOfItemsException;
 import org.jminiorm.query.AbstractQuery;
+import org.jminiorm.utils.CaseInsensitiveMap;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public class GenericSelectQuery extends AbstractQuery implements IGenericSelectQuery {
 
@@ -13,6 +17,7 @@ public class GenericSelectQuery extends AbstractQuery implements IGenericSelectQ
     private List<Object> params;
     private Long limit;
     private Long offset;
+    private Map<String, Class<?>> typeMappings = new CaseInsensitiveMap<Class<?>>();
 
     public GenericSelectQuery(IQueryTarget target) {
         super(target);
@@ -34,6 +39,18 @@ public class GenericSelectQuery extends AbstractQuery implements IGenericSelectQ
     @Override
     public IGenericSelectQuery offset(Long offset) {
         this.offset = offset;
+        return this;
+    }
+
+    @Override
+    public IGenericSelectQuery type(String column, Class<?> javaClass) {
+        typeMappings.put(column, javaClass);
+        return this;
+    }
+
+    @Override
+    public IGenericSelectQuery types(Map<String, Class<?>> typeMappings) {
+        this.typeMappings.putAll(typeMappings);
         return this;
     }
 
@@ -76,7 +93,7 @@ public class GenericSelectQuery extends AbstractQuery implements IGenericSelectQ
     }
 
     protected List<Map<String, Object>> getResultSet() throws DBException {
-        return getQueryTarget().executeQuery(getSQL(), params, Collections.emptyMap());
+        return getQueryTarget().executeQuery(getSQL(), params, typeMappings);
     }
 
     protected String getSQL() {

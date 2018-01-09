@@ -49,6 +49,8 @@ public class JPAORMapping extends ORMapping {
             ColumnMapping columnMapping = new ColumnMapping();
             columnMapping.setPropertyDescriptor(descriptor);
             Field field = getField(clazz, descriptor.getName());
+            Transient transientAnn = field.getAnnotation(Transient.class);
+            if (transientAnn != null) continue;
             Id idAnn = field.getAnnotation(Id.class);
             Lob lobAnn = field.getAnnotation(Lob.class);
             Column columnAnn = field.getAnnotation(Column.class);

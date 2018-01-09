@@ -9,6 +9,8 @@ import org.jminiorm.executor.DefaultStatementExecutor;
 import org.jminiorm.executor.IStatementExecutor;
 import org.jminiorm.mapping.provider.IORMappingProvider;
 import org.jminiorm.mapping.provider.JPAORMappingProvider;
+import org.jminiorm.mapping.type.DefaultJDBCTypeMapper;
+import org.jminiorm.mapping.type.IJDBCTypeMapper;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -20,13 +22,13 @@ public class Database extends AbstractQueryTarget implements IDatabase {
     private ISQLDialect dialect;
     private IORMappingProvider mappingProvider;
     private IStatementExecutor statementExecutor;
+    private IJDBCTypeMapper jdbcTypeMapper;
 
     public Database() {
     }
 
     /**
-     * Creates a new database with a Hikary connection pool, ANSI SQL dialect, JPA mapping provider and default
-     * statement executor.
+     * Creates a new database with a Hikary connection pool.
      *
      * @param url
      * @param username
@@ -40,9 +42,6 @@ public class Database extends AbstractQueryTarget implements IDatabase {
         config.setUsername(username);
         config.setPassword(password);
         setDataSource(new HikariDataSource(config));
-        setDialect(new GenericSQLDialect());
-        setORMappingProvider(new JPAORMappingProvider());
-        setStatementExecutor(new DefaultStatementExecutor());
     }
 
     public DataSource getDataSource() {
@@ -55,6 +54,8 @@ public class Database extends AbstractQueryTarget implements IDatabase {
 
     @Override
     public ISQLDialect getDialect() {
+        if (dialect == null)
+            dialect = new GenericSQLDialect();
         return dialect;
     }
 
@@ -64,6 +65,8 @@ public class Database extends AbstractQueryTarget implements IDatabase {
 
     @Override
     public IORMappingProvider getORMappingProvider() {
+        if (mappingProvider == null)
+            mappingProvider = new JPAORMappingProvider();
         return mappingProvider;
     }
 
@@ -71,12 +74,26 @@ public class Database extends AbstractQueryTarget implements IDatabase {
         this.mappingProvider = mappingProvider;
     }
 
+    @Override
     public IStatementExecutor getStatementExecutor() {
+        if (statementExecutor == null)
+            statementExecutor = new DefaultStatementExecutor();
         return statementExecutor;
     }
 
     public void setStatementExecutor(IStatementExecutor statementExecutor) {
         this.statementExecutor = statementExecutor;
+    }
+
+    @Override
+    public IJDBCTypeMapper getJDBCTypeMapper() {
+        if (jdbcTypeMapper == null)
+            jdbcTypeMapper = new DefaultJDBCTypeMapper();
+        return jdbcTypeMapper;
+    }
+
+    public void setJDBCTypeMapper(IJDBCTypeMapper jdbcTypeMapper) {
+        this.jdbcTypeMapper = jdbcTypeMapper;
     }
 
     @Override
