@@ -103,19 +103,26 @@ public class GenericSQLDialect implements ISQLDialect {
         Integer length = columnMapping.getLength();
         Integer scale = columnMapping.getScale();
         Integer precision = columnMapping.getPrecision();
+        return sqlForColumnType(javaType, length, scale, precision);
+    }
+
+    protected String sqlForColumnType(Class<?> javaType, Integer length, Integer scale, Integer precision) {
         if (javaType == Integer.class) return "INTEGER";
         if (javaType == Long.class) return "BIGINT";
         if (javaType == Float.class) return "REAL";
         if (javaType == Double.class) return "DOUBLE";
-        if (javaType == Boolean.class) return "INTEGER";
+        if (javaType == Boolean.class) return "BOOLEAN";
+        if (javaType == byte[].class) return "BINARY";
         if (javaType == String.class) {
             if (length == null) return "TEXT";
             else return "VARCHAR(" + length + ")";
         }
-        if (javaType == Date.class || javaType == LocalDateTime.class || javaType == LocalDate.class)
+        if (javaType == Date.class || javaType == LocalDateTime.class)
             return "TIMESTAMP";
+        if (javaType == LocalDate.class)
+            return "DATE";
         if (javaType == BigDecimal.class) return "NUMERIC(" + precision + "," + scale + ")";
-        throw new RuntimeException("No SQL type defined for java type " + javaType.getName());
+        throw new RuntimeException("No SQL type defined in dialect for java type " + javaType.getName());
     }
 
     protected String sqlForPrimaryKey(ColumnMapping idColumnMapping) {
@@ -126,13 +133,17 @@ public class GenericSQLDialect implements ISQLDialect {
     public List<String> sqlForCreateIndexes(ORMapping mapping) {
         List<String> sqls = new ArrayList<>();
         for (Index index : mapping.getIndexes()) {
-            sqls.add(sqlForIndex(index));
+            sqls.add(sqlForIndex(index, mapping.getTable()));
         }
         return sqls;
     }
 
-    protected String sqlForIndex(Index index) {
-        return null;
+    protected String sqlForIndex(Index index, String table) {
+        String sql = "CREATE " + (index.isUnique() ? "UNIQUE " : "") + "INDEX " + index.getName() + " ON " +
+                identifier(table) + " (" +
+                index.getColumns() +
+                ")";
+        return sql;
     }
 
     /**
@@ -184,7 +195,7 @@ public class GenericSQLDialect implements ISQLDialect {
 
     /**
      * To avoid SQL injection attacks, the default implementation simply throws an Exception if there is a special
-     * character in the identifier. Only letters, numbers and underscores are allowed. Override if there is a safe
+     * character in the identifier. Only letters, numbers, dots and underscores are allowed. Override if there is a safe
      * mechanism to escape special characters in your database and if you need special characters. You may also keep the
      * current behavior but whitelist some identifiers.
      *
@@ -193,10 +204,10 @@ public class GenericSQLDialect implements ISQLDialect {
      * @throws DBException
      */
     protected String escapeIdentifier(String identifier) {
-        if (!identifier.matches("^[a-zA-Z0-9_]+$"))
+        if (!identifier.matches("^[a-zA-Z0-9_.]+$"))
             throw new RuntimeException("Special character found in identifier '" + identifier + "'. To prevent SQL " +
-                    "injection attacks, only letters, numbers and underscores are allowed in identifiers. Overrides " +
-                    "escapeIdentifier in your SQL dialect if you need a different behavior.");
+                    "injection attacks, only letters, numbers, dots and underscores are allowed in identifiers. " +
+                    "Overrides escapeIdentifier in your SQL dialect if you need a different behavior.");
         else
             return identifier;
     }
