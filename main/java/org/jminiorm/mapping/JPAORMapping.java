@@ -52,16 +52,16 @@ public class JPAORMapping extends ORMapping {
             Transient transientAnn = field.getAnnotation(Transient.class);
             if (transientAnn != null) continue;
             Id idAnn = field.getAnnotation(Id.class);
-            Lob lobAnn = field.getAnnotation(Lob.class);
             Column columnAnn = field.getAnnotation(Column.class);
             GeneratedValue generatedValueAnn = field.getAnnotation(GeneratedValue.class);
             columnMapping.setId(idAnn != null);
             columnMapping.setGenerated(generatedValueAnn != null);
             if (columnAnn != null) {
-                columnMapping.setColumn(columnAnn.name());
-                columnMapping.setColumnDefinition(columnAnn.columnDefinition());
+                columnMapping.setColumn(columnAnn.name().equals("") ? descriptor.getName() : columnAnn.name());
+                columnMapping.setColumnDefinition(columnAnn.columnDefinition().equals("") ? null : columnAnn
+                        .columnDefinition());
                 columnMapping.setInsertable(columnAnn.insertable());
-                columnMapping.setLength(lobAnn != null ? null : columnAnn.length());
+                columnMapping.setLength(columnAnn.length() >= 255 ? null : columnAnn.length());
                 columnMapping.setScale(columnAnn.scale());
                 columnMapping.setNullable(columnAnn.nullable());
                 columnMapping.setUpdatable(columnAnn.updatable());

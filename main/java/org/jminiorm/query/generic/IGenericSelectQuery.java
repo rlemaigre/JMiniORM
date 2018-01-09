@@ -79,4 +79,21 @@ public interface IGenericSelectQuery extends IGenericQuery {
      */
     <T> List<T> list() throws DBException;
 
+    /**
+     * Returns all the items in the result set indexed by the given column.
+     *
+     * @return
+     * @throws DBException
+     */
+    <K> Map<K, List<Map<String, Object>>> index(String column) throws DBException;
+
+    /**
+     * Returns all the items in the result set indexed by the given column. Throws exception if the same value for the
+     * given column is found more than once.
+     *
+     * @return
+     * @throws DBException
+     */
+    <K> Map<K, Map<String, Object>> uniqueIndex(String column) throws DBException;
+
 }

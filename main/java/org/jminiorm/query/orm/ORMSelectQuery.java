@@ -7,6 +7,8 @@ import org.jminiorm.mapping.ColumnMapping;
 import org.jminiorm.query.generic.IGenericSelectQuery;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class ORMSelectQuery<T> extends AbstractORMQuery<T> implements IORMSelectQuery<T> {
 
@@ -76,12 +78,22 @@ public class ORMSelectQuery<T> extends AbstractORMQuery<T> implements IORMSelect
 
     @Override
     public List<T> list() throws DBException {
-        List<T> list = new ArrayList<>();
         List<Map<String, Object>> rows = getGenericQuery().list();
-        for (Map<String, Object> row : rows) {
-            list.add(buildObject(row));
-        }
-        return list;
+        return rows.stream().map(this::buildObject).collect(Collectors.toList());
+    }
+
+    @Override
+    public <K> Map<K, List<T>> index(String property) throws DBException {
+        List<T> rs = list();
+        ColumnMapping columnMapping = getMapping().getColumnMappingByProperty(property);
+        return rs.stream().collect(Collectors.groupingBy(obj -> (K) columnMapping.readProperty(obj)));
+    }
+
+    @Override
+    public <K> Map<K, T> uniqueIndex(String property) throws DBException {
+        List<T> rs = list();
+        ColumnMapping columnMapping = getMapping().getColumnMappingByProperty(property);
+        return rs.stream().collect(Collectors.toMap(obj -> (K) columnMapping.readProperty(obj), Function.identity()));
     }
 
     /**

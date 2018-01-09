@@ -6,10 +6,11 @@ import org.jminiorm.exception.UnexpectedNumberOfItemsException;
 import org.jminiorm.query.AbstractQuery;
 import org.jminiorm.utils.CaseInsensitiveMap;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class GenericSelectQuery extends AbstractQuery implements IGenericSelectQuery {
 
@@ -70,12 +71,20 @@ public class GenericSelectQuery extends AbstractQuery implements IGenericSelectQ
 
     @Override
     public <T> List<T> list() throws DBException {
-        List<T> result = new ArrayList<>();
         List<Map<String, Object>> rs = getResultSet();
-        for (Map<String, Object> row : rs) {
-            result.add(rowToObject(row));
-        }
-        return result;
+        return rs.stream().map(row -> (T) rowToObject(row)).collect(Collectors.toList());
+    }
+
+    @Override
+    public <K> Map<K, List<Map<String, Object>>> index(String column) throws DBException {
+        List<Map<String, Object>> rs = list();
+        return rs.stream().collect(Collectors.groupingBy(m -> (K) m.get(column)));
+    }
+
+    @Override
+    public <K> Map<K, Map<String, Object>> uniqueIndex(String column) throws DBException {
+        List<Map<String, Object>> rs = list();
+        return rs.stream().collect(Collectors.toMap(m -> (K) m.get(column), Function.identity()));
     }
 
     /**
@@ -85,7 +94,7 @@ public class GenericSelectQuery extends AbstractQuery implements IGenericSelectQ
      * @param <T>
      * @return
      */
-    protected <T> T rowToObject(Map<String, Object> row) {
+    protected static <T> T rowToObject(Map<String, Object> row) {
         if (row.size() == 1)
             return (T) row.entrySet().iterator().next().getValue();
         else

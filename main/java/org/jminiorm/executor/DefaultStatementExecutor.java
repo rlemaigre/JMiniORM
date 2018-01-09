@@ -67,7 +67,7 @@ public class DefaultStatementExecutor implements IStatementExecutor {
             ResultSetMetaData metaData = rs.getMetaData();
             while (rs.next()) {
                 Map<String, Object> row = new CaseInsensitiveMap<>();
-                for (int i = 0; i < metaData.getColumnCount(); i++) {
+                for (int i = 1; i <= metaData.getColumnCount(); i++) {
                     String colName = metaData.getColumnName(i);
                     Class<?> type = caseInsensitiveTypeOverrides.get(colName);
                     if (type == null)

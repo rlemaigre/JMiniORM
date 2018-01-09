@@ -51,7 +51,9 @@ public class GenericSQLDialect implements ISQLDialect {
 
     @Override
     public String sqlForSelect(String sql, Long limit, Long offset) {
-        return sql + " LIMIT " + limit + " OFFSET " + offset;
+        if (limit != null) sql = sql + " LIMIT " + limit + " ";
+        if (offset != null) sql = sql + " OFFSET " + offset + " ";
+        return sql;
     }
 
     @Override
@@ -184,13 +186,14 @@ public class GenericSQLDialect implements ISQLDialect {
     }
 
     /**
-     * Quotes the identifier.
+     * Quotes the identifier. Does nothing by default. Quoting identifiers makes them case sensitive in some databases
+     * (H2, Oracle).
      *
      * @param identifier
      * @return
      */
     protected String quoteIdentifier(String identifier) {
-        return "\"" + identifier + "\"";
+        return identifier;
     }
 
     /**

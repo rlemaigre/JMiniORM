@@ -4,6 +4,7 @@ import org.jminiorm.exception.DBException;
 import org.jminiorm.exception.UnexpectedNumberOfItemsException;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Represents a select query that returns objects of a JPA annotated class. The select and from clauses are infered from
@@ -82,5 +83,22 @@ public interface IORMSelectQuery<T> extends IORMQuery<T> {
      * @throws DBException
      */
     List<T> list() throws DBException;
+
+    /**
+     * Returns all the items in the result set indexed by the given property.
+     *
+     * @return
+     * @throws DBException
+     */
+    <K> Map<K, List<T>> index(String property) throws DBException;
+
+    /**
+     * Returns all the items in the result set indexed by the given property. Throws exception if the same value for the
+     * given column is found more than once.
+     *
+     * @return
+     * @throws DBException
+     */
+    <K> Map<K, T> uniqueIndex(String property) throws DBException;
 
 }
