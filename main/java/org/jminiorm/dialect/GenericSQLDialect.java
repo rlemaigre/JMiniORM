@@ -101,11 +101,15 @@ public class GenericSQLDialect implements ISQLDialect {
     }
 
     protected String sqlForColumnType(ColumnMapping columnMapping) {
-        Class<?> javaType = columnMapping.getPropertyDescriptor().getPropertyType();
-        Integer length = columnMapping.getLength();
-        Integer scale = columnMapping.getScale();
-        Integer precision = columnMapping.getPrecision();
-        return sqlForColumnType(javaType, length, scale, precision);
+        if (columnMapping.getConverter() != null)
+            return sqlForColumnType(String.class, null, null, null);
+        else {
+            Class<?> javaType = columnMapping.getPropertyDescriptor().getPropertyType();
+            Integer length = columnMapping.getLength();
+            Integer scale = columnMapping.getScale();
+            Integer precision = columnMapping.getPrecision();
+            return sqlForColumnType(javaType, length, scale, precision);
+        }
     }
 
     protected String sqlForColumnType(Class<?> javaType, Integer length, Integer scale, Integer precision) {

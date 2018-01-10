@@ -54,8 +54,15 @@ public class JPAORMapping extends ORMapping {
             Id idAnn = field.getAnnotation(Id.class);
             Column columnAnn = field.getAnnotation(Column.class);
             GeneratedValue generatedValueAnn = field.getAnnotation(GeneratedValue.class);
+            Convert convertAnn = field.getAnnotation(Convert.class);
             columnMapping.setId(idAnn != null);
             columnMapping.setGenerated(generatedValueAnn != null);
+            try {
+                columnMapping.setConverter(convertAnn != null ? (AttributeConverter) convertAnn.converter()
+                        .newInstance() : null);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
             if (columnAnn != null) {
                 columnMapping.setColumn(columnAnn.name().equals("") ? descriptor.getName() : columnAnn.name());
                 columnMapping.setColumnDefinition(columnAnn.columnDefinition().equals("") ? null : columnAnn

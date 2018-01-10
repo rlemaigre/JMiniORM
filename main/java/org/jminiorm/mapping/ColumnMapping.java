@@ -1,5 +1,6 @@
 package org.jminiorm.mapping;
 
+import javax.persistence.AttributeConverter;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 
@@ -19,6 +20,7 @@ public class ColumnMapping {
     private Integer scale;
     private boolean updatable;
     private boolean generated;
+    private AttributeConverter converter;
 
     public ColumnMapping() {
     }
@@ -111,6 +113,14 @@ public class ColumnMapping {
         this.generated = generated;
     }
 
+    public AttributeConverter<?, ?> getConverter() {
+        return converter;
+    }
+
+    public void setConverter(AttributeConverter<?, ?> converter) {
+        this.converter = converter;
+    }
+
     /**
      * Utility method that reads the value of the property this mapping is about.
      *
@@ -119,7 +129,8 @@ public class ColumnMapping {
      */
     public Object readProperty(Object bean) {
         try {
-            return getPropertyDescriptor().getReadMethod().invoke(bean);
+            Object value = getPropertyDescriptor().getReadMethod().invoke(bean);
+            return converter == null ? value : converter.convertToDatabaseColumn(value);
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
@@ -133,7 +144,9 @@ public class ColumnMapping {
      */
     public void writeProperty(Object bean, Object value) {
         try {
-            getPropertyDescriptor().getWriteMethod().invoke(bean, value);
+            getPropertyDescriptor().getWriteMethod().invoke(bean,
+                    converter == null ? value : converter.convertToEntityAttribute(value)
+            );
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }

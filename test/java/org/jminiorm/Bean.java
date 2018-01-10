@@ -1,10 +1,13 @@
 package org.jminiorm;
 
+import orm.jminiorm.attributeconverter.JsonAttributeConverter;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 @Table(name = "beans", indexes = {
@@ -23,6 +26,10 @@ public class Bean {
     private LocalDateTime localDateTime;
     private Integer someInt;
     private byte[] bytes;
+
+    @Column(name = "json")
+    @Convert(converter = ListSubBeanJsonAttributeConverter.class)
+    private List<SubBean> subBeans;
     @Transient
     private String notStored;
 
@@ -105,6 +112,14 @@ public class Bean {
         this.notStored = notStored;
     }
 
+    public List<SubBean> getSubBeans() {
+        return subBeans;
+    }
+
+    public void setSubBeans(List<SubBean> subBeans) {
+        this.subBeans = subBeans;
+    }
+
     public boolean compareWithoutId(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -116,6 +131,10 @@ public class Bean {
                 Objects.equals(localDateTime, bean.localDateTime) &&
                 Objects.equals(someInt, bean.someInt) &&
                 Arrays.equals(bytes, bean.bytes) &&
+                Objects.equals(subBeans, bean.subBeans) &&
                 Objects.equals(notStored, bean.notStored);
+    }
+
+    public static class ListSubBeanJsonAttributeConverter extends JsonAttributeConverter<List<SubBean>> {
     }
 }

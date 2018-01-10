@@ -56,7 +56,11 @@ public class ObjectResultSet<T> extends AbstractResultSet<T> implements IObjectR
     protected Map<String, Class<?>> typeMappings() {
         Map<String, Class<?>> typeMappings = new HashMap<>();
         for (ColumnMapping columnMapping : getMapping().getColumnMappings()) {
-            Class<?> propertyType = columnMapping.getPropertyDescriptor().getPropertyType();
+            Class<?> propertyType;
+            if (columnMapping.getConverter() != null)
+                propertyType = String.class;
+            else
+                propertyType = columnMapping.getPropertyDescriptor().getPropertyType();
             typeMappings.put(columnMapping.getColumn(), propertyType);
         }
         return typeMappings;

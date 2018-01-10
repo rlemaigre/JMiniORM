@@ -67,7 +67,7 @@ public class TestQueries {
         Map<String, Object> map = db.select("show tables").asMap().one();
         assertEquals("BEANS", map.get("table_name"));
         List<Map<String, Object>> list = db.select("show columns from beans").asMap().list();
-        assertEquals(8, list.size());
+        assertEquals(9, list.size());
 
         // Insertion and reselect :
         Bean b1 = new Bean();
@@ -78,6 +78,7 @@ public class TestQueries {
         b1.setShortText("short text");
         b1.setLongText("long text");
         b1.setBytes("some bytes".getBytes(StandardCharsets.UTF_8));
+        b1.setSubBeans(Arrays.asList(new SubBean(1), new SubBean(2)));
         db.insert(b1);
         assertNotNull(b1.getId());
         Bean b2 = db.select(Bean.class).one();
@@ -112,9 +113,9 @@ public class TestQueries {
         assertEquals(3, resultAsIndexedMaps.size());
         assertEquals("b1", resultAsIndexedMaps.get("b1").get("short_text"));
         List<Pojo> pojos = db.select("show columns from beans").asObject(Pojo.class).list();
-        assertEquals(8, pojos.size());
+        assertEquals(9, pojos.size());
         Map<String, List<Pojo>> groups = db.select("show columns from beans").asObject(Pojo.class).group("field");
-        assertEquals(8, groups.size());
+        assertEquals(9, groups.size());
         assertEquals("VARBINARY(2147483647)", groups.get("BYTES").get(0).getType());
 
         // ORM select :
