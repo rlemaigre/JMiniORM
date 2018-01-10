@@ -18,6 +18,9 @@ public class ORMCreateTableQuery<T> extends AbstractORMQuery<T> implements IORMC
     public void execute() throws DBException {
         String sql = getQueryTarget().getDialect().sqlForCreateTable(getMapping());
         getQueryTarget().sql(sql);
+        for (String s : getQueryTarget().getDialect().sqlForCreateIndexes(getMapping())) {
+            getQueryTarget().sql(s);
+        }
     }
 
 }
