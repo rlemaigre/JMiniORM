@@ -70,12 +70,13 @@ public class DefaultStatementExecutor implements IStatementExecutor {
                 for (int i = 1; i <= metaData.getColumnCount(); i++) {
                     String colName = metaData.getColumnName(i);
                     Class<?> type = caseInsensitiveTypeOverrides.get(colName);
+                    if (type == null) type = caseInsensitiveTypeOverrides.get(null);
                     if (type == null)
                         row.put(colName, rs.getObject(i));
                     else {
                         if (type == java.util.Date.class) {
                             java.sql.Timestamp d = rs.getObject(i, java.sql.Timestamp.class);
-                            row.put(colName, new java.util.Date(d.getTime()));
+                            row.put(colName, d == null ? null : new java.util.Date(d.getTime()));
                         } else row.put(colName, rs.getObject(i, type));
                     }
                 }

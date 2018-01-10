@@ -8,14 +8,14 @@ import java.util.Date;
 import java.util.Objects;
 
 @Table(name = "beans", indexes = {
-        @Index(name = "shortTextIndex", columnList = "shortText")
+        @Index(name = "shortTextIndex", columnList = "short_text")
 })
 public class Bean {
 
     @Id
     @GeneratedValue
     private Integer id;
-    @Column(name="short_text", length = 16)
+    @Column(name = "short_text", length = 16)
     private String shortText;
     private String longText;
     private Date date;
@@ -27,6 +27,10 @@ public class Bean {
     private String notStored;
 
     public Bean() {
+    }
+
+    public Bean(String shortText) {
+        this.shortText = shortText;
     }
 
     public Integer getId() {

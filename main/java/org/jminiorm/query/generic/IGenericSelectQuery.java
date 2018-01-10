@@ -1,10 +1,8 @@
 package org.jminiorm.query.generic;
 
-import org.jminiorm.exception.DBException;
-import org.jminiorm.exception.UnexpectedNumberOfItemsException;
-
-import java.util.List;
-import java.util.Map;
+import org.jminiorm.resultset.IMapResultSet;
+import org.jminiorm.resultset.IObjectResultSet;
+import org.jminiorm.resultset.IPrimitiveResultSet;
 
 /**
  * Represents a generic select query, that is, one that may return objects of any type (not necessarily a JPA annotated
@@ -39,63 +37,26 @@ public interface IGenericSelectQuery extends IGenericQuery {
     IGenericSelectQuery offset(Long offset);
 
     /**
-     * Adds a column name => Java class mapping.
+     * Returns the result set as objects of primitive type T.
      *
-     * @param column
-     * @param javaClass
+     * @param clazz
+     * @param <T>
+     * @return
      */
-    IGenericSelectQuery type(String column, Class<?> javaClass);
+    <T> IPrimitiveResultSet<T> asPrimitive(Class<T> clazz);
 
     /**
-     * Specifies the column name => Java class mappings.
-     *
-     * @param typeMappings
-     */
-    IGenericSelectQuery types(Map<String, Class<?>> typeMappings);
-
-    /**
-     * Extracts the first result of the result set. Throws an exception if there is more than or less than one element
-     * in the result set.
+     * Returns the result set as Maps.
      *
      * @return
-     * @throws UnexpectedNumberOfItemsException when there are more than one or zero items in the result set.
-     * @throws DBException
      */
-    <T> T one() throws UnexpectedNumberOfItemsException, DBException;
+    IMapResultSet asMap();
 
     /**
-     * Extracts the first result of the result set.
+     * Returns the result set as objects of type T.
      *
      * @return
-     * @throws DBException
      */
-    <T> T first() throws DBException;
-
-    /**
-     * Returns all the items in the result set.
-     *
-     * @return
-     * @throws DBException
-     */
-    <T> List<T> list() throws DBException;
-
-    /**
-     * Returns all the items in the result set as a Map. For each distinct value of the given column in the result set,
-     * adds an entry to the map with that value as key and the list of rows that match it as value.
-     *
-     * @return
-     * @throws DBException
-     */
-    <K> Map<K, List<Map<String, Object>>> group(String column) throws DBException;
-
-    /**
-     * Returns all the items in the result set as a Map. Throws an exception if the same value for the given column is
-     * found more than once. Otherwise, adds an entry to the Map for each distinct value of the given column and the
-     * corresponding row as value.
-     *
-     * @return
-     * @throws DBException
-     */
-    <K> Map<K, Map<String, Object>> index(String column) throws DBException;
+    <T> IObjectResultSet<T> asObject(Class<T> clazz);
 
 }

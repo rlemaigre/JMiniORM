@@ -4,11 +4,12 @@ import org.jminiorm.IQueryTarget;
 import org.jminiorm.exception.DBException;
 import org.jminiorm.exception.UnexpectedNumberOfItemsException;
 import org.jminiorm.mapping.ColumnMapping;
-import org.jminiorm.query.generic.IGenericSelectQuery;
+import org.jminiorm.resultset.IObjectResultSet;
 
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public class ORMSelectQuery<T> extends AbstractORMQuery<T> implements IORMSelectQuery<T> {
 
@@ -65,44 +66,38 @@ public class ORMSelectQuery<T> extends AbstractORMQuery<T> implements IORMSelect
     }
 
     @Override
+    public <K> Map<K, List<T>> group(String column) throws DBException {
+        return getResultSet().group(column);
+    }
+
+    @Override
+    public <K> Map<K, T> index(String column) throws DBException {
+        return getResultSet().index(column);
+    }
+
+    @Override
     public T one() throws UnexpectedNumberOfItemsException, DBException {
-        Map<String, Object> row = getGenericQuery().one();
-        return buildObject(row);
+        return getResultSet().one();
     }
 
     @Override
     public T first() throws DBException {
-        Map<String, Object> row = getGenericQuery().first();
-        return buildObject(row);
+        return getResultSet().first();
     }
 
     @Override
     public List<T> list() throws DBException {
-        List<Map<String, Object>> rows = getGenericQuery().list();
-        return rows.stream().map(this::buildObject).collect(Collectors.toList());
-    }
-
-    @Override
-    public <K> Map<K, List<T>> group(String property) throws DBException {
-        List<T> rs = list();
-        ColumnMapping columnMapping = getMapping().getColumnMappingByProperty(property);
-        return rs.stream().collect(Collectors.groupingBy(obj -> (K) columnMapping.readProperty(obj)));
-    }
-
-    @Override
-    public <K> Map<K, T> index(String property) throws DBException {
-        List<T> rs = list();
-        ColumnMapping columnMapping = getMapping().getColumnMappingByProperty(property);
-        return rs.stream().collect(Collectors.toMap(obj -> (K) columnMapping.readProperty(obj), Function.identity()));
+        return getResultSet().list();
     }
 
     /**
-     * Returns the generic query that gets the rows from the database.
+     * Returns the result set.
      *
      * @return
      */
-    protected IGenericSelectQuery getGenericQuery() {
-        return getQueryTarget().select(getSQL(), params.toArray()).limit(limit).offset(offset).types(getTypeMappings());
+    protected IObjectResultSet<T> getResultSet() {
+        return getQueryTarget().select(getSQL(), params.toArray()).limit(limit).offset(offset).asObject
+                (getTargetClass());
     }
 
     /**
@@ -122,38 +117,6 @@ public class ORMSelectQuery<T> extends AbstractORMQuery<T> implements IORMSelect
 
         // Generate sql :
         return getQueryTarget().getDialect().sqlForSelect(columns, table, where, orderBy);
-    }
-
-    /**
-     * Returns the column => java class mapping.
-     *
-     * @return
-     */
-    protected Map<String, Class<?>> getTypeMappings() {
-        Map<String, Class<?>> typeMappings = new HashMap<>();
-        for (ColumnMapping columnMapping : getMapping().getColumnMappings()) {
-            Class<?> propertyType = columnMapping.getPropertyDescriptor().getPropertyType();
-            typeMappings.put(columnMapping.getColumn(), propertyType);
-        }
-        return typeMappings;
-    }
-
-    /**
-     * Builds an instance of T from a database row.
-     *
-     * @param row
-     * @return
-     */
-    protected T buildObject(Map<String, Object> row) {
-        try {
-            T obj = getTargetClass().newInstance();
-            for (ColumnMapping columnMapping : getMapping().getColumnMappings()) {
-                columnMapping.writeProperty(obj, row.get(columnMapping.getColumn()));
-            }
-            return obj;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
 }

@@ -1,10 +1,6 @@
 package org.jminiorm.query.orm;
 
-import org.jminiorm.exception.DBException;
-import org.jminiorm.exception.UnexpectedNumberOfItemsException;
-
-import java.util.List;
-import java.util.Map;
+import org.jminiorm.resultset.IObjectResultSet;
 
 /**
  * Represents a select query that returns objects of a JPA annotated class. The select and from clauses are infered from
@@ -12,7 +8,7 @@ import java.util.Map;
  *
  * @param <T>
  */
-public interface IORMSelectQuery<T> extends IORMQuery<T> {
+public interface IORMSelectQuery<T> extends IORMQuery<T>, IObjectResultSet<T> {
 
     @Override
     IORMSelectQuery<T> forClass(Class<T> clazz);
@@ -57,50 +53,5 @@ public interface IORMSelectQuery<T> extends IORMQuery<T> {
      * @return this
      */
     IORMSelectQuery<T> orderBy(String orderBy);
-
-    /**
-     * Extracts the first result of the result set. Throws an exception if there is more than or less than one element
-     * in the result set.
-     *
-     * @return
-     * @throws UnexpectedNumberOfItemsException when there are more than one or zero items in the result set.
-     * @throws DBException
-     */
-    T one() throws UnexpectedNumberOfItemsException, DBException;
-
-    /**
-     * Extracts the first result of the result set.
-     *
-     * @return
-     * @throws DBException
-     */
-    T first() throws DBException;
-
-    /**
-     * Returns all the items in the result set.
-     *
-     * @return
-     * @throws DBException
-     */
-    List<T> list() throws DBException;
-
-    /**
-     * Returns all the items in the result set as a Map. For each distinct value of the given property in the result
-     * set, adds an entry to the map with that value as key and the list of objects that match it as value.
-     *
-     * @return
-     * @throws DBException
-     */
-    <K> Map<K, List<T>> group(String property) throws DBException;
-
-    /**
-     * Returns all the items in the result set as a Map. Throws an exception if the same value for the given property is
-     * found more than once. Otherwise, adds an entry to the Map for each distinct value of the given property and the
-     * corresponding object as value.
-     *
-     * @return
-     * @throws DBException
-     */
-    <K> Map<K, T> index(String property) throws DBException;
 
 }
