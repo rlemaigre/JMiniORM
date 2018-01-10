@@ -1,7 +1,7 @@
 package org.jminiorm;
 
 import org.h2.tools.Server;
-import org.jminiorm.executor.BatchStatementExecutor;
+import org.jminiorm.executor.DefaultStatementExecutor;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -40,10 +40,20 @@ public class TestQueries {
 
     @Test
     public void testQueries() throws Exception {
-        // Database creation :
-        Database db = new Database("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;", "", "");
-        db.setStatementExecutor(new BatchStatementExecutor());
+        Database db;
 
+        // Test database in default execution mode :
+        db = new Database("jdbc:h2:mem:test-single;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;", "", "");
+        db.setStatementExecutor(new DefaultStatementExecutor());
+        testQueriesOnDatabase(db);
+
+        // Test database in batch execution mode :
+        db = new Database("jdbc:h2:mem:test-batch;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;", "", "");
+        db.setStatementExecutor(new DefaultStatementExecutor());
+        testQueriesOnDatabase(db);
+    }
+
+    protected void testQueriesOnDatabase(IDatabase db) throws Exception {
         // Table creation :
         db.createTable(Bean.class);
         Map<String, Object> map = db.select("show tables").asMap().one();
