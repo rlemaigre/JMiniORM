@@ -10,6 +10,8 @@ import java.io.Closeable;
  */
 public interface ITransaction extends IQueryTarget, Closeable {
 
+    IDatabase getDatabase();
+
     void commit() throws DBException;
 
     void rollback() throws DBException;

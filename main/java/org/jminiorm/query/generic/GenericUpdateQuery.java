@@ -51,7 +51,7 @@ public class GenericUpdateQuery extends AbstractQuery implements IGenericUpdateQ
         columns.remove(idColumn);
 
         // SQL :
-        String sql = getQueryTarget().getDialect().sqlForUpdate(table, idColumn, columns);
+        String sql = getQueryTarget().getConfig().getDialect().sqlForUpdate(table, idColumn, columns);
 
         // Parameters :
         List<List<Object>> params = new ArrayList<>();

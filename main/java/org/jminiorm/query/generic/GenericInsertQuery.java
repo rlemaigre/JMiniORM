@@ -50,7 +50,7 @@ public class GenericInsertQuery extends AbstractQuery implements IGenericInsertQ
         List<String> columns = new ArrayList<>(values.get(0).keySet());
 
         // SQL :
-        String sql = getQueryTarget().getDialect().sqlForInsert(table, columns);
+        String sql = getQueryTarget().getConfig().getDialect().sqlForInsert(table, columns);
 
         // Parameters :
         List<List<Object>> params = new ArrayList<>();

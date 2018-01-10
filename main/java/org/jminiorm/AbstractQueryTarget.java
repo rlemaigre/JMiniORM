@@ -105,12 +105,12 @@ public abstract class AbstractQueryTarget implements IQueryTarget {
 
     @Override
     public List<Long> executeUpdate(String sql, List<List<Object>> params) throws DBException {
-        return getStatementExecutor().executeUpdate(this, sql, params);
+        return getConfig().getStatementExecutor().executeUpdate(this, sql, params);
     }
 
     @Override
     public List<Map<String, Object>> executeQuery(String sql, List<Object> params,
                                                   Map<String, Class<?>> typeOverrides) throws DBException {
-        return getStatementExecutor().executeQuery(this, sql, params, typeOverrides);
+        return getConfig().getStatementExecutor().executeQuery(this, sql, params, typeOverrides);
     }
 }

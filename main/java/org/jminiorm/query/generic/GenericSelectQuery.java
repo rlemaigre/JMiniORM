@@ -53,7 +53,7 @@ public class GenericSelectQuery extends AbstractQuery implements IGenericSelectQ
     }
 
     protected String getSQL() {
-        return getQueryTarget().getDialect().sqlForSelect(sql, limit, offset);
+        return getQueryTarget().getConfig().getDialect().sqlForSelect(sql, limit, offset);
     }
 
 }

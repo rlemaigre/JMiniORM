@@ -1,10 +1,6 @@
 package org.jminiorm;
 
-import org.jminiorm.dialect.ISQLDialect;
 import org.jminiorm.exception.DBException;
-import org.jminiorm.executor.IStatementExecutor;
-import org.jminiorm.mapping.provider.IORMappingProvider;
-import org.jminiorm.mapping.type.IJDBCTypeMapper;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -22,6 +18,11 @@ public class Transaction extends AbstractQueryTarget implements ITransaction {
         } catch (SQLException e) {
             throw new DBException(e);
         }
+    }
+
+    @Override
+    public IDatabase getDatabase() {
+        return database;
     }
 
     @Override
@@ -57,23 +58,8 @@ public class Transaction extends AbstractQueryTarget implements ITransaction {
     }
 
     @Override
-    public ISQLDialect getDialect() {
-        return database.getDialect();
-    }
-
-    @Override
-    public IJDBCTypeMapper getJDBCTypeMapper() {
-        return database.getJDBCTypeMapper();
-    }
-
-    @Override
-    public IORMappingProvider getORMappingProvider() {
-        return database.getORMappingProvider();
-    }
-
-    @Override
-    public IStatementExecutor getStatementExecutor() {
-        return database.getStatementExecutor();
+    public IDatabaseConfig getConfig() {
+        return getDatabase().getConfig();
     }
 
 }

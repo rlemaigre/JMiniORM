@@ -28,7 +28,7 @@ public abstract class AbstractORMQuery<T> extends AbstractQuery implements IORMQ
      * @return
      */
     protected ORMapping getMapping() {
-        return getQueryTarget().getORMappingProvider().getORMapping(getTargetClass());
+        return getQueryTarget().getConfig().getORMappingProvider().getORMapping(getTargetClass());
     }
 
 }

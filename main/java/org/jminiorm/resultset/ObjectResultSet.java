@@ -35,7 +35,7 @@ public class ObjectResultSet<T> extends AbstractResultSet<T> implements IObjectR
     }
 
     protected ORMapping getMapping() {
-        return getQueryTarget().getORMappingProvider().getORMapping(targetClass);
+        return getQueryTarget().getConfig().getORMappingProvider().getORMapping(targetClass);
     }
 
     @Override

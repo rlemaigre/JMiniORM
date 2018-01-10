@@ -42,15 +42,22 @@ public class TestQueries {
     @Test
     public void testQueries() throws Exception {
         Database db;
+        IDatabaseConfig config;
 
         // Test database in default execution mode :
-        db = new Database("jdbc:h2:mem:test-single;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;", "", "");
-        db.setStatementExecutor(new DefaultStatementExecutor());
+        config = new DatabaseConfig.Builder()
+                .dataSource("jdbc:h2:mem:test-single;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;", "", "")
+                .statementExecutor(new DefaultStatementExecutor())
+                .build();
+        db = new Database(config);
         testQueriesOnDatabase(db);
 
         // Test database in batch execution mode :
-        db = new Database("jdbc:h2:mem:test-batch;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;", "", "");
-        db.setStatementExecutor(new BatchStatementExecutor());
+        config = new DatabaseConfig.Builder()
+                .dataSource("jdbc:h2:mem:test-batch;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;", "", "")
+                .statementExecutor(new BatchStatementExecutor())
+                .build();
+        db = new Database(config);
         testQueriesOnDatabase(db);
     }
 
