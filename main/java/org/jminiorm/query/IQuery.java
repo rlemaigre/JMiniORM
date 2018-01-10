@@ -14,4 +14,11 @@ public interface IQuery {
      */
     void setQueryTarget(IQueryTarget target);
 
+    /**
+     * Returns the target of this query.
+     *
+     * @return
+     */
+    IQueryTarget getQueryTarget();
+
 }

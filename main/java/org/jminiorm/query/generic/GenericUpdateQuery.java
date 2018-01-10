@@ -12,7 +12,7 @@ public class GenericUpdateQuery extends AbstractQuery implements IGenericUpdateQ
 
     private String table;
     private String idColumn;
-    private List<Map<String, Object>> values;
+    private List<Map<String, Object>> values = new ArrayList<>();
 
     public GenericUpdateQuery(IQueryTarget target) {
         super(target);

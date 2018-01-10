@@ -20,21 +20,21 @@ public class JPAORMapping extends ORMapping {
         // Java class :
         setJavaClass(clazz);
 
-        // Table name :
+        // Table and indexes :
         Table tableAnn = clazz.getAnnotation(Table.class);
-        setTable(tableAnn.name());
-
-        // Indexes :
-        List<Index> indexes = new ArrayList<>();
-        javax.persistence.Index[] indexesAnn = tableAnn.indexes();
-        for (javax.persistence.Index indexAnn : indexesAnn) {
-            org.jminiorm.mapping.Index index = new org.jminiorm.mapping.Index();
-            index.setName(indexAnn.name());
-            index.setUnique(indexAnn.unique());
-            index.setColumns(indexAnn.columnList());
-            indexes.add(index);
+        if (tableAnn != null) {
+            setTable(tableAnn.name());
+            List<Index> indexes = new ArrayList<>();
+            javax.persistence.Index[] indexesAnn = tableAnn.indexes();
+            for (javax.persistence.Index indexAnn : indexesAnn) {
+                org.jminiorm.mapping.Index index = new org.jminiorm.mapping.Index();
+                index.setName(indexAnn.name());
+                index.setUnique(indexAnn.unique());
+                index.setColumns(indexAnn.columnList());
+                indexes.add(index);
+            }
+            setIndexes(indexes);
         }
-        setIndexes(indexes);
 
         // Columns :
         List<ColumnMapping> columnMappings = new ArrayList<>();

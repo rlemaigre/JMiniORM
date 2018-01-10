@@ -60,6 +60,10 @@ public class TestQueries {
         db.update(b2);
         Bean b3 = db.select(Bean.class).id(b2.getId()).one();
         assertTrue(b2.compareWithoutId(b3));
+
+        // Delete :
+        db.delete(b3);
+        assertEquals(0, db.select(Bean.class).list().size());
     }
 
 }

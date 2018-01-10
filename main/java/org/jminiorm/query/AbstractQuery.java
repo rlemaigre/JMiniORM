@@ -15,7 +15,8 @@ public class AbstractQuery implements IQuery {
         this.target = target;
     }
 
-    protected IQueryTarget getQueryTarget() {
+    @Override
+    public IQueryTarget getQueryTarget() {
         return target;
     }
 
