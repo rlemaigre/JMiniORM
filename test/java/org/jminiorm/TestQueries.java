@@ -1,6 +1,7 @@
 package org.jminiorm;
 
 import org.h2.tools.Server;
+import org.jminiorm.executor.BatchStatementExecutor;
 import org.jminiorm.executor.DefaultStatementExecutor;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -49,7 +50,7 @@ public class TestQueries {
 
         // Test database in batch execution mode :
         db = new Database("jdbc:h2:mem:test-batch;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;", "", "");
-        db.setStatementExecutor(new DefaultStatementExecutor());
+        db.setStatementExecutor(new BatchStatementExecutor());
         testQueriesOnDatabase(db);
     }
 
