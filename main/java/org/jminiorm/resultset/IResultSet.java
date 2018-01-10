@@ -20,7 +20,7 @@ public interface IResultSet<T> {
      * @throws UnexpectedNumberOfItemsException when there are more than one or zero items in the result set.
      * @throws DBException
      */
-    T one() throws UnexpectedNumberOfItemsException;
+    T one() throws UnexpectedNumberOfItemsException, DBException;
 
     /**
      * Extracts the first result of the result set.
@@ -28,7 +28,7 @@ public interface IResultSet<T> {
      * @return
      * @throws DBException
      */
-    T first();
+    T first() throws DBException;
 
     /**
      * Returns all the items in the result set.
@@ -36,6 +36,6 @@ public interface IResultSet<T> {
      * @return
      * @throws DBException
      */
-    List<T> list();
+    List<T> list() throws DBException;
 
 }

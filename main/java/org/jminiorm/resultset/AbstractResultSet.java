@@ -1,8 +1,8 @@
 package org.jminiorm.resultset;
 
+import org.jminiorm.IQueryTarget;
 import org.jminiorm.exception.DBException;
 import org.jminiorm.exception.UnexpectedNumberOfItemsException;
-import org.jminiorm.query.IQuery;
 
 import java.util.List;
 import java.util.Map;
@@ -10,12 +10,14 @@ import java.util.stream.Collectors;
 
 public abstract class AbstractResultSet<T> implements IResultSet<T> {
 
-    private IQuery query;
-    private List<Map<String, Object>> rawResultSet;
+    private IQueryTarget queryTarget;
+    private String sql;
+    private List<Object> params;
 
-    public AbstractResultSet(IQuery query, List<Map<String, Object>> rawResultSet) {
-        this.query = query;
-        this.rawResultSet = rawResultSet;
+    public AbstractResultSet(IQueryTarget queryTarget, String sql, List<Object> params) {
+        this.queryTarget = queryTarget;
+        this.sql = sql;
+        this.params = params;
     }
 
     @Override
@@ -34,16 +36,12 @@ public abstract class AbstractResultSet<T> implements IResultSet<T> {
 
     @Override
     public List<T> list() throws DBException {
+        List<Map<String, Object>> rawResultSet = queryTarget.executeQuery(sql, params, typeMappings());
         return rawResultSet.stream().map(this::castRow).collect(Collectors.toList());
     }
 
-    /**
-     * Returns the query that generated this result set.
-     *
-     * @return
-     */
-    protected IQuery getQuery() {
-        return query;
+    protected IQueryTarget getQueryTarget() {
+        return queryTarget;
     }
 
     /**
@@ -53,4 +51,11 @@ public abstract class AbstractResultSet<T> implements IResultSet<T> {
      * @return
      */
     protected abstract T castRow(Map<String, Object> row);
+
+    /**
+     * Return the column name => Java type mappings to use when executing the query.
+     *
+     * @return
+     */
+    protected abstract Map<String, Class<?>> typeMappings();
 }

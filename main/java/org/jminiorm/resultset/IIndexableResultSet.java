@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * Common interface of object and map result sets.
  */
-public interface IIndexableResultSet<T> {
+public interface IIndexableResultSet<T> extends IResultSet<T> {
 
     /**
      * Returns all the items in the result set as a Map. For each distinct value of the given column/property in the
