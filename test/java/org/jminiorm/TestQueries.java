@@ -1,6 +1,7 @@
 package org.jminiorm;
 
 import org.h2.tools.Server;
+import org.jminiorm.executor.BatchStatementExecutor;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -41,6 +42,7 @@ public class TestQueries {
     public void testQueries() throws Exception {
         // Database creation :
         Database db = new Database("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;", "", "");
+        db.setStatementExecutor(new BatchStatementExecutor());
 
         // Table creation :
         db.createTable(Bean.class);
