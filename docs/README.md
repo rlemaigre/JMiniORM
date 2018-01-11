@@ -114,32 +114,44 @@ db.update(user);
 
 ## Select
 
-# Automatic serialization / deserialization of properties using JSON
+# Automatic serialization / deserialization of properties
 
-The project support conversion of properties to and from text (only) columns via JPA converters. One such converter is provided : JsonAttributeConverter. It is based on [Jackson](https://github.com/FasterXML/jackson) (see for example [here](https://www.mkyong.com/java/jackson-2-convert-java-object-to-from-json/) for a getting started).
+The project support conversion of properties to and from text (only) columns via JPA converters.
+
+## JSON serialization / deserialization
+The [JsonAttributeConverter](https://github.com/rlemaigre/JMiniORM/blob/master/main/java/org/jminiorm/attributeconverter/JsonAttributeConverter.java) can read/write any Java object from/to a text database column. It is based on [Jackson](https://github.com/FasterXML/jackson) (see for example [here](https://www.mkyong.com/java/jackson-2-convert-java-object-to-from-json/) to get started). It is invaluably useful to store complex data structures to a database without having to setup many tables and create complex mapping logic.
+
+Suppose Users have a list of roles and a role is an instance of the Role class (which can be arbitrarily complex).
 
 ``` java
-@Table(...)
+@Table(name = "users")
 public class User {
-    // ...other fields...
-    
-    @Convert(converter = RolesJsonConverter.class)
+    // ...other properties...
     private List<Role> roles;
 }
 
 public class Role {
-    private String name;
-
-    public Role() {
-    }
-
-    // ... getters and setters...
+    // ... properties, lists, maps, sub objects,...
 }
+```
 
+To enable serialization of Roles to JSON, you must first define a converter class, like so :
+
+``` java
 public class RolesJsonConverter extends JsonAttributeConverter<List<Role>> {
-    // Nothing to do here. The class is simply declared to capture de generic type
+    // Nothing to do here. The class is simply declared to capture the generic type
     // "List<Role>" in a way that is available at runtime for the JsonAttributeConverter
     // parent class.
+}
+```
+
+Then assign the converter to the roles property :
+
+``` java
+@Table(...)
+public class User {
+    @Convert(converter = RolesJsonConverter.class)
+    private List<Role> roles;
 }
 ```
 
