@@ -1,4 +1,4 @@
-package orm.jminiorm.attributeconverter;
+package org.jminiorm.attributeconverter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;

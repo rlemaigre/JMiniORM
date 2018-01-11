@@ -1,5 +1,5 @@
 # Overview
-JMiniORM is a lightweight ORM and database utility for the Java language. It has no dependencies, its footprint is small (~100 KB) and it is very easy to learn.
+JMiniORM is a lightweight ORM and database utility for the Java language. It has no dependencies, its footprint is small (~100 KB), it is customizable and it is very easy to learn.
 
 # Features
 * Simple config in Java (no XML files)
@@ -64,27 +64,11 @@ public class User {
     private String password;
     @Column(name = "registration_date")
     private LocalDate registrationDate;
-    @Convert(converter = RolesJsonConverter.class)
-    private List<Role> roles;
 
     public User() {
     }
 
     // ...getters and setters...
-}
-
-public class Role {
-    private String name;
-
-    public Role() {
-    }
-
-    // ... getters and setters...
-}
-
-public class RolesJsonConverter extends JsonAttributeConverter<List<Role>> {
-    // Nothing to do here. The class is simply declared to capture de "List<Role>" type in a way that is available at
-    // runtime for the JsonAttributeConverter parent class.
 }
 ```
 
@@ -123,13 +107,41 @@ db.delete(User.class, <id>);
 ## Update
 
 ``` java
-
+User user = db.select(User.class, <id>);
+user.setLogin(<new login>)
+db.update(user);
 ```
 
+## Select
 
+# Automatic serialization / deserialization of properties using JSON
 
+The project support conversion of properties to and from text (only) columns via JPA converters. One such converter is provided : JsonAttributeConverter. It is based on [Jackson](https://github.com/FasterXML/jackson) (see for example [here](https://www.mkyong.com/java/jackson-2-convert-java-object-to-from-json/) for a getting started).
 
+``` java
+@Table(...)
+public class User {
+    // ...other fields...
+    
+    @Convert(converter = RolesJsonConverter.class)
+    private List<Role> roles;
+}
 
+public class Role {
+    private String name;
+
+    public Role() {
+    }
+
+    // ... getters and setters...
+}
+
+public class RolesJsonConverter extends JsonAttributeConverter<List<Role>> {
+    // Nothing to do here. The class is simply declared to capture de generic type
+    // "List<Role>" in a way that is available at runtime for the JsonAttributeConverter
+    // parent class.
+}
+```
 
 
 

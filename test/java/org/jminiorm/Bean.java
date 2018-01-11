@@ -1,6 +1,6 @@
 package org.jminiorm;
 
-import orm.jminiorm.attributeconverter.JsonAttributeConverter;
+import org.jminiorm.attributeconverter.JsonAttributeConverter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
