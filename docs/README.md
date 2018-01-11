@@ -252,7 +252,7 @@ IDatabase db = new Database(config);
 
 # Automatic serialization / deserialization of properties
 
-The project support conversion of properties to and from text (only) columns via JPA converters.
+The project supports conversion of properties to and from text (only) columns via JPA converters.
 
 ## JSON serialization / deserialization
 The [JsonAttributeConverter](https://github.com/rlemaigre/JMiniORM/blob/master/main/java/org/jminiorm/attributeconverter/JsonAttributeConverter.java) can read/write any Java object from/to a text database column. It is based on [Jackson](https://github.com/FasterXML/jackson) (see for example [here](https://www.mkyong.com/java/jackson-2-convert-java-object-to-from-json/) to get started). It is invaluably useful to store complex data structures to a database without having to setup many tables and create complex mapping logic.
