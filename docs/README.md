@@ -240,7 +240,7 @@ IDatabase db = new Database(config);
 ```
 
 # Custom SQL dialect
-SQL dialects are objects implementing [ISQLDialect](https://github.com/rlemaigre/JMiniORM/blob/master/main/java/org/jminiorm/dialect/ISQLDialect.java) The project ships with a generic SQL dialect that tries to accomodate with most databases : [GenericSQLDialect](https://github.com/rlemaigre/JMiniORM/blob/master/main/java/org/jminiorm/dialect/GenericSQLDialect.java). To account for the peculiarities of your own database, subclass it and configure it that way :
+SQL dialects are objects implementing [ISQLDialect](https://github.com/rlemaigre/JMiniORM/blob/master/main/java/org/jminiorm/dialect/ISQLDialect.java) The project ships with a generic SQL dialect that tries to accomodate for most databases : [GenericSQLDialect](https://github.com/rlemaigre/JMiniORM/blob/master/main/java/org/jminiorm/dialect/GenericSQLDialect.java). To account for the peculiarities of your own database, subclass it and configure it that way :
 
 ``` java
 IDatabaseConfig config = new DatabaseConfig.Builder()
