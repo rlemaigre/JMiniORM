@@ -3,6 +3,12 @@
 
 @import "{{ site.theme }}";
 
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+body {
+  font:14px/1.5 'Roboto', "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
 .wrapper {
   width: 800px;
 }
