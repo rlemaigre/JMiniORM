@@ -56,7 +56,6 @@ This class is used as an example for the rest of this doc.
         @Index(name = "login_index", columnList = "login ASC")
 })
 public class User {
-
     @Id
     @GeneratedValue
     private Integer id;
@@ -72,18 +71,15 @@ public class User {
     }
 
     // ...getters and setters...
-
 }
 
 public class Role {
-
     private String name;
 
     public Role() {
     }
 
     // ... getters and setters...
-
 }
 
 public class RolesJsonConverter extends JsonAttributeConverter<List<Role>> {
