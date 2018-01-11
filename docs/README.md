@@ -147,13 +147,32 @@ List<SomeClass>> maps = db.select("select x, y, z from u, v where ...")
     .list();
 
 // Result as primitives :
-List<Integer> db.select("select id from ...").asPrimitive(Integer.class).list();
+List<Integer> db.select("select id from ...")
+    .asPrimitive(Integer.class)
+    .list();
 
-// One and first are supported as well
-Long count = db.select("select count(*) from ...").asPrimitive(Long.class).one();
+// One and first are supported as well :
+Long count = db.select("select count(*) from ...")
+    .asPrimitive(Long.class)
+    .one();
 ```
 
 Notice that such queries don't start by specifying a Java class, thus the select and from clause can't be infered and must be provided explicitly.
+
+# Transactions
+The interface of transaction is the same as the one of database + commit, rollback and close. Once create, a transaction MUST be closed, otherwise the underlying connection won't be returned to the pool and a connection will be leaked. Closing a transaction automatically rolls back any pending operations.
+
+Tu ensure a block of SQL statement is either executed fully or not at all, do :
+
+``` java
+try (ITransaction transaction : db.createTransaction()) {
+    // ...work with the transaction...
+    transaction.commit();
+}
+```
+
+# Utilities
+
 
 
 # Schema generation

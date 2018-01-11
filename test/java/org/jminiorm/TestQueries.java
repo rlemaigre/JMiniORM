@@ -3,6 +3,7 @@ package org.jminiorm;
 import org.h2.tools.Server;
 import org.jminiorm.executor.BatchStatementExecutor;
 import org.jminiorm.executor.DefaultStatementExecutor;
+import org.jminiorm.utils.RSUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -108,18 +109,19 @@ public class TestQueries {
         assertEquals(new Integer(3), countInteger);
         String countString = db.select("select count(*) from beans").asPrimitive(String.class).one();
         assertEquals("3", countString);
-        Map<String, Map<String, Object>> resultAsIndexedMaps = db.select("select * from beans").asMap().index
-                ("short_text");
+        Map<String, Map<String, Object>> resultAsIndexedMaps = RSUtils.index(db.select("select * from beans").asMap()
+                .list(), "short_text");
         assertEquals(3, resultAsIndexedMaps.size());
         assertEquals("b1", resultAsIndexedMaps.get("b1").get("short_text"));
         List<Pojo> pojos = db.select("show columns from beans").asObject(Pojo.class).list();
         assertEquals(9, pojos.size());
-        Map<String, List<Pojo>> groups = db.select("show columns from beans").asObject(Pojo.class).group("field");
+        Map<String, List<Pojo>> groups = RSUtils.group(db.select("show columns from beans").asObject(Pojo.class).list
+                (), "field");
         assertEquals(9, groups.size());
         assertEquals("VARBINARY(2147483647)", groups.get("BYTES").get(0).getType());
 
         // ORM select :
-        Map<String, Bean> resultAsIndexedObject = db.select(Bean.class).index("shortText");
+        Map<String, Bean> resultAsIndexedObject = RSUtils.index(db.select(Bean.class).list(), "shortText");
         assertEquals(3, resultAsIndexedObject.size());
         assertEquals("b1", resultAsIndexedObject.get("b1").getShortText());
     }

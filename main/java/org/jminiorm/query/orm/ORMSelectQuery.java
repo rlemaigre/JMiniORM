@@ -9,7 +9,6 @@ import org.jminiorm.resultset.IObjectResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 public class ORMSelectQuery<T> extends AbstractORMQuery<T> implements IORMSelectQuery<T> {
 
@@ -63,16 +62,6 @@ public class ORMSelectQuery<T> extends AbstractORMQuery<T> implements IORMSelect
     public IORMSelectQuery<T> orderBy(String orderBy) {
         this.orderBy = orderBy;
         return this;
-    }
-
-    @Override
-    public <K> Map<K, List<T>> group(String column) throws DBException {
-        return getResultSet().group(column);
-    }
-
-    @Override
-    public <K> Map<K, T> index(String column) throws DBException {
-        return getResultSet().index(column);
     }
 
     @Override

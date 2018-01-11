@@ -45,6 +45,10 @@ public class Transaction extends AbstractQueryTarget implements ITransaction {
 
     @Override
     public void close() throws DBException {
+        try {
+            rollback();
+        } catch (Throwable t) {
+        }
         database.releaseConnection(connection);
     }
 

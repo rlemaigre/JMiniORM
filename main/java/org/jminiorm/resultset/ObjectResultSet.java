@@ -1,15 +1,12 @@
 package org.jminiorm.resultset;
 
 import org.jminiorm.IQueryTarget;
-import org.jminiorm.exception.DBException;
 import org.jminiorm.mapping.ColumnMapping;
 import org.jminiorm.mapping.ORMapping;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class ObjectResultSet<T> extends AbstractResultSet<T> implements IObjectResultSet<T> {
 
@@ -36,20 +33,6 @@ public class ObjectResultSet<T> extends AbstractResultSet<T> implements IObjectR
 
     protected ORMapping getMapping() {
         return getQueryTarget().getConfig().getORMappingProvider().getORMapping(targetClass);
-    }
-
-    @Override
-    public <K> Map<K, List<T>> group(String property) throws DBException {
-        List<T> rs = list();
-        ColumnMapping columnMapping = getMapping().getColumnMappingByProperty(property);
-        return rs.stream().collect(Collectors.groupingBy(obj -> (K) columnMapping.readProperty(obj)));
-    }
-
-    @Override
-    public <K> Map<K, T> index(String property) throws DBException {
-        List<T> rs = list();
-        ColumnMapping columnMapping = getMapping().getColumnMappingByProperty(property);
-        return rs.stream().collect(Collectors.toMap(obj -> (K) columnMapping.readProperty(obj), Function.identity()));
     }
 
     @Override
