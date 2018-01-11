@@ -33,7 +33,7 @@ Optional parameters :
 * **dataSource** : An object implementing [DataSource](https://docs.oracle.com/javase/7/docs/api/javax/sql/DataSource.html)
 * **dialect** : An object implementing [ISQLDialect](https://github.com/rlemaigre/JMiniORM/blob/master/main/java/org/jminiorm/dialect/ISQLDialect.java). The ORM delegates to this object each time it needs to build a SQL statement. Defaults to [GenericSQLDialect](https://github.com/rlemaigre/JMiniORM/blob/master/main/java/org/jminiorm/dialect/GenericSQLDialect.java). Subclass to provide support for your own database.
 * **mappingProvider** : An object implementing [IORMappingProvider](https://github.com/rlemaigre/JMiniORM/blob/master/main/java/org/jminiorm/mapping/provider/IORMappingProvider.java). The ORM delegates to this object each time it needs to build the [mapping](https://github.com/rlemaigre/JMiniORM/blob/master/main/java/org/jminiorm/mapping/ORMapping.java) between a class and a database table. Defaults to [JPAORMappingProvider](https://github.com/rlemaigre/JMiniORM/blob/master/main/java/org/jminiorm/mapping/provider/JPAORMappingProvider.java). Subclass if you need a mapping for a class that isn't based on JPA annotations.
-* **typeMapper** : An object implementing [IJDBCTypeMapper](https://github.com/rlemaigre/JMiniORM/blob/master/main/java/org/jminiorm/mapping/type/IJDBCTypeMapper.java). The ORM delegates to this object each types it needs to convert a value coming from the database to a Java object. Default to [DefaultJDBCTypeMapper](https://github.com/rlemaigre/JMiniORM/blob/master/main/java/org/jminiorm/mapping/type/DefaultJDBCTypeMapper.java).
+* **typeMapper** : An object implementing [IJDBCTypeMapper](https://github.com/rlemaigre/JMiniORM/blob/master/main/java/org/jminiorm/mapping/type/IJDBCTypeMapper.java). The ORM delegates to this object each time it needs to convert a value coming from the database to a primitive Java value. Default to [DefaultJDBCTypeMapper](https://github.com/rlemaigre/JMiniORM/blob/master/main/java/org/jminiorm/mapping/type/DefaultJDBCTypeMapper.java).
 * **executor** : An object implementing [IStatementExecutor](https://github.com/rlemaigre/JMiniORM/blob/master/main/java/org/jminiorm/executor/IStatementExecutor.java). The ORM delegates to this class each time it needs to execute a statement. Defaults to [DefaultStatementExecutor](https://github.com/rlemaigre/JMiniORM/blob/master/main/java/org/jminiorm/executor/DefaultStatementExecutor.java).
 
 # JPA annotations
@@ -50,7 +50,7 @@ This project partially supports a subset of the standard JPA 2.1 annotations, na
 * [Transient](https://docs.oracle.com/javaee/7/api/javax/persistence/Transient.html) : Specifies that the property isn't persisted.
 
 ## Example of an annotated class
-This class is used as an example for the rest of this doc.
+This class is used as an example throughout the rest of this doc.
 
 ``` java
 @Table(name = "users", indexes = {
