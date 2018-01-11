@@ -1,3 +1,5 @@
+[![Coverage Status](https://coveralls.io/repos/github/rlemaigre/JMiniORM/badge.svg?branch=master)](https://coveralls.io/github/rlemaigre/JMiniORM?branch=master)
+
 # Overview
 JMiniORM is a lightweight ORM and database utility for the Java language. It has no dependencies, its footprint is small (~100 KB), it is extensible and it is very easy to learn.
 
