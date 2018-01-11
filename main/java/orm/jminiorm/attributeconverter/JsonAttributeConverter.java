@@ -7,8 +7,10 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 import javax.persistence.AttributeConverter;
+import javax.persistence.Converter;
 import java.io.IOException;
 
+@Converter
 public abstract class JsonAttributeConverter<T> implements AttributeConverter<T, String> {
 
     private JavaType javaType;
