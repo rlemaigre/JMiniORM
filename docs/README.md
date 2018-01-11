@@ -15,7 +15,7 @@ JMiniORM is a lightweight ORM and database utility for the Java language. It has
 
 # Configuration
 At the very least, you must provide the database URL, username and password.
-```java
+``` java
 IDatabaseConfig config = new DatabaseConfig.Builder()
                 .dataSource("jdbc:h2:mem:test-single;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;", "", "")
                 .build();
