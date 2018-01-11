@@ -1,5 +1,5 @@
 # Overview
-JMiniORM is a lightweight ORM and database utility for the Java language. It has no dependencies, its footprint is small (~100 KB), it is customizable and it is very easy to learn.
+JMiniORM is a lightweight ORM and database utility for the Java language. It has no dependencies, its footprint is small (~100 KB), it is extensible and it is very easy to learn.
 
 # Features
 * Simple config in Java (no XML files)
@@ -76,14 +76,12 @@ public class User {
 ## ORM vs generic
 Queries come in two flavours :
 
-* "generic" : accept and return Maps.
+* "generic" : accept and return Maps, or allows for executing arbitrary SQL statement ("CREATE TABLE...").
 * "ORM" : accept and return objects of JPA annotated classes.
 
 Only ORM queries are described in this doc, except for the generic select query that can be used to execute arbitrary SELECT statements and retrieve the result in a type of your choosing.
 
-## ORM queries 
-
-### Insert
+## Insert
 
 ``` java
 // Creates a User :
@@ -96,7 +94,7 @@ db.insert(user);
 assertNotNull(user.getId());
 ```
 
-### Delete
+## Delete
 
 ``` java
 // By object (the id must be set) :
@@ -106,14 +104,14 @@ db.delete(user);
 db.delete(User.class, <id>);
 ```
 
-### Update
+## Update
 
 ``` java
 user.setLogin(<new login>)
 db.update(user);
 ```
 
-### Select
+## Select
 
 ``` java
 // By id :
@@ -132,6 +130,29 @@ User user = db.select(User.class).where(<where>).first();
 
 // Single User of the result set (exception generated if 0 or more than one encountered) :
 User user = db.select(User.class).where(<where>).one();
+```
+
+## Generic select query
+Sometimes it is necessary to execute a select statement that spans several tables (joins) or one that doesn't (necessarily) have a result set that maps to a class. Such queries can be executed that way :
+
+```
+// Result as maps :
+List<Map<String,Object>> maps = db.select("select x, y, z from u, v where ...").asMap().list();
+
+// Result as objects (JPA annotations are respected here too, as they are with ORM queries) :
+List<SomeClass>> maps = db.select("select x, y, z from u, v where ...").asObject(SomeClass.class).list();
+
+// Result as primitives :
+List<Integer> db.select("select id from ...").asPrimitive(Integer.class).list();
+Long count = db.select("select count(*) from ...").asPrimitive(Long.class).one();
+```
+
+
+# Schema generation
+To create the database table and indexes for an entity according to its JPA annotations, use :
+
+``` java
+db.createTable(User.class);
 ```
 
 # Automatic serialization / deserialization of properties
