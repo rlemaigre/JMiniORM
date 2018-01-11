@@ -135,17 +135,25 @@ User user = db.select(User.class).where(<where>).one();
 ## Generic select query
 Sometimes it is necessary to execute a select statement that spans several tables (joins) or one that doesn't (necessarily) have a result set that maps to a class. Such queries can be executed that way :
 
-```
+``` java
 // Result as maps :
-List<Map<String,Object>> maps = db.select("select x, y, z from u, v where ...").asMap().list();
+List<Map<String,Object>> maps = db.select("select x, y, z from u, v where ...")
+    .asMap()
+    .list();
 
 // Result as objects (JPA annotations are respected here too, as they are with ORM queries) :
-List<SomeClass>> maps = db.select("select x, y, z from u, v where ...").asObject(SomeClass.class).list();
+List<SomeClass>> maps = db.select("select x, y, z from u, v where ...")
+    .asObject(SomeClass.class)
+    .list();
 
 // Result as primitives :
 List<Integer> db.select("select id from ...").asPrimitive(Integer.class).list();
+
+// One and first are supported as well
 Long count = db.select("select count(*) from ...").asPrimitive(Long.class).one();
 ```
+
+Notice that such queries don't start by specifying a Java class, thus the select and from clause can't be infered and must be provided explicitly.
 
 
 # Schema generation
