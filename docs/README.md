@@ -12,7 +12,6 @@ JMiniORM is a lightweight ORM and database utility for the Java language. It has
 * Raw select statements with custom return types (primitive, Map, Object)    
 * Transactions support
 * JDBC batch mode support
-
 * Pluggable SQL dialects
 
 # Configuration
@@ -74,6 +73,7 @@ public class User {
 
 # Queries
 
+## ORM vs generic
 Queries come in two flavours :
 
 * "generic" : accept and return Maps.
@@ -81,7 +81,9 @@ Queries come in two flavours :
 
 Only ORM queries are described in this doc, except for the generic select query that can be used to execute arbitrary SELECT statements and retrieve the result in a type of your choosing.
 
-## Insert
+## ORM queries 
+
+### Insert
 
 ``` java
 // Creates a User :
@@ -94,7 +96,7 @@ db.insert(user);
 assertNotNull(user.getId());
 ```
 
-## Delete
+### Delete
 
 ``` java
 // By object (the id must be set) :
@@ -104,15 +106,33 @@ db.delete(user);
 db.delete(User.class, <id>);
 ```
 
-## Update
+### Update
 
 ``` java
-User user = db.select(User.class, <id>);
 user.setLogin(<new login>)
 db.update(user);
 ```
 
-## Select
+### Select
+
+``` java
+// By id :
+User user = db.select(User.class, <id>);
+
+// With where, orderBy, limit, offset :
+List<User> users = db.select(User.class)
+        .where("login = 'test'")
+        .orderBy("registration_date DESC")
+        .limit(10)
+        .offset(5)
+    .list();
+
+// First User of the result set :
+User user = db.select(User.class).where(<where>).first();
+
+// Single User of the result set (exception generated if 0 or more than one encountered) :
+User user = db.select(User.class).where(<where>).one();
+```
 
 # Automatic serialization / deserialization of properties
 
