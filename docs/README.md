@@ -81,7 +81,9 @@ Queries come in two flavours :
 
 Only ORM queries are described in this doc, except for the generic select query that can be used to execute arbitrary SELECT statements and retrieve the result in a type of your choosing.
 
-## Insert
+## ORM queries
+
+### Insert
 
 ``` java
 // Creates a User :
@@ -94,7 +96,7 @@ db.insert(user);
 assertNotNull(user.getId());
 ```
 
-## Delete
+### Delete
 
 ``` java
 // By object (the id must be set) :
@@ -104,14 +106,14 @@ db.delete(user);
 db.delete(User.class, <id>);
 ```
 
-## Update
+### Update
 
 ``` java
 user.setLogin(<new login>)
 db.update(user);
 ```
 
-## Select
+### Select
 
 ``` java
 // By id :
@@ -132,7 +134,9 @@ User user = db.select(User.class).where(<where>).first();
 User user = db.select(User.class).where(<where>).one();
 ```
 
-## Generic select query
+## Generic queries 
+
+### Select
 Sometimes it is necessary to execute a select statement that spans several tables (joins) or one that doesn't (necessarily) have a result set that maps to a class. Such queries can be executed that way :
 
 ``` java
@@ -159,6 +163,13 @@ Long count = db.select("select count(*) from ...")
 
 Notice that such queries don't start by specifying a Java class, thus the select and from clause can't be infered and must be provided explicitly.
 
+### Raw
+You can use arbitrary SQL statements like so :
+
+``` java
+db.sql("DROP TABLE test");
+```
+
 # Transactions
 The interface of transaction is the same as the one of database + commit, rollback and close. Once create, a transaction MUST be closed, otherwise the underlying connection won't be returned to the pool and a connection will be leaked. Closing a transaction automatically rolls back any pending operations.
 
@@ -173,13 +184,48 @@ try (ITransaction transaction : db.createTransaction()) {
 
 # Utilities
 
+The following utility class is provided to help manipulate result sets : [RSUtils](https://github.com/rlemaigre/JMiniORM/blob/master/main/java/org/jminiorm/utils/RSUtils.java).
 
+Example :
+
+``` java
+List<User> users = db.select(User.class).list();
+Map<Integer, User> usersById = RSUtils.index(users, "id");
+Map<LocalDate, List<User>> usersGroupedByRegistrationDate = RSUtils.group(users, "registrationDate");
+Set<String> logins = RSUtils.distinct(users, "login");
+
+```
 
 # Schema generation
 To create the database table and indexes for an entity according to its JPA annotations, use :
 
 ``` java
 db.createTable(User.class);
+```
+
+# JDBC batch mode
+
+[Batch mode](https://www.tutorialspoint.com/jdbc/jdbc-batch-processing.htm) is disabled by default. To enable it, configure the database this way :
+ 
+``` java
+IDatabaseConfig config = new DatabaseConfig.Builder()
+                .dataSource("<url>", "<username>", "<password>")
+                .statementExecutor(new BatchStatementExecutor())
+                .build();
+IDatabase db = new Database(config);
+```
+
+Batch mode can greatly improve performance for mass insertions/deletions/udpates. However, when used in combination with database generated keys, it may cause problems with some drivers.
+
+# Logging
+
+You can enable logging of SQL statements by configuring the database this way :
+``` java
+IDatabaseConfig config = new DatabaseConfig.Builder()
+                .dataSource("<url>", "<username>", "<password>")
+                .statementExecutor(new SLF4JLoggingStatementExecutor(new DefaultStatementExecutor()))
+                .build();
+IDatabase db = new Database(config);
 ```
 
 # Automatic serialization / deserialization of properties
