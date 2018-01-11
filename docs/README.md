@@ -164,14 +164,14 @@ Long count = db.select("select count(*) from ...")
 Notice that such queries don't start by specifying a Java class, thus the select and from clause can't be infered and must be provided explicitly.
 
 ### Raw
-You can use arbitrary SQL statements like so :
+You can execute arbitrary SQL statements like so :
 
 ``` java
 db.sql("DROP TABLE test");
 ```
 
 # Transactions
-The interface of transaction is the same as the one of database + commit, rollback and close. Once create, a transaction MUST be closed, otherwise the underlying connection won't be returned to the pool and a connection will be leaked. Closing a transaction automatically rolls back any pending operations.
+The interface of transaction is the same as the one of database + commit, rollback and close. Once created, a transaction MUST be closed, otherwise the underlying connection won't be returned to the pool and a connection will be leaked. Closing a transaction automatically rolls back any pending operations.
 
 Tu ensure a block of SQL statement is either executed fully or not at all, do :
 
