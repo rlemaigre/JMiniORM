@@ -31,10 +31,10 @@ If you do so, a [HikaryCP](https://brettwooldridge.github.io/HikariCP/) connecti
 Optional parameters :
 
 * **dataSource** : An object implementing [DataSource](https://docs.oracle.com/javase/7/docs/api/javax/sql/DataSource.html)
-* **dialect** : An object implementing [ISQLDialect](https://github.com/rlemaigre/JMiniORM/blob/master/main/java/org/jminiorm/dialect/ISQLDialect.java). The ORM delegates to this object each time it needs to build a SQL statement. Defaults to [GenericSQLDialect](https://github.com/rlemaigre/JMiniORM/blob/master/main/java/org/jminiorm/dialect/GenericSQLDialect.java). Subclass to provide support for your own database.
-* **mappingProvider** : An object implementing [IORMappingProvider](https://github.com/rlemaigre/JMiniORM/blob/master/main/java/org/jminiorm/mapping/provider/IORMappingProvider.java). The ORM delegates to this object each time it needs to build the [mapping](https://github.com/rlemaigre/JMiniORM/blob/master/main/java/org/jminiorm/mapping/ORMapping.java) between a class and a database table. Defaults to [JPAORMappingProvider](https://github.com/rlemaigre/JMiniORM/blob/master/main/java/org/jminiorm/mapping/provider/JPAORMappingProvider.java). Subclass if you need a mapping for a class that isn't based on JPA annotations.
-* **typeMapper** : An object implementing [IJDBCTypeMapper](https://github.com/rlemaigre/JMiniORM/blob/master/main/java/org/jminiorm/mapping/type/IJDBCTypeMapper.java). The ORM delegates to this object each time it needs to convert a value coming from the database to a primitive Java value. Default to [DefaultJDBCTypeMapper](https://github.com/rlemaigre/JMiniORM/blob/master/main/java/org/jminiorm/mapping/type/DefaultJDBCTypeMapper.java).
-* **executor** : An object implementing [IStatementExecutor](https://github.com/rlemaigre/JMiniORM/blob/master/main/java/org/jminiorm/executor/IStatementExecutor.java). The ORM delegates to this class each time it needs to execute a statement. Defaults to [DefaultStatementExecutor](https://github.com/rlemaigre/JMiniORM/blob/master/main/java/org/jminiorm/executor/DefaultStatementExecutor.java).
+* **dialect** : An object implementing [ISQLDialect](https://github.com/rlemaigre/JMiniORM/blob/master/src/main/java/org/jminiorm/dialect/ISQLDialect.java). The ORM delegates to this object each time it needs to build a SQL statement. Defaults to [GenericSQLDialect](https://github.com/rlemaigre/JMiniORM/blob/master/src/main/java/org/jminiorm/dialect/GenericSQLDialect.java). Subclass to provide support for your own database.
+* **mappingProvider** : An object implementing [IORMappingProvider](https://github.com/rlemaigre/JMiniORM/blob/master/src/main/java/org/jminiorm/mapping/provider/IORMappingProvider.java). The ORM delegates to this object each time it needs to build the [mapping](https://github.com/rlemaigre/JMiniORM/blob/master/src/main/java/org/jminiorm/mapping/ORMapping.java) between a class and a database table. Defaults to [JPAORMappingProvider](https://github.com/rlemaigre/JMiniORM/blob/master/src/main/java/org/jminiorm/mapping/provider/JPAORMappingProvider.java). Subclass if you need a mapping for a class that isn't based on JPA annotations.
+* **typeMapper** : An object implementing [IJDBCTypeMapper](https://github.com/rlemaigre/JMiniORM/blob/master/src/main/java/org/jminiorm/mapping/type/IJDBCTypeMapper.java). The ORM delegates to this object each time it needs to convert a value coming from the database to a primitive Java value. Default to [DefaultJDBCTypeMapper](https://github.com/rlemaigre/JMiniORM/blob/master/src/main/java/org/jminiorm/mapping/type/DefaultJDBCTypeMapper.java).
+* **executor** : An object implementing [IStatementExecutor](https://github.com/rlemaigre/JMiniORM/blob/master/src/main/java/org/jminiorm/executor/IStatementExecutor.java). The ORM delegates to this class each time it needs to execute a statement. Defaults to [DefaultStatementExecutor](https://github.com/rlemaigre/JMiniORM/blob/master/src/main/java/org/jminiorm/executor/DefaultStatementExecutor.java).
 
 # JPA annotations
 
@@ -195,7 +195,7 @@ try (ITransaction transaction : db.createTransaction()) {
 
 # Utilities
 
-The following utility class is provided to help manipulate result sets : [RSUtils](https://github.com/rlemaigre/JMiniORM/blob/master/main/java/org/jminiorm/utils/RSUtils.java).
+The following utility class is provided to help manipulate result sets : [RSUtils](https://github.com/rlemaigre/JMiniORM/blob/master/src/main/java/org/jminiorm/utils/RSUtils.java).
 
 Example :
 
@@ -240,7 +240,7 @@ IDatabase db = new Database(config);
 ```
 
 # Custom SQL dialect
-SQL dialects are objects implementing [ISQLDialect](https://github.com/rlemaigre/JMiniORM/blob/master/main/java/org/jminiorm/dialect/ISQLDialect.java) The project ships with a generic SQL dialect that tries to accomodate for most databases : [GenericSQLDialect](https://github.com/rlemaigre/JMiniORM/blob/master/main/java/org/jminiorm/dialect/GenericSQLDialect.java). To account for the peculiarities of your own database, subclass it and configure it that way : 
+SQL dialects are objects implementing [ISQLDialect](https://github.com/rlemaigre/JMiniORM/blob/master/src/main/java/org/jminiorm/dialect/ISQLDialect.java) The project ships with a generic SQL dialect that tries to accomodate for most databases : [GenericSQLDialect](https://github.com/rlemaigre/JMiniORM/blob/master/src/main/java/org/jminiorm/dialect/GenericSQLDialect.java). To account for the peculiarities of your own database, subclass it and configure it that way : 
 
 ``` java
 IDatabaseConfig config = new DatabaseConfig.Builder()
@@ -255,7 +255,7 @@ IDatabase db = new Database(config);
 The project supports conversion of properties to and from text (only) columns via JPA converters.
 
 ## JSON serialization / deserialization
-The [JsonAttributeConverter](https://github.com/rlemaigre/JMiniORM/blob/master/main/java/org/jminiorm/attributeconverter/JsonAttributeConverter.java) can read/write any Java object from/to a text database column. It is based on [Jackson](https://github.com/FasterXML/jackson) (see for example [here](https://www.mkyong.com/java/jackson-2-convert-java-object-to-from-json/) to get started). It is invaluably useful to store complex data structures to a database without having to setup many tables and create complex mapping logic.
+The [JsonAttributeConverter](https://github.com/rlemaigre/JMiniORM/blob/master/src/main/java/org/jminiorm/attributeconverter/JsonAttributeConverter.java) can read/write any Java object from/to a text database column. It is based on [Jackson](https://github.com/FasterXML/jackson) (see for example [here](https://www.mkyong.com/java/jackson-2-convert-java-object-to-from-json/) to get started). It is invaluably useful to store complex data structures to a database without having to setup many tables and create complex mapping logic.
 
 Suppose Users have a list of roles and a role is an instance of the Role class (which can be arbitrarily complex).
 
