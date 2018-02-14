@@ -1,16 +1,15 @@
 package org.jminiorm.dialect;
 
-import org.jminiorm.exception.DBException;
-import org.jminiorm.mapping.ColumnMapping;
-import org.jminiorm.mapping.Index;
-import org.jminiorm.mapping.ORMapping;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import org.jminiorm.mapping.ColumnMapping;
+import org.jminiorm.mapping.Index;
+import org.jminiorm.mapping.ORMapping;
 
 /**
  * An implementation that tries to be compatible with most databases. Subclass as needed to provide support for specific
@@ -113,11 +112,11 @@ public class GenericSQLDialect implements ISQLDialect {
     }
 
     protected String sqlForColumnType(Class<?> javaType, Integer length, Integer scale, Integer precision) {
-        if (javaType == Integer.class) return "INTEGER";
-        if (javaType == Long.class) return "BIGINT";
-        if (javaType == Float.class) return "REAL";
-        if (javaType == Double.class) return "DOUBLE";
-        if (javaType == Boolean.class) return "BOOLEAN";
+        if ((javaType == Integer.class) || (javaType == int.class)) return "INTEGER";
+        if ((javaType == Long.class) || (javaType == long.class)) return "BIGINT";
+        if ((javaType == Float.class) || (javaType == float.class)) return "REAL";
+        if ((javaType == Double.class) || (javaType == double.class)) return "DOUBLE";
+        if ((javaType == Boolean.class) || (javaType == boolean.class)) return "BOOLEAN";
         if (javaType == byte[].class) return "BINARY";
         if (javaType == String.class) {
             if (length == null) return "TEXT";
