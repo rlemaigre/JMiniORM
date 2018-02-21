@@ -77,7 +77,7 @@ public class GenericSQLDialect implements ISQLDialect {
         }
         sb.append(String.join(", ", columns));
         sb.append(", ");
-        sb.append(sqlForPrimaryKey(mapping.getIdColumnMapping()));
+        sb.append(sqlForPrimaryKey(mapping, mapping.getIdColumnMapping()));
         sb.append(")");
         return sb.toString();
     }
@@ -130,8 +130,9 @@ public class GenericSQLDialect implements ISQLDialect {
         throw new RuntimeException("No SQL type defined in dialect for java type " + javaType.getName());
     }
 
-    protected String sqlForPrimaryKey(ColumnMapping idColumnMapping) {
-        return "CONSTRAINT pk PRIMARY KEY (" + identifier(idColumnMapping.getColumn()) + ")";
+    protected String sqlForPrimaryKey(ORMapping mapping, ColumnMapping idColumnMapping) {
+        return "CONSTRAINT " + identifier(mapping.getTable() + "_pk") + " PRIMARY KEY ("
+                + identifier(idColumnMapping.getColumn()) + ")";
     }
 
     @Override

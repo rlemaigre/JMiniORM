@@ -1,19 +1,23 @@
 package org.jminiorm.executor;
 
-import org.jminiorm.IQueryTarget;
-import org.jminiorm.exception.DBException;
-import org.jminiorm.utils.CaseInsensitiveMap;
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.jminiorm.IQueryTarget;
+import org.jminiorm.exception.DBException;
+import org.jminiorm.utils.CaseInsensitiveMap;
+
 public abstract class AbstractStatementExecutor implements IStatementExecutor {
 
     @Override
-    public List<Map<String, Object>> executeQuery(IQueryTarget target, String sql, List<Object> params,
-                                                  Map<String, Class<?>> typeOverrides) throws DBException {
+    public List<Map<String,Object>> executeQuery(IQueryTarget target, String sql, List<Object> params,
+            Map<String,Class<?>> typeOverrides) throws DBException {
         CaseInsensitiveMap<Class<?>> caseInsensitiveTypeOverrides = new CaseInsensitiveMap<>(typeOverrides);
         Connection con = null;
         PreparedStatement stmt = null;
@@ -26,10 +30,10 @@ public abstract class AbstractStatementExecutor implements IStatementExecutor {
             rs = stmt.executeQuery();
 
             // Convert ResultSet to a list of maps :
-            List<Map<String, Object>> rows = new ArrayList<>();
+            List<Map<String,Object>> rows = new ArrayList<>();
             ResultSetMetaData metaData = rs.getMetaData();
             while (rs.next()) {
-                Map<String, Object> row = new CaseInsensitiveMap<>();
+                Map<String,Object> row = new CaseInsensitiveMap<>();
                 for (int i = 1; i <= metaData.getColumnCount(); i++) {
                     String colName = metaData.getColumnName(i);
                     Class<?> type = caseInsensitiveTypeOverrides.get(colName);
