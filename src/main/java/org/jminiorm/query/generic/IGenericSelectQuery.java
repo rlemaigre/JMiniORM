@@ -46,11 +46,18 @@ public interface IGenericSelectQuery extends IGenericQuery {
     <T> IPrimitiveResultSet<T> asPrimitive(Class<T> clazz);
 
     /**
-     * Returns the result set as Maps.
+     * Returns the result set as Maps String Object.
      *
      * @return
      */
-    IMapResultSet asMap();
+    IMapResultSet<Object> asMap();
+
+    /**
+     * Returns the result set as Maps String T.
+     *
+     * @return
+     */
+    <T> IMapResultSet<T> asMap(Class<T> type);
 
     /**
      * Returns the result set as objects of type T.

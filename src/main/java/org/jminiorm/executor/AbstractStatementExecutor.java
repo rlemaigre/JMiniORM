@@ -88,7 +88,9 @@ public abstract class AbstractStatementExecutor implements IStatementExecutor {
     protected Object getObject(ResultSet rs, ResultSetMetaData metaData, int columnIndex, Class<?> type)
             throws DBException {
         try {
-            if (type == String.class)
+            if (type == Object.class)
+                return rs.getObject(columnIndex);
+            else if (type == String.class)
                 return rs.getString(columnIndex);
             else if (type == Integer.class || type == int.class)
                 return rs.getInt(columnIndex);

@@ -1,11 +1,16 @@
 package org.jminiorm.query.generic;
 
-import org.jminiorm.IQueryTarget;
-import org.jminiorm.query.AbstractQuery;
-import org.jminiorm.resultset.*;
-
 import java.util.Arrays;
 import java.util.List;
+
+import org.jminiorm.IQueryTarget;
+import org.jminiorm.query.AbstractQuery;
+import org.jminiorm.resultset.IMapResultSet;
+import org.jminiorm.resultset.IObjectResultSet;
+import org.jminiorm.resultset.IPrimitiveResultSet;
+import org.jminiorm.resultset.MapResultSet;
+import org.jminiorm.resultset.ObjectResultSet;
+import org.jminiorm.resultset.PrimitiveResultSet;
 
 public class GenericSelectQuery extends AbstractQuery implements IGenericSelectQuery {
 
@@ -43,8 +48,13 @@ public class GenericSelectQuery extends AbstractQuery implements IGenericSelectQ
     }
 
     @Override
-    public IMapResultSet asMap() {
-        return new MapResultSet(getQueryTarget(), getSQL(), params);
+    public IMapResultSet<Object> asMap() {
+        return new MapResultSet<Object>(getQueryTarget(), getSQL(), params, Object.class);
+    }
+
+    @Override
+    public <T> IMapResultSet<T> asMap(Class<T> type) {
+        return new MapResultSet<T>(getQueryTarget(), getSQL(), params, type);
     }
 
     @Override
