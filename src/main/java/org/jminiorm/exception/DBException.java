@@ -5,10 +5,15 @@ package org.jminiorm.exception;
  * there is nothing the caller can do about it. This avoid cluttering client code with try and catch blocks each time
  * the database is accessed.
  */
+@SuppressWarnings("serial")
 public class DBException extends RuntimeException {
 
     public DBException(Throwable t) {
         super(t);
+    }
+
+    public DBException(String string) {
+        this(new Exception(string));
     }
 
 }

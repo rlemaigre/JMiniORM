@@ -1,8 +1,5 @@
 package org.jminiorm;
 
-import org.jminiorm.attributeconverter.JsonAttributeConverter;
-
-import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -10,8 +7,18 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Index;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.jminiorm.attributeconverter.JsonAttributeConverter;
+
 @Table(name = "beans", indexes = {
-        @Index(name = "shortTextIndex", columnList = "short_text")
+    @Index(name = "shortTextIndex", columnList = "short_text")
 })
 public class Bean {
 
@@ -25,6 +32,7 @@ public class Bean {
     private LocalDate localDate;
     private LocalDateTime localDateTime;
     private Integer someInt;
+    private Boolean someBoolean;
     private byte[] bytes;
 
     @Column(name = "json")
@@ -38,6 +46,14 @@ public class Bean {
 
     public Bean(String shortText) {
         this.shortText = shortText;
+    }
+
+    public Boolean getSomeBoolean() {
+        return someBoolean;
+    }
+
+    public void setSomeBoolean(Boolean someBoolean) {
+        this.someBoolean = someBoolean;
     }
 
     public Integer getId() {
@@ -123,7 +139,7 @@ public class Bean {
     public boolean compareWithoutId(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Bean bean = (Bean) o;
+        Bean bean = (Bean)o;
         return Objects.equals(shortText, bean.shortText) &&
                 Objects.equals(longText, bean.longText) &&
                 Objects.equals(date, bean.date) &&
@@ -132,7 +148,8 @@ public class Bean {
                 Objects.equals(someInt, bean.someInt) &&
                 Arrays.equals(bytes, bean.bytes) &&
                 Objects.equals(subBeans, bean.subBeans) &&
-                Objects.equals(notStored, bean.notStored);
+                Objects.equals(notStored, bean.notStored) &&
+                Objects.equals(someBoolean, someBoolean);
     }
 
     public static class ListSubBeanJsonAttributeConverter extends JsonAttributeConverter<List<SubBean>> {
