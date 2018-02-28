@@ -1,11 +1,15 @@
 package org.jminiorm.executor;
 
-import org.jminiorm.IQueryTarget;
-import org.jminiorm.exception.DBException;
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.jminiorm.IQueryTarget;
+import org.jminiorm.exception.DBException;
 
 /**
  * The default implementation of IStatementExecutor.
@@ -25,10 +29,10 @@ public class DefaultStatementExecutor extends AbstractStatementExecutor {
                 stmt.executeUpdate();
                 try (ResultSet rs = stmt.getGeneratedKeys()) {
                     Long key = null;
-                    if (rs != null && rs.next()) {
+                    if (rs != null && rs.next() && (rs.getObject(1) instanceof Long)) {
                         key = rs.getLong(1);
+                        generatedKeys.add(key);
                     }
-                    generatedKeys.add(key);
                 }
             }
             return generatedKeys;
