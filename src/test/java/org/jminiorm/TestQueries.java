@@ -12,7 +12,6 @@ import java.util.Date;
 import java.util.Map;
 
 import org.h2.tools.Server;
-import org.jminiorm.dialect.PostgreSQLDialect;
 import org.jminiorm.executor.BatchStatementExecutor;
 import org.jminiorm.executor.DefaultStatementExecutor;
 import org.jminiorm.utils.RSUtils;
@@ -67,17 +66,17 @@ public class TestQueries {
     }
 
     // @Test
-    public void testPostgreSQL() throws Exception {
-        Database db;
-        IDatabaseConfig config;
-        config = new DatabaseConfig.Builder()
-                .dataSource("jdbc:postgresql://localhost/jminiorm", "jminiorm", "jminiorm")
-                .statementExecutor(new DefaultStatementExecutor())
-                .dialect(new PostgreSQLDialect())
-                .build();
-        db = new Database(config);
-        testQueriesOnDatabase(db);
-    }
+    // public void testPostgreSQL() throws Exception {
+    // Database db;
+    // IDatabaseConfig config;
+    // config = new DatabaseConfig.Builder()
+    // .dataSource("jdbc:postgresql://localhost/jminiorm", "jminiorm", "jminiorm")
+    // .statementExecutor(new DefaultStatementExecutor())
+    // .dialect(new PostgreSQLDialect())
+    // .build();
+    // db = new Database(config);
+    // testQueriesOnDatabase(db);
+    // }
 
     protected void testQueriesOnDatabase(IDatabase db) throws Exception {
         // Table creation :
