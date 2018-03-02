@@ -33,8 +33,9 @@ public class DefaultStatementExecutor extends AbstractStatementExecutor {
                 stmt.executeUpdate();
                 if (generatedColumn != null) {
                     try (ResultSet rs = stmt.getGeneratedKeys()) {
+                        int generatedKeyIndex = getGeneratedColumnIndex(rs, generatedColumn);
                         rs.next();
-                        generatedKeys.add(rs.getLong(1));
+                        generatedKeys.add(rs.getLong(generatedKeyIndex));
                     }
                 }
             }

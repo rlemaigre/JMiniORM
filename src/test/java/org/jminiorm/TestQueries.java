@@ -9,10 +9,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 import org.h2.tools.Server;
+import org.jminiorm.dialect.PostgreSQLDialect;
 import org.jminiorm.executor.BatchStatementExecutor;
 import org.jminiorm.executor.DefaultStatementExecutor;
 import org.jminiorm.utils.RSUtils;
@@ -43,19 +43,21 @@ public class TestQueries {
     }
 
     @Test
-    public void testQueries() throws Exception {
+    public void testDefaultExecutionMode() throws Exception {
         Database db;
         IDatabaseConfig config;
-
-        // Test database in default execution mode :
         config = new DatabaseConfig.Builder()
                 .dataSource("jdbc:h2:mem:test-single;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;", "", "")
                 .statementExecutor(new DefaultStatementExecutor())
                 .build();
         db = new Database(config);
         testQueriesOnDatabase(db);
+    }
 
-        // Test database in batch execution mode :
+    @Test
+    public void testBatchExecutionMode() throws Exception {
+        Database db;
+        IDatabaseConfig config;
         config = new DatabaseConfig.Builder()
                 .dataSource("jdbc:h2:mem:test-batch;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;", "", "")
                 .statementExecutor(new BatchStatementExecutor())
@@ -64,15 +66,35 @@ public class TestQueries {
         testQueriesOnDatabase(db);
     }
 
+    @Test
+    public void testPostgreSQL() throws Exception {
+        Database db;
+        IDatabaseConfig config;
+        config = new DatabaseConfig.Builder()
+                .dataSource("jdbc:postgresql://localhost/jminiorm", "jminiorm", "jminiorm")
+                .statementExecutor(new DefaultStatementExecutor())
+                .dialect(new PostgreSQLDialect())
+                .build();
+        db = new Database(config);
+        testQueriesOnDatabase(db);
+    }
+
     protected void testQueriesOnDatabase(IDatabase db) throws Exception {
         // Table creation :
+        db.sql("drop table if exists beans");
         db.createTable(Bean.class);
-        Map<String,Object> map = db.select("show tables").asMap().one();
-        assertEquals("BEANS", map.get("table_name"));
-        List<Map<String,Object>> list = db.select("show columns from beans").asMap().list();
-        assertEquals(10, list.size());
 
-        // Insertion and reselect :
+        // ORM queries :
+        testORMQueries(db);
+
+        // Generic selects :
+        testGenericQueries(db);
+    }
+
+    private void testORMQueries(IDatabase db) throws Exception {
+        db.sql("truncate table beans");
+
+        // Insert :
         Bean b1 = new Bean();
         b1.setLocalDate(LocalDate.now());
         b1.setLocalDateTime(LocalDateTime.now());
@@ -98,7 +120,18 @@ public class TestQueries {
         db.delete(b3);
         assertEquals(0, db.select(Bean.class).list().size());
 
-        // Generic selects :
+        // ORM select :
+        db.sql("truncate table beans");
+        db.insert(Arrays.asList(
+                new Bean("b1"),
+                new Bean("b2"),
+                new Bean("b3")));
+        Map<String,Bean> resultAsIndexedObject = RSUtils.index(db.select(Bean.class).list(), "shortText");
+        assertEquals(3, resultAsIndexedObject.size());
+        assertEquals("b1", resultAsIndexedObject.get("b1").getShortText());
+    }
+
+    private void testGenericQueries(IDatabase db) throws Exception {
         db.sql("truncate table beans");
         db.insert(Arrays.asList(
                 new Bean("b1"),
@@ -114,17 +147,6 @@ public class TestQueries {
                 .list(), "short_text");
         assertEquals(3, resultAsIndexedMaps.size());
         assertEquals("b1", resultAsIndexedMaps.get("b1").get("short_text"));
-        List<Pojo> pojos = db.select("show columns from beans").asObject(Pojo.class).list();
-        assertEquals(10, pojos.size());
-        Map<String,List<Pojo>> groups = RSUtils.group(db.select("show columns from beans").asObject(Pojo.class).list(),
-                "field");
-        assertEquals(10, groups.size());
-        assertEquals("VARBINARY(2147483647)", groups.get("BYTES").get(0).getType());
-
-        // ORM select :
-        Map<String,Bean> resultAsIndexedObject = RSUtils.index(db.select(Bean.class).list(), "shortText");
-        assertEquals(3, resultAsIndexedObject.size());
-        assertEquals("b1", resultAsIndexedObject.get("b1").getShortText());
     }
 
 }

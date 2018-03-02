@@ -81,8 +81,9 @@ public class BatchStatementExecutor extends AbstractStatementExecutor {
         else {
             List<Long> generatedKeys = new ArrayList<>();
             try (ResultSet rs = stmt.getGeneratedKeys()) {
+                int generatedKeyIndex = getGeneratedColumnIndex(rs, generatedColumn);
                 while (rs.next()) {
-                    generatedKeys.add(rs.getLong(1));
+                    generatedKeys.add(rs.getLong(generatedKeyIndex));
                 }
                 return generatedKeys;
             } catch (SQLException e) {

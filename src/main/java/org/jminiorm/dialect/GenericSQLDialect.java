@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.jminiorm.exception.DBException;
 import org.jminiorm.mapping.ColumnMapping;
 import org.jminiorm.mapping.Index;
 import org.jminiorm.mapping.ORMapping;
@@ -95,23 +96,22 @@ public class GenericSQLDialect implements ISQLDialect {
         return sb.toString();
     }
 
-    protected String sqlForAutoIncrement() {
-        return "AUTO_INCREMENT";
-    }
-
     protected String sqlForColumnType(ColumnMapping columnMapping) {
         if (columnMapping.getConverter() != null)
-            return sqlForColumnType(String.class, null, null, null);
+            return sqlForColumnType(String.class, null, null, null, false);
         else {
             Class<?> javaType = columnMapping.getPropertyDescriptor().getPropertyType();
             Integer length = columnMapping.getLength();
             Integer scale = columnMapping.getScale();
             Integer precision = columnMapping.getPrecision();
-            return sqlForColumnType(javaType, length, scale, precision);
+            boolean generated = columnMapping.isGenerated();
+            return sqlForColumnType(javaType, length, scale, precision, generated);
         }
     }
 
-    protected String sqlForColumnType(Class<?> javaType, Integer length, Integer scale, Integer precision) {
+    protected String sqlForColumnType(Class<?> javaType, Integer length, Integer scale, Integer precision,
+            boolean generated) {
+        if ((javaType == Short.class) || (javaType == short.class)) return "SMALLINT";
         if ((javaType == Integer.class) || (javaType == int.class)) return "INTEGER";
         if ((javaType == Long.class) || (javaType == long.class)) return "BIGINT";
         if ((javaType == Float.class) || (javaType == float.class)) return "REAL";
@@ -128,6 +128,10 @@ public class GenericSQLDialect implements ISQLDialect {
             return "DATE";
         if (javaType == BigDecimal.class) return "NUMERIC(" + precision + "," + scale + ")";
         throw new RuntimeException("No SQL type defined in dialect for java type " + javaType.getName());
+    }
+
+    protected String sqlForAutoIncrement() {
+        return "AUTO_INCREMENT";
     }
 
     protected String sqlForPrimaryKey(ORMapping mapping, ColumnMapping idColumnMapping) {

@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -17,6 +18,32 @@ import org.jminiorm.exception.DBException;
 import org.jminiorm.utils.CaseInsensitiveMap;
 
 public abstract class AbstractStatementExecutor implements IStatementExecutor {
+
+    public enum SetNullParameterMethod {
+        /**
+         * Uses stmt.setNull(..., Types.INTEGER). Works with Sybase.
+         */
+        SETNULL,
+        /**
+         * Uses stmt.setObject(..., null). Works with H2 and PostgreSQL.
+         */
+        SETOBJECT;
+    }
+
+    private SetNullParameterMethod setNullParameterMethod;
+
+    public AbstractStatementExecutor() {
+        this(SetNullParameterMethod.SETOBJECT);
+    }
+
+    public AbstractStatementExecutor(SetNullParameterMethod setNullParameterMethod) {
+        super();
+        this.setNullParameterMethod = setNullParameterMethod;
+    }
+
+    public SetNullParameterMethod getSetNullParameterMethod() {
+        return setNullParameterMethod;
+    }
 
     @Override
     public List<Map<String,Object>> executeQuery(IQueryTarget target, String sql, List<Object> params,
@@ -70,7 +97,7 @@ public abstract class AbstractStatementExecutor implements IStatementExecutor {
 
     protected void setParameters(PreparedStatement stmt, List<Object> params) throws SQLException {
         for (int i = 1; i <= params.size(); i++) {
-            stmt.setObject(i, params.get(i - 1));
+            setObject(stmt, i, params.get(i - 1));
         }
     }
 
@@ -115,6 +142,64 @@ public abstract class AbstractStatementExecutor implements IStatementExecutor {
                 return rs.getObject(columnIndex, type);
         } catch (SQLException e) {
             throw new DBException(e);
+        }
+    }
+
+    protected void setObject(PreparedStatement stmt, int columnIndex, Object param)
+            throws DBException {
+        try {
+            if (param == null) {
+                if (getSetNullParameterMethod() == SetNullParameterMethod.SETNULL)
+                    stmt.setNull(columnIndex, Types.INTEGER);
+                else
+                    stmt.setObject(columnIndex, null);
+            } else if (param instanceof String)
+                stmt.setString(columnIndex, (String)param);
+            else if (param instanceof Integer)
+                stmt.setInt(columnIndex, (Integer)param);
+            else if (param instanceof BigDecimal)
+                stmt.setBigDecimal(columnIndex, (BigDecimal)param);
+            else if (param instanceof Boolean)
+                stmt.setBoolean(columnIndex, (Boolean)param);
+            else if (param instanceof byte[])
+                stmt.setBytes(columnIndex, (byte[])param);
+            else if (param instanceof Date) {
+                Timestamp timestamp = new Timestamp(((Date)param).getTime());
+                stmt.setTimestamp(columnIndex, timestamp);
+            } else if (param instanceof Double)
+                stmt.setDouble(columnIndex, (Double)param);
+            else if (param instanceof Float)
+                stmt.setFloat(columnIndex, (Float)param);
+            else if (param instanceof Long)
+                stmt.setLong(columnIndex, (Long)param);
+            else if (param instanceof Short)
+                stmt.setShort(columnIndex, (Short)param);
+            else
+                stmt.setObject(columnIndex, param);
+        } catch (SQLException e) {
+            throw new DBException(e);
+        }
+    }
+
+    /**
+     * Returns the index of the generated column in the generated keys result set.
+     * 
+     * @param rs
+     * @param generatedColumn
+     * @return
+     * @throws SQLException
+     */
+    protected int getGeneratedColumnIndex(ResultSet rs, String generatedColumn) throws SQLException {
+        ResultSetMetaData metaData = rs.getMetaData();
+        if (metaData.getColumnCount() == 1)
+            return 1;
+        else {
+            // PostgreSQL :
+            for (int i = 1; i <= metaData.getColumnCount(); i++) {
+                if (metaData.getColumnName(i).equalsIgnoreCase(generatedColumn))
+                    return i;
+            }
+            throw new DBException("Generated column " + generatedColumn + " not found in generated keys result set.");
         }
     }
 
