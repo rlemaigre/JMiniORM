@@ -66,7 +66,7 @@ public class TestQueries {
         testQueriesOnDatabase(db);
     }
 
-    @Test
+    // @Test
     public void testPostgreSQL() throws Exception {
         Database db;
         IDatabaseConfig config;
