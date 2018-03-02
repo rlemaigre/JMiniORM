@@ -47,11 +47,11 @@ public class BatchStatementExecutor extends AbstractStatementExecutor {
             boolean remains = false;
             for (int i = 1; i <= params.size(); i++) {
                 List<Object> curParams = params.get(i - 1);
-                setParameters(stmt, curParams);
+                setParameters(target, stmt, curParams);
                 stmt.addBatch();
                 if (i % batchSize == 0) {
                     stmt.executeBatch();
-                    generatedKeys.addAll(getGeneratedKeys(stmt, generatedColumn));
+                    generatedKeys.addAll(getGeneratedKeys(target, stmt, generatedColumn));
                     remains = false;
                 } else {
                     remains = true;
@@ -59,7 +59,7 @@ public class BatchStatementExecutor extends AbstractStatementExecutor {
             }
             if (remains) {
                 stmt.executeBatch();
-                generatedKeys.addAll(getGeneratedKeys(stmt, generatedColumn));
+                generatedKeys.addAll(getGeneratedKeys(target, stmt, generatedColumn));
             }
             return generatedKeys;
         } catch (SQLException e) {
@@ -76,12 +76,12 @@ public class BatchStatementExecutor extends AbstractStatementExecutor {
         }
     }
 
-    protected List<Long> getGeneratedKeys(PreparedStatement stmt, String generatedColumn) {
+    protected List<Long> getGeneratedKeys(IQueryTarget target, PreparedStatement stmt, String generatedColumn) {
         if (generatedColumn == null) return Collections.emptyList();
         else {
             List<Long> generatedKeys = new ArrayList<>();
             try (ResultSet rs = stmt.getGeneratedKeys()) {
-                int generatedKeyIndex = getGeneratedColumnIndex(rs, generatedColumn);
+                int generatedKeyIndex = getGeneratedColumnIndex(target, rs, generatedColumn);
                 while (rs.next()) {
                     generatedKeys.add(rs.getLong(generatedKeyIndex));
                 }

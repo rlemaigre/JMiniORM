@@ -14,36 +14,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.jminiorm.IQueryTarget;
+import org.jminiorm.dialect.SetNullParameterMethod;
 import org.jminiorm.exception.DBException;
 import org.jminiorm.utils.CaseInsensitiveMap;
 
 public abstract class AbstractStatementExecutor implements IStatementExecutor {
-
-    public enum SetNullParameterMethod {
-        /**
-         * Uses stmt.setNull(..., Types.INTEGER). Works with Sybase.
-         */
-        SETNULL,
-        /**
-         * Uses stmt.setObject(..., null). Works with H2 and PostgreSQL.
-         */
-        SETOBJECT;
-    }
-
-    private SetNullParameterMethod setNullParameterMethod;
-
-    public AbstractStatementExecutor() {
-        this(SetNullParameterMethod.SETOBJECT);
-    }
-
-    public AbstractStatementExecutor(SetNullParameterMethod setNullParameterMethod) {
-        super();
-        this.setNullParameterMethod = setNullParameterMethod;
-    }
-
-    public SetNullParameterMethod getSetNullParameterMethod() {
-        return setNullParameterMethod;
-    }
 
     @Override
     public List<Map<String,Object>> executeQuery(IQueryTarget target, String sql, List<Object> params,
@@ -56,7 +31,7 @@ public abstract class AbstractStatementExecutor implements IStatementExecutor {
             // Get raw ResultSet :
             con = target.getConnection();
             stmt = con.prepareStatement(sql);
-            setParameters(stmt, params);
+            setParameters(target, stmt, params);
             rs = stmt.executeQuery();
 
             // Convert ResultSet to a list of maps :
@@ -71,7 +46,7 @@ public abstract class AbstractStatementExecutor implements IStatementExecutor {
                     if (type == null)
                         row.put(colName, rs.getObject(i));
                     else {
-                        row.put(colName, getObject(rs, metaData, i, type));
+                        row.put(colName, getObject(target, rs, metaData, i, type));
                     }
                 }
                 rows.add(row);
@@ -95,9 +70,9 @@ public abstract class AbstractStatementExecutor implements IStatementExecutor {
         }
     }
 
-    protected void setParameters(PreparedStatement stmt, List<Object> params) throws SQLException {
+    protected void setParameters(IQueryTarget target, PreparedStatement stmt, List<Object> params) throws SQLException {
         for (int i = 1; i <= params.size(); i++) {
-            setObject(stmt, i, params.get(i - 1));
+            setObject(target, stmt, i, params.get(i - 1));
         }
     }
 
@@ -112,7 +87,8 @@ public abstract class AbstractStatementExecutor implements IStatementExecutor {
      * @return
      * @throws DBException
      */
-    protected Object getObject(ResultSet rs, ResultSetMetaData metaData, int columnIndex, Class<?> type)
+    protected Object getObject(IQueryTarget target, ResultSet rs, ResultSetMetaData metaData, int columnIndex,
+            Class<?> type)
             throws DBException {
         try {
             if (type == Object.class)
@@ -145,11 +121,11 @@ public abstract class AbstractStatementExecutor implements IStatementExecutor {
         }
     }
 
-    protected void setObject(PreparedStatement stmt, int columnIndex, Object param)
+    protected void setObject(IQueryTarget target, PreparedStatement stmt, int columnIndex, Object param)
             throws DBException {
         try {
             if (param == null) {
-                if (getSetNullParameterMethod() == SetNullParameterMethod.SETNULL)
+                if (target.getConfig().getDialect().getSetNullParameterMethod() == SetNullParameterMethod.SETNULL)
                     stmt.setNull(columnIndex, Types.INTEGER);
                 else
                     stmt.setObject(columnIndex, null);
@@ -189,12 +165,12 @@ public abstract class AbstractStatementExecutor implements IStatementExecutor {
      * @return
      * @throws SQLException
      */
-    protected int getGeneratedColumnIndex(ResultSet rs, String generatedColumn) throws SQLException {
+    protected int getGeneratedColumnIndex(IQueryTarget target, ResultSet rs, String generatedColumn)
+            throws SQLException {
         ResultSetMetaData metaData = rs.getMetaData();
         if (metaData.getColumnCount() == 1)
             return 1;
         else {
-            // PostgreSQL :
             for (int i = 1; i <= metaData.getColumnCount(); i++) {
                 if (metaData.getColumnName(i).equalsIgnoreCase(generatedColumn))
                     return i;

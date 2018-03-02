@@ -223,4 +223,9 @@ public class GenericSQLDialect implements ISQLDialect {
             return identifier;
     }
 
+    @Override
+    public SetNullParameterMethod getSetNullParameterMethod() {
+        return SetNullParameterMethod.SETOBJECT;
+    }
+
 }

@@ -29,11 +29,11 @@ public class DefaultStatementExecutor extends AbstractStatementExecutor {
             else
                 stmt = con.prepareStatement(sql);
             for (List<Object> curParams : params) {
-                setParameters(stmt, curParams);
+                setParameters(target, stmt, curParams);
                 stmt.executeUpdate();
                 if (generatedColumn != null) {
                     try (ResultSet rs = stmt.getGeneratedKeys()) {
-                        int generatedKeyIndex = getGeneratedColumnIndex(rs, generatedColumn);
+                        int generatedKeyIndex = getGeneratedColumnIndex(target, rs, generatedColumn);
                         rs.next();
                         generatedKeys.add(rs.getLong(generatedKeyIndex));
                     }

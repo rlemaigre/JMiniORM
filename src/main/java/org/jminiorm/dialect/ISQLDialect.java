@@ -1,8 +1,8 @@
 package org.jminiorm.dialect;
 
-import org.jminiorm.mapping.ORMapping;
-
 import java.util.List;
+
+import org.jminiorm.mapping.ORMapping;
 
 /**
  * Interface of objects responsible for turing the data that defines queries into executable SQL statements. The
@@ -23,4 +23,6 @@ public interface ISQLDialect {
     String sqlForCreateTable(ORMapping mapping);
 
     List<String> sqlForCreateIndexes(ORMapping mapping);
+
+    SetNullParameterMethod getSetNullParameterMethod();
 }
