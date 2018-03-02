@@ -1,18 +1,18 @@
 package org.jminiorm.query.generic;
 
-import org.jminiorm.IQueryTarget;
-import org.jminiorm.exception.DBException;
-import org.jminiorm.query.AbstractQuery;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import org.jminiorm.IQueryTarget;
+import org.jminiorm.exception.DBException;
+import org.jminiorm.query.AbstractQuery;
 
 public class GenericInsertQuery extends AbstractQuery implements IGenericInsertQuery {
 
     private String table;
     private String generatedColumn;
-    private List<Map<String, Object>> values = new ArrayList<>();
+    private List<Map<String,Object>> values = new ArrayList<>();
 
     public GenericInsertQuery(IQueryTarget target) {
         super(target);
@@ -31,13 +31,13 @@ public class GenericInsertQuery extends AbstractQuery implements IGenericInsertQ
     }
 
     @Override
-    public IGenericInsertQuery addOne(Map<String, Object> values) {
+    public IGenericInsertQuery addOne(Map<String,Object> values) {
         this.values.add(values);
         return this;
     }
 
     @Override
-    public IGenericInsertQuery addMany(List<Map<String, Object>> values) {
+    public IGenericInsertQuery addMany(List<Map<String,Object>> values) {
         this.values.addAll(values);
         return this;
     }
@@ -54,7 +54,7 @@ public class GenericInsertQuery extends AbstractQuery implements IGenericInsertQ
 
         // Parameters :
         List<List<Object>> params = new ArrayList<>();
-        for (Map<String, Object> val : values) {
+        for (Map<String,Object> val : values) {
             List<Object> curParams = new ArrayList<>();
             for (String col : columns) {
                 curParams.add(val.get(col));
@@ -63,7 +63,7 @@ public class GenericInsertQuery extends AbstractQuery implements IGenericInsertQ
         }
 
         // Execute query :
-        List<Long> generatedKeys = getQueryTarget().executeUpdate(sql, params);
+        List<Long> generatedKeys = getQueryTarget().executeUpdate(sql, params, generatedColumn);
         if (generatedColumn != null) {
             for (int i = 0; i < generatedKeys.size(); i++) {
                 values.get(i).put(generatedColumn, generatedKeys.get(i));

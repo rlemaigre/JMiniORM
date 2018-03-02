@@ -1,11 +1,16 @@
 package org.jminiorm.executor;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.jminiorm.IQueryTarget;
 import org.jminiorm.exception.DBException;
-
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Executes insert, update and delete statements in JDBC batch mode, which may give a huge performance boost when
@@ -28,13 +33,17 @@ public class BatchStatementExecutor extends AbstractStatementExecutor {
     }
 
     @Override
-    public List<Long> executeUpdate(IQueryTarget target, String sql, List<List<Object>> params) throws DBException {
+    public List<Long> executeUpdate(IQueryTarget target, String sql, List<List<Object>> params, String generatedColumn)
+            throws DBException {
         Connection con = null;
         PreparedStatement stmt = null;
         try {
             List<Long> generatedKeys = new ArrayList<>();
             con = target.getConnection();
-            stmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            if (generatedColumn != null)
+                stmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            else
+                stmt = con.prepareStatement(sql);
             boolean remains = false;
             for (int i = 1; i <= params.size(); i++) {
                 List<Object> curParams = params.get(i - 1);
@@ -42,7 +51,7 @@ public class BatchStatementExecutor extends AbstractStatementExecutor {
                 stmt.addBatch();
                 if (i % batchSize == 0) {
                     stmt.executeBatch();
-                    generatedKeys.addAll(getGeneratedKeys(stmt));
+                    generatedKeys.addAll(getGeneratedKeys(stmt, generatedColumn));
                     remains = false;
                 } else {
                     remains = true;
@@ -50,7 +59,7 @@ public class BatchStatementExecutor extends AbstractStatementExecutor {
             }
             if (remains) {
                 stmt.executeBatch();
-                generatedKeys.addAll(getGeneratedKeys(stmt));
+                generatedKeys.addAll(getGeneratedKeys(stmt, generatedColumn));
             }
             return generatedKeys;
         } catch (SQLException e) {
@@ -67,17 +76,18 @@ public class BatchStatementExecutor extends AbstractStatementExecutor {
         }
     }
 
-    protected List<Long> getGeneratedKeys(PreparedStatement stmt) {
-        List<Long> generatedKeys = new ArrayList<>();
-        try (ResultSet rs = stmt.getGeneratedKeys()) {
-            if (rs != null) {
+    protected List<Long> getGeneratedKeys(PreparedStatement stmt, String generatedColumn) {
+        if (generatedColumn == null) return Collections.emptyList();
+        else {
+            List<Long> generatedKeys = new ArrayList<>();
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
                 while (rs.next()) {
                     generatedKeys.add(rs.getLong(1));
                 }
+                return generatedKeys;
+            } catch (SQLException e) {
+                throw new DBException(e);
             }
-            return generatedKeys;
-        } catch (SQLException e) {
-            throw new DBException(e);
         }
     }
 

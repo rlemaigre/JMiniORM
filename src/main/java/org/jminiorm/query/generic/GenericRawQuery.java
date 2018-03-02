@@ -1,12 +1,12 @@
 package org.jminiorm.query.generic;
 
-import org.jminiorm.IQueryTarget;
-import org.jminiorm.exception.DBException;
-import org.jminiorm.query.AbstractQuery;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import org.jminiorm.IQueryTarget;
+import org.jminiorm.exception.DBException;
+import org.jminiorm.query.AbstractQuery;
 
 public class GenericRawQuery extends AbstractQuery implements IGenericRawQuery {
 
@@ -28,6 +28,6 @@ public class GenericRawQuery extends AbstractQuery implements IGenericRawQuery {
     public void execute() throws DBException {
         List<List<Object>> params = new ArrayList<>();
         params.add(this.params);
-        getQueryTarget().executeUpdate(sql, params);
+        getQueryTarget().executeUpdate(sql, params, null);
     }
 }

@@ -16,7 +16,7 @@ public class SLF4JLoggingStatementExecutor extends AbstractLoggingStatementExecu
 
     @Override
     protected void log(String message) {
-        logger.debug(message);
+        logger.info(message);
     }
 
 }

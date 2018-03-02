@@ -17,21 +17,24 @@ import org.jminiorm.exception.DBException;
 public class DefaultStatementExecutor extends AbstractStatementExecutor {
 
     @Override
-    public List<Long> executeUpdate(IQueryTarget target, String sql, List<List<Object>> params) throws DBException {
+    public List<Long> executeUpdate(IQueryTarget target, String sql, List<List<Object>> params, String generatedColumn)
+            throws DBException {
         Connection con = null;
         PreparedStatement stmt = null;
         try {
             List<Long> generatedKeys = new ArrayList<>();
             con = target.getConnection();
-            stmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            if (generatedColumn != null)
+                stmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            else
+                stmt = con.prepareStatement(sql);
             for (List<Object> curParams : params) {
                 setParameters(stmt, curParams);
                 stmt.executeUpdate();
-                try (ResultSet rs = stmt.getGeneratedKeys()) {
-                    Long key = null;
-                    if (rs != null && rs.next() && (rs.getObject(1) instanceof Long)) {
-                        key = rs.getLong(1);
-                        generatedKeys.add(key);
+                if (generatedColumn != null) {
+                    try (ResultSet rs = stmt.getGeneratedKeys()) {
+                        rs.next();
+                        generatedKeys.add(rs.getLong(1));
                     }
                 }
             }

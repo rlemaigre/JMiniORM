@@ -1,10 +1,10 @@
 package org.jminiorm.executor;
 
-import org.jminiorm.IQueryTarget;
-import org.jminiorm.exception.DBException;
-
 import java.util.List;
 import java.util.Map;
+
+import org.jminiorm.IQueryTarget;
+import org.jminiorm.exception.DBException;
 
 /**
  * Subclass to implement logging of SQL statements and parameters.
@@ -23,9 +23,10 @@ public abstract class AbstractLoggingStatementExecutor implements IStatementExec
     }
 
     @Override
-    public List<Long> executeUpdate(IQueryTarget target, String sql, List<List<Object>> params) throws DBException {
+    public List<Long> executeUpdate(IQueryTarget target, String sql, List<List<Object>> params, String generatedColumn)
+            throws DBException {
         logUpdate(target, sql, params);
-        return wrapped.executeUpdate(target, sql, params);
+        return wrapped.executeUpdate(target, sql, params, generatedColumn);
     }
 
     protected void logUpdate(IQueryTarget target, String sql, List<List<Object>> params) throws DBException {
@@ -36,14 +37,14 @@ public abstract class AbstractLoggingStatementExecutor implements IStatementExec
     }
 
     @Override
-    public List<Map<String, Object>> executeQuery(IQueryTarget target, String sql, List<Object> params,
-                                                  Map<String, Class<?>> typeOverrides) throws DBException {
+    public List<Map<String,Object>> executeQuery(IQueryTarget target, String sql, List<Object> params,
+            Map<String,Class<?>> typeOverrides) throws DBException {
         logQuery(target, sql, params, typeOverrides);
         return wrapped.executeQuery(target, sql, params, typeOverrides);
     }
 
     protected void logQuery(IQueryTarget target, String sql, List<Object> params,
-                            Map<String, Class<?>> typeOverrides) throws DBException {
+            Map<String,Class<?>> typeOverrides) throws DBException {
         log("SQL : " + sql);
         log("Parameters : " + params.toString());
     }

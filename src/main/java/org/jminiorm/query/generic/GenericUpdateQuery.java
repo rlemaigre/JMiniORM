@@ -1,18 +1,18 @@
 package org.jminiorm.query.generic;
 
-import org.jminiorm.IQueryTarget;
-import org.jminiorm.exception.DBException;
-import org.jminiorm.query.AbstractQuery;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import org.jminiorm.IQueryTarget;
+import org.jminiorm.exception.DBException;
+import org.jminiorm.query.AbstractQuery;
 
 public class GenericUpdateQuery extends AbstractQuery implements IGenericUpdateQuery {
 
     private String table;
     private String idColumn;
-    private List<Map<String, Object>> values = new ArrayList<>();
+    private List<Map<String,Object>> values = new ArrayList<>();
 
     public GenericUpdateQuery(IQueryTarget target) {
         super(target);
@@ -31,13 +31,13 @@ public class GenericUpdateQuery extends AbstractQuery implements IGenericUpdateQ
     }
 
     @Override
-    public IGenericUpdateQuery addOne(Map<String, Object> values) {
+    public IGenericUpdateQuery addOne(Map<String,Object> values) {
         this.values.add(values);
         return this;
     }
 
     @Override
-    public IGenericUpdateQuery addMany(List<Map<String, Object>> values) {
+    public IGenericUpdateQuery addMany(List<Map<String,Object>> values) {
         this.values.addAll(values);
         return this;
     }
@@ -55,7 +55,7 @@ public class GenericUpdateQuery extends AbstractQuery implements IGenericUpdateQ
 
         // Parameters :
         List<List<Object>> params = new ArrayList<>();
-        for (Map<String, Object> val : values) {
+        for (Map<String,Object> val : values) {
             List<Object> curParams = new ArrayList<>();
             for (String col : columns) {
                 curParams.add(val.get(col));
@@ -65,7 +65,7 @@ public class GenericUpdateQuery extends AbstractQuery implements IGenericUpdateQ
         }
 
         // Execute query :
-        getQueryTarget().executeUpdate(sql, params);
+        getQueryTarget().executeUpdate(sql, params, null);
     }
 
 }

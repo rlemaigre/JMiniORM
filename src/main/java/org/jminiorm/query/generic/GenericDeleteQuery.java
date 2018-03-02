@@ -1,10 +1,10 @@
 package org.jminiorm.query.generic;
 
-import org.jminiorm.IQueryTarget;
-import org.jminiorm.exception.DBException;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.jminiorm.IQueryTarget;
+import org.jminiorm.exception.DBException;
 
 public class GenericDeleteQuery extends AbstractGenericQuery implements IGenericDeleteQuery {
 
@@ -55,6 +55,6 @@ public class GenericDeleteQuery extends AbstractGenericQuery implements IGeneric
             params.add(curParams);
         }
 
-        getQueryTarget().executeUpdate(sql, params);
+        getQueryTarget().executeUpdate(sql, params, null);
     }
 }

@@ -1,10 +1,10 @@
 package org.jminiorm.executor;
 
-import org.jminiorm.IQueryTarget;
-import org.jminiorm.exception.DBException;
-
 import java.util.List;
 import java.util.Map;
+
+import org.jminiorm.IQueryTarget;
+import org.jminiorm.exception.DBException;
 
 /**
  * Interface of objects responsible for executing SQL statements.
@@ -16,10 +16,12 @@ public interface IStatementExecutor {
      *
      * @param sql
      * @param params
+     * @param generatedColumn
      * @return
      * @throws DBException
      */
-    List<Long> executeUpdate(IQueryTarget target, String sql, List<List<Object>> params) throws DBException;
+    List<Long> executeUpdate(IQueryTarget target, String sql, List<List<Object>> params, String generatedColumn)
+            throws DBException;
 
     /**
      * Executes the given SQL statement with the given set of parameters and returns the rows. Column values for each
@@ -34,7 +36,7 @@ public interface IStatementExecutor {
      * @return
      * @throws DBException
      */
-    List<Map<String, Object>> executeQuery(IQueryTarget target, String sql, List<Object> params,
-                                           Map<String, Class<?>> typeOverrides) throws DBException;
+    List<Map<String,Object>> executeQuery(IQueryTarget target, String sql, List<Object> params,
+            Map<String,Class<?>> typeOverrides) throws DBException;
 
 }

@@ -1,5 +1,10 @@
 package org.jminiorm;
 
+import java.sql.Connection;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
 import org.jminiorm.exception.DBException;
 import org.jminiorm.query.generic.IGenericDeleteQuery;
 import org.jminiorm.query.generic.IGenericInsertQuery;
@@ -9,11 +14,6 @@ import org.jminiorm.query.orm.IORMDeleteQuery;
 import org.jminiorm.query.orm.IORMInsertQuery;
 import org.jminiorm.query.orm.IORMSelectQuery;
 import org.jminiorm.query.orm.IORMUpdateQuery;
-
-import java.sql.Connection;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 public interface IQueryTarget {
 
@@ -45,7 +45,7 @@ public interface IQueryTarget {
     /**
      * Begins a generic select query.
      *
-     * @param sql    The whole SQL, except limit and offset.
+     * @param sql The whole SQL, except limit and offset.
      * @param params
      * @return
      */
@@ -206,10 +206,11 @@ public interface IQueryTarget {
      *
      * @param sql
      * @param params
+     * @param generatedColumn
      * @return
      * @throws DBException
      */
-    List<Long> executeUpdate(String sql, List<List<Object>> params) throws DBException;
+    List<Long> executeUpdate(String sql, List<List<Object>> params, String generatedColumn) throws DBException;
 
     /**
      * Executes the given SQL statement with the given set of parameters and returns the rows. Column values for each
@@ -223,8 +224,8 @@ public interface IQueryTarget {
      * @return
      * @throws DBException
      */
-    List<Map<String, Object>> executeQuery(String sql, List<Object> params,
-                                           Map<String, Class<?>> typeOverrides) throws DBException;
+    List<Map<String,Object>> executeQuery(String sql, List<Object> params,
+            Map<String,Class<?>> typeOverrides) throws DBException;
 
     /**
      * Returns a connection to the current database. Close, commit and rollback shouldn't be called on this connection.
