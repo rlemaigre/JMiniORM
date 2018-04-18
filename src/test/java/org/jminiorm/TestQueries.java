@@ -148,4 +148,13 @@ public class TestQueries {
         assertEquals("b1", resultAsIndexedMaps.get("b1").get("short_text"));
     }
 
+    private void testLocalDate(IDatabase db) throws Exception {
+        db.sql("truncate table beans");
+        Bean b = new Bean();
+        b.setLocalDate(LocalDate.now());
+        db.insert(b);
+        Map<String,Object> data = db.select("select localDate from beans").asMap().one();
+        assertEquals(LocalDate.now(), data.get("localDate"));
+    }
+
 }

@@ -8,6 +8,9 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -41,8 +44,10 @@ public abstract class AbstractStatementExecutor implements IStatementExecutor {
                 Map<String,Object> row = new CaseInsensitiveMap<>();
                 for (int i = 1; i <= metaData.getColumnCount(); i++) {
                     String colName = metaData.getColumnName(i);
+                    int jdbcType = metaData.getColumnType(i);
                     Class<?> type = caseInsensitiveTypeOverrides.get(colName);
                     if (type == null) type = caseInsensitiveTypeOverrides.get(null);
+                    if (type == null) type = target.getConfig().getJDBCTypeMapper().getJavaType(jdbcType);
                     if (type == null)
                         row.put(colName, rs.getObject(i));
                     else {
@@ -114,7 +119,19 @@ public abstract class AbstractStatementExecutor implements IStatementExecutor {
                 return rs.getLong(columnIndex);
             else if (type == Short.class || type == short.class)
                 return rs.getShort(columnIndex);
-            else
+            else if (type == LocalDate.class) {
+                Date d = (Date)getObject(target, rs, metaData, columnIndex, Date.class);
+                if (d == null) return null;
+                else {
+                    return d.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                }
+            } else if (type == LocalDateTime.class) {
+                Date d = (Date)getObject(target, rs, metaData, columnIndex, Date.class);
+                if (d == null) return null;
+                else {
+                    return d.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+                }
+            } else
                 return rs.getObject(columnIndex, type);
         } catch (SQLException e) {
             throw new DBException(e);
