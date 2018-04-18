@@ -23,7 +23,7 @@ public class MapResultSet<V> extends AbstractResultSet<Map<String,V>> implements
     @Override
     protected Map<String,Class<?>> typeMappings() {
         Map<String,Class<?>> mappings = new HashMap<>();
-        mappings.put(null, type);
+        if (type != Object.class) mappings.put(null, type);
         return mappings;
     }
 }
