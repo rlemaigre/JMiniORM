@@ -167,7 +167,14 @@ public abstract class AbstractStatementExecutor implements IStatementExecutor {
                 stmt.setLong(columnIndex, (Long)param);
             else if (param instanceof Short)
                 stmt.setShort(columnIndex, (Short)param);
-            else
+            else if (param instanceof LocalDate) {
+                LocalDate ld = (LocalDate)param;
+                Timestamp timestamp = Timestamp.valueOf(ld.atStartOfDay());
+                stmt.setTimestamp(columnIndex, timestamp);
+            } else if (param instanceof LocalDateTime) {
+                Timestamp timestamp = Timestamp.valueOf((LocalDateTime)param);
+                stmt.setTimestamp(columnIndex, timestamp);
+            } else
                 stmt.setObject(columnIndex, param);
         } catch (SQLException e) {
             throw new DBException(e);
