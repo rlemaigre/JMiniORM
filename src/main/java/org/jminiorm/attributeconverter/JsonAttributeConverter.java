@@ -1,15 +1,12 @@
 package org.jminiorm.attributeconverter;
 
-import java.io.IOException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.databind.ObjectWriter;
+import java.io.IOException;
 
 @Converter
 public abstract class JsonAttributeConverter<T> implements AttributeConverter<T, String> {
@@ -44,6 +41,8 @@ public abstract class JsonAttributeConverter<T> implements AttributeConverter<T,
 	protected ObjectMapper getMapper() {
 		if (mapper == null) {
 			mapper = new ObjectMapper();
+            mapper.registerModule(new JavaTimeModule());
+            mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 		}
 		return mapper;
 	}
