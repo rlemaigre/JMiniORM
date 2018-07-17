@@ -84,8 +84,10 @@ public class GenericSQLDialect implements ISQLDialect {
 			columns.add(sqlForColumnDefinition(columnMapping));
 		}
 		sb.append(String.join(", ", columns));
-		sb.append(", ");
-		sb.append(sqlForPrimaryKey(mapping, mapping.getIdColumnMapping()));
+		if (mapping.getColumnMappings().stream().anyMatch(ColumnMapping::isId)) {
+			sb.append(", ");
+			sb.append(sqlForPrimaryKey(mapping, mapping.getIdColumnMapping()));
+		}
 		sb.append(")");
 		return sb.toString();
 	}
