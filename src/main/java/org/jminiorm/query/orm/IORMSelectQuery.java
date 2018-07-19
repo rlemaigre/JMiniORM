@@ -36,7 +36,7 @@ public interface IORMSelectQuery<T> extends IORMQuery<T>, IObjectResultSet<T> {
      * @param limit
      * @return
      */
-    IORMSelectQuery<T> limit(Long limit);
+    IORMSelectQuery<T> limit(Integer limit);
 
     /**
      * Sets the offset and returns this.
@@ -44,7 +44,7 @@ public interface IORMSelectQuery<T> extends IORMQuery<T>, IObjectResultSet<T> {
      * @param offset
      * @return
      */
-    IORMSelectQuery<T> offset(Long offset);
+    IORMSelectQuery<T> offset(Integer offset);
 
     /**
      * Sets the order by clause and returns this. Optional.

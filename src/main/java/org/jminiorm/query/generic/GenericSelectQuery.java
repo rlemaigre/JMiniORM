@@ -1,23 +1,18 @@
 package org.jminiorm.query.generic;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.jminiorm.IQueryTarget;
 import org.jminiorm.query.AbstractQuery;
-import org.jminiorm.resultset.IMapResultSet;
-import org.jminiorm.resultset.IObjectResultSet;
-import org.jminiorm.resultset.IPrimitiveResultSet;
-import org.jminiorm.resultset.MapResultSet;
-import org.jminiorm.resultset.ObjectResultSet;
-import org.jminiorm.resultset.PrimitiveResultSet;
+import org.jminiorm.resultset.*;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class GenericSelectQuery extends AbstractQuery implements IGenericSelectQuery {
 
     private String sql;
     private List<Object> params;
-    private Long limit;
-    private Long offset;
+    private Integer limit;
+    private Integer offset;
 
     public GenericSelectQuery(IQueryTarget target) {
         super(target);
@@ -31,13 +26,13 @@ public class GenericSelectQuery extends AbstractQuery implements IGenericSelectQ
     }
 
     @Override
-    public IGenericSelectQuery limit(Long limit) {
+    public IGenericSelectQuery limit(Integer limit) {
         this.limit = limit;
         return this;
     }
 
     @Override
-    public IGenericSelectQuery offset(Long offset) {
+    public IGenericSelectQuery offset(Integer offset) {
         this.offset = offset;
         return this;
     }

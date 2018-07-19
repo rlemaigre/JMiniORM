@@ -14,8 +14,8 @@ public class ORMSelectQuery<T> extends AbstractORMQuery<T> implements IORMSelect
 
     private String where;
     private List<Object> params = new ArrayList<>();
-    private Long limit;
-    private Long offset;
+    private Integer limit;
+    private Integer offset;
     private String orderBy;
 
     public ORMSelectQuery(IQueryTarget target) {
@@ -47,13 +47,13 @@ public class ORMSelectQuery<T> extends AbstractORMQuery<T> implements IORMSelect
     }
 
     @Override
-    public IORMSelectQuery<T> limit(Long limit) {
+    public IORMSelectQuery<T> limit(Integer limit) {
         this.limit = limit;
         return this;
     }
 
     @Override
-    public IORMSelectQuery<T> offset(Long offset) {
+    public IORMSelectQuery<T> offset(Integer offset) {
         this.offset = offset;
         return this;
     }

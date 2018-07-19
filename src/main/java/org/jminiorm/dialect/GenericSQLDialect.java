@@ -1,21 +1,19 @@
 package org.jminiorm.dialect;
 
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.jminiorm.exception.DBException;
+import org.jminiorm.mapping.ColumnMapping;
+import org.jminiorm.mapping.Index;
+import org.jminiorm.mapping.ORMapping;
+
+import javax.persistence.AttributeConverter;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import javax.persistence.AttributeConverter;
-
-import org.jminiorm.exception.DBException;
-import org.jminiorm.mapping.ColumnMapping;
-import org.jminiorm.mapping.Index;
-import org.jminiorm.mapping.ORMapping;
-
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * An implementation that tries to be compatible with most databases. Subclass
@@ -55,7 +53,7 @@ public class GenericSQLDialect implements ISQLDialect {
 	}
 
 	@Override
-	public String sqlForSelect(String sql, Long limit, Long offset) {
+    public String sqlForSelect(String sql, Integer limit, Integer offset) {
 		if (limit != null)
 			sql = sql + " LIMIT " + limit + " ";
 		if (offset != null)

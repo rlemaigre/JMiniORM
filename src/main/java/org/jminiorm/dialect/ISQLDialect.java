@@ -1,8 +1,8 @@
 package org.jminiorm.dialect;
 
-import java.util.List;
-
 import org.jminiorm.mapping.ORMapping;
+
+import java.util.List;
 
 /**
  * Interface of objects responsible for turing the data that defines queries into executable SQL statements. The
@@ -16,7 +16,7 @@ public interface ISQLDialect {
 
     String sqlForUpdate(String table, String idColumn, List<String> columns);
 
-    String sqlForSelect(String sql, Long limit, Long offset);
+    String sqlForSelect(String sql, Integer limit, Integer offset);
 
     String sqlForSelect(List<String> columns, String table, String where, String orderBy);
 

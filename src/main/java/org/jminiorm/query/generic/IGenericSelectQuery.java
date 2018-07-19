@@ -26,7 +26,7 @@ public interface IGenericSelectQuery extends IGenericQuery {
      * @param limit
      * @return
      */
-    IGenericSelectQuery limit(Long limit);
+    IGenericSelectQuery limit(Integer limit);
 
     /**
      * Sets the offset and returns this.
@@ -34,7 +34,7 @@ public interface IGenericSelectQuery extends IGenericQuery {
      * @param offset
      * @return
      */
-    IGenericSelectQuery offset(Long offset);
+    IGenericSelectQuery offset(Integer offset);
 
     /**
      * Returns the result set as objects of primitive type T.
