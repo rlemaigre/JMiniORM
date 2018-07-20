@@ -49,7 +49,7 @@ public class TestJPAMapping {
         assertNull(sometextColumnMapping.getColumnDefinition());
         assertTrue(sometextColumnMapping.isInsertable());
         assertTrue(sometextColumnMapping.isUpdatable());
-        assertNull(sometextColumnMapping.getLength());
+        assertEquals(new Integer(255), sometextColumnMapping.getLength());
         assertNull(sometextColumnMapping.getPrecision());
         assertNull(sometextColumnMapping.getScale());
         assertTrue(sometextColumnMapping.isNullable());
