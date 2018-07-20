@@ -55,6 +55,7 @@ public class JPAORMapping extends ORMapping {
             Column columnAnn = field.getAnnotation(Column.class);
             GeneratedValue generatedValueAnn = field.getAnnotation(GeneratedValue.class);
             Convert convertAnn = field.getAnnotation(Convert.class);
+            Lob lobAnn = field.getAnnotation(Lob.class);
             columnMapping.setId(idAnn != null);
             columnMapping.setGenerated(generatedValueAnn != null);
             try {
@@ -68,7 +69,7 @@ public class JPAORMapping extends ORMapping {
                 columnMapping.setColumnDefinition(columnAnn.columnDefinition().equals("") ? null : columnAnn
                         .columnDefinition());
                 columnMapping.setInsertable(columnAnn.insertable());
-                columnMapping.setLength(columnAnn.length() >= 255 ? null : columnAnn.length());
+                columnMapping.setLength(lobAnn != null ? null : columnAnn.length());
                 columnMapping.setScale(columnAnn.scale());
                 columnMapping.setNullable(columnAnn.nullable());
                 columnMapping.setUpdatable(columnAnn.updatable());
@@ -77,7 +78,7 @@ public class JPAORMapping extends ORMapping {
                 columnMapping.setColumn(descriptor.getName());
                 columnMapping.setColumnDefinition(null);
                 columnMapping.setInsertable(true);
-                columnMapping.setLength(null);
+                columnMapping.setLength(lobAnn != null ? null : 255);
                 columnMapping.setScale(null);
                 columnMapping.setNullable(true);
                 columnMapping.setUpdatable(true);
