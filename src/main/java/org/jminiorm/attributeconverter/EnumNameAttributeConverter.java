@@ -3,7 +3,7 @@ package org.jminiorm.attributeconverter;
 import javax.persistence.AttributeConverter;
 
 /**
- * @author u205992
+ * @author Alexandre Neuville
  */
 public class EnumNameAttributeConverter<T extends Enum<T>> implements AttributeConverter<T, String> {
 

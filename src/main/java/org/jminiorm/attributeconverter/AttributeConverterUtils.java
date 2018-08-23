@@ -9,7 +9,13 @@ import javax.persistence.AttributeConverter;
  * @author Alexandre Neuville
  */
 public class AttributeConverterUtils {
-    public static Class<?> getConvertionResultType(AttributeConverter converter) {
+
+    /**
+     * Get the java type for the database column
+     * @param converter converter used to convert data
+     * @return the class for the database type
+     */
+    public static Class<?> getConverterDatabaseType(AttributeConverter converter) {
         Class<?> converterClass = converter.getClass();
         try {
             JavaType converterType = new ObjectMapper().getTypeFactory().constructType(converterClass);

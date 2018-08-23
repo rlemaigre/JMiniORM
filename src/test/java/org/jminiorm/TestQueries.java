@@ -1,9 +1,5 @@
 package org.jminiorm;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -18,6 +14,8 @@ import org.jminiorm.utils.RSUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestQueries {
 
@@ -110,6 +108,7 @@ public class TestQueries {
         assertNotNull(b1.getId());
         Bean b2 = db.select(Bean.class).one();
         assertTrue(b1.compareWithoutId(b2));
+        assertNotSame(b1, b2);
 
         // Update :
         b2.setShortText("a new short text");

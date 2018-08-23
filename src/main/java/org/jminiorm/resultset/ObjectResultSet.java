@@ -1,13 +1,10 @@
 package org.jminiorm.resultset;
 
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jminiorm.IQueryTarget;
 import org.jminiorm.attributeconverter.AttributeConverterUtils;
 import org.jminiorm.mapping.ColumnMapping;
 import org.jminiorm.mapping.ORMapping;
 
-import javax.persistence.AttributeConverter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +42,7 @@ public class ObjectResultSet<T> extends AbstractResultSet<T> implements IObjectR
         for (ColumnMapping columnMapping : getMapping().getColumnMappings()) {
             Class<?> propertyType;
             if (columnMapping.getConverter() != null) {
-                propertyType = AttributeConverterUtils.getConvertionResultType(columnMapping.getConverter());
+                propertyType = AttributeConverterUtils.getConverterDatabaseType(columnMapping.getConverter());
             } else
                 propertyType = columnMapping.getPropertyDescriptor().getPropertyType();
             typeMappings.put(columnMapping.getColumn(), propertyType);

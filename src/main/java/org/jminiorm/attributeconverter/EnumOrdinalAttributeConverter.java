@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author u205992
+ * @author Alexandre Neuville
  */
 public class EnumOrdinalAttributeConverter<T extends Enum> implements AttributeConverter<T, Integer> {
 
