@@ -104,6 +104,8 @@ public class TestQueries {
         b1.setLongText("long text");
         b1.setBytes("some bytes".getBytes(StandardCharsets.UTF_8));
         b1.setSubBeans(Arrays.asList(new SubBean(1), new SubBean(2)));
+        b1.setTestNameEnum(EnumerationTest.FIRST);
+        b1.setTestOrdinalEnum(EnumerationTest.SECOND);
         db.insert(b1);
         assertNotNull(b1.getId());
         Bean b2 = db.select(Bean.class).one();

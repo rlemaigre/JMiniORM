@@ -22,7 +22,6 @@ public class ColumnMapping {
     private boolean updatable;
     private boolean generated;
     private AttributeConverter converter;
-    private EnumType enumType;
 
     public ColumnMapping() {
     }
@@ -152,13 +151,5 @@ public class ColumnMapping {
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public EnumType getEnumType() {
-        return enumType;
-    }
-
-    public void setEnumType(EnumType enumType) {
-        this.enumType = enumType;
     }
 }

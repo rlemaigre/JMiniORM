@@ -7,13 +7,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 import org.jminiorm.attributeconverter.JsonAttributeConverter;
 
@@ -32,6 +26,10 @@ public class Bean {
 	private Integer someInt;
 	private Boolean someBoolean;
 	private byte[] bytes;
+	@Enumerated(EnumType.ORDINAL)
+	private	EnumerationTest testOrdinalEnum;
+	@Enumerated(EnumType.STRING)
+	private	EnumerationTest testNameEnum;
 
 	@Column(name = "json")
 	@Convert(converter = ListSubBeanJsonAttributeConverter.class)
@@ -44,6 +42,22 @@ public class Bean {
 
 	public Bean(String shortText) {
 		this.shortText = shortText;
+	}
+
+	public EnumerationTest getTestOrdinalEnum() {
+		return testOrdinalEnum;
+	}
+
+	public void setTestOrdinalEnum(EnumerationTest testOrdinalEnum) {
+		this.testOrdinalEnum = testOrdinalEnum;
+	}
+
+	public EnumerationTest getTestNameEnum() {
+		return testNameEnum;
+	}
+
+	public void setTestNameEnum(EnumerationTest testNameEnum) {
+		this.testNameEnum = testNameEnum;
 	}
 
 	public Boolean getSomeBoolean() {
@@ -144,7 +158,8 @@ public class Bean {
 				&& Objects.equals(date, bean.date) && Objects.equals(localDate, bean.localDate)
 				&& Objects.equals(localDateTime, bean.localDateTime) && Objects.equals(someInt, bean.someInt)
 				&& Arrays.equals(bytes, bean.bytes) && Objects.equals(subBeans, bean.subBeans)
-				&& Objects.equals(notStored, bean.notStored) && Objects.equals(someBoolean, someBoolean);
+				&& Objects.equals(notStored, bean.notStored) && Objects.equals(someBoolean, bean.someBoolean)
+				&& Objects.equals(testNameEnum, bean.testNameEnum) && Objects.equals(testOrdinalEnum, bean.testOrdinalEnum);
 	}
 
 	public static class ListSubBeanJsonAttributeConverter extends JsonAttributeConverter<List<SubBean>> {

@@ -1,5 +1,7 @@
 package org.jminiorm;
 
+import org.jminiorm.attributeconverter.EnumNameAttributeConverter;
+import org.jminiorm.attributeconverter.EnumOrdinalAttributeConverter;
 import org.jminiorm.mapping.ColumnMapping;
 import org.jminiorm.mapping.JPAORMapping;
 import org.jminiorm.mapping.ORMapping;
@@ -13,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TestJPAMapping {
 
     @Test
-    public void testJPAMapping() throws Exception {
+    public void testJPAMapping() {
         ORMapping mapping = new JPAORMapping(User.class);
 
         assertEquals(mapping.getJavaClass(), User.class);
@@ -41,7 +43,6 @@ public class TestJPAMapping {
         assertEquals(new Integer(1), loginColumnMapping.getPrecision());
         assertEquals(new Integer(2), loginColumnMapping.getScale());
         assertFalse(loginColumnMapping.isNullable());
-        assertNull(loginColumnMapping.getEnumType());
 
         ColumnMapping sometextColumnMapping = mapping.getColumnMappingByColumn("sometext");
         assertNotNull(sometextColumnMapping);
@@ -56,10 +57,10 @@ public class TestJPAMapping {
         assertTrue(sometextColumnMapping.isNullable());
 
         ColumnMapping enumNameColumnMapping = mapping.getColumnMappingByColumn("name");
-        assertEquals(EnumType.STRING, enumNameColumnMapping.getEnumType());
+        assertEquals(EnumNameAttributeConverter.class, enumNameColumnMapping.getConverter().getClass());
 
         ColumnMapping enumOrdinalColumnMapping = mapping.getColumnMappingByColumn("ordinal");
-        assertEquals(EnumType.ORDINAL, enumOrdinalColumnMapping.getEnumType());
+        assertEquals(EnumOrdinalAttributeConverter.class, enumOrdinalColumnMapping.getConverter().getClass());
     }
 
     /**
@@ -78,9 +79,9 @@ public class TestJPAMapping {
         private String login;
         private String sometext;
         @Enumerated(EnumType.STRING)
-        private UserType name;
+        private EnumerationTest name;
         @Enumerated(EnumType.ORDINAL)
-        private UserType ordinal;
+        private EnumerationTest ordinal;
 
         public User() {
         }
@@ -109,26 +110,21 @@ public class TestJPAMapping {
             this.sometext = sometext;
         }
 
-        public UserType getOrdinal() {
+        public EnumerationTest getOrdinal() {
             return ordinal;
         }
 
-        public void setOrdinal(UserType ordinal) {
+        public void setOrdinal(EnumerationTest ordinal) {
             this.ordinal = ordinal;
         }
 
-        public UserType getName() {
+        public EnumerationTest getName() {
             return name;
         }
 
-        public void setName(UserType name) {
+        public void setName(EnumerationTest name) {
             this.name = name;
         }
-    }
-
-    enum UserType {
-        FIRST,
-        SECOND
     }
 }
 
