@@ -24,7 +24,7 @@ public class TestJPAMapping {
         assertEquals("list", i.getColumns());
 
         List<ColumnMapping> cols = mapping.getColumnMappings();
-        assertEquals(3, cols.size());
+        assertEquals(5, cols.size());
 
         ColumnMapping idColumnMapping = mapping.getIdColumnMapping();
         assertTrue(idColumnMapping.isId());
@@ -41,6 +41,7 @@ public class TestJPAMapping {
         assertEquals(new Integer(1), loginColumnMapping.getPrecision());
         assertEquals(new Integer(2), loginColumnMapping.getScale());
         assertFalse(loginColumnMapping.isNullable());
+        assertNull(loginColumnMapping.getEnumType());
 
         ColumnMapping sometextColumnMapping = mapping.getColumnMappingByColumn("sometext");
         assertNotNull(sometextColumnMapping);
@@ -54,6 +55,11 @@ public class TestJPAMapping {
         assertNull(sometextColumnMapping.getScale());
         assertTrue(sometextColumnMapping.isNullable());
 
+        ColumnMapping enumNameColumnMapping = mapping.getColumnMappingByColumn("name");
+        assertEquals(EnumType.STRING, enumNameColumnMapping.getEnumType());
+
+        ColumnMapping enumOrdinalColumnMapping = mapping.getColumnMappingByColumn("ordinal");
+        assertEquals(EnumType.ORDINAL, enumOrdinalColumnMapping.getEnumType());
     }
 
     /**
@@ -71,6 +77,10 @@ public class TestJPAMapping {
                 false, precision = 1, scale = 2, updatable = false)
         private String login;
         private String sometext;
+        @Enumerated(EnumType.STRING)
+        private UserType name;
+        @Enumerated(EnumType.ORDINAL)
+        private UserType ordinal;
 
         public User() {
         }
@@ -98,8 +108,28 @@ public class TestJPAMapping {
         public void setSometext(String sometext) {
             this.sometext = sometext;
         }
+
+        public UserType getOrdinal() {
+            return ordinal;
+        }
+
+        public void setOrdinal(UserType ordinal) {
+            this.ordinal = ordinal;
+        }
+
+        public UserType getName() {
+            return name;
+        }
+
+        public void setName(UserType name) {
+            this.name = name;
+        }
     }
 
+    enum UserType {
+        FIRST,
+        SECOND
+    }
 }
 
 

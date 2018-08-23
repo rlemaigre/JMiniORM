@@ -1,6 +1,7 @@
 package org.jminiorm.mapping;
 
 import javax.persistence.AttributeConverter;
+import javax.persistence.EnumType;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 
@@ -21,6 +22,7 @@ public class ColumnMapping {
     private boolean updatable;
     private boolean generated;
     private AttributeConverter converter;
+    private EnumType enumType;
 
     public ColumnMapping() {
     }
@@ -152,4 +154,11 @@ public class ColumnMapping {
         }
     }
 
+    public EnumType getEnumType() {
+        return enumType;
+    }
+
+    public void setEnumType(EnumType enumType) {
+        this.enumType = enumType;
+    }
 }

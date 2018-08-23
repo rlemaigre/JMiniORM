@@ -84,6 +84,10 @@ public class JPAORMapping extends ORMapping {
                 columnMapping.setUpdatable(true);
                 columnMapping.setPrecision(null);
             }
+
+            Enumerated enumerated = field.getAnnotation(Enumerated.class);
+            columnMapping.setEnumType(enumerated != null ? enumerated.value() : null);
+
             columnMappings.add(columnMapping);
         }
         setColumnMappings(columnMappings);
