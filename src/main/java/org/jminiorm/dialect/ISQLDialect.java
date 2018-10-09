@@ -12,6 +12,8 @@ public interface ISQLDialect {
 
     String sqlForDelete(String table, String idColumn);
 
+    String sqlForDeleteWhere(String table, String where);
+
     String sqlForInsert(String table, List<String> columns);
 
     String sqlForUpdate(String table, String idColumn, List<String> columns);
@@ -21,6 +23,8 @@ public interface ISQLDialect {
     String sqlForSelect(List<String> columns, String table, String where, String orderBy);
 
     String sqlForCreateTable(ORMapping mapping);
+
+    String sqlForDropTable(ORMapping mapping);
 
     List<String> sqlForCreateIndexes(ORMapping mapping);
 

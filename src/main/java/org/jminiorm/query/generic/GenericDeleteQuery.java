@@ -1,16 +1,19 @@
 package org.jminiorm.query.generic;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.jminiorm.IQueryTarget;
 import org.jminiorm.exception.DBException;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class GenericDeleteQuery extends AbstractGenericQuery implements IGenericDeleteQuery {
 
     private String table;
     private String idColumn;
     private List<Object> ids = new ArrayList<>();
+    private String where;
+    private List<Object> params;
 
     public GenericDeleteQuery(IQueryTarget target) {
         super(target);
@@ -41,20 +44,31 @@ public class GenericDeleteQuery extends AbstractGenericQuery implements IGeneric
     }
 
     @Override
+    public IGenericDeleteQuery where(String where, Object... params) {
+        this.where = where;
+        this.params = Arrays.asList(params);
+        return this;
+    }
+
+    @Override
     public void execute() throws DBException {
-        if (ids.isEmpty()) return;
+        if (!ids.isEmpty()) {
+            // SQL :
+            String sql = getQueryTarget().getConfig().getDialect().sqlForDelete(table, idColumn);
 
-        // SQL :
-        String sql = getQueryTarget().getConfig().getDialect().sqlForDelete(table, idColumn);
+            // Parameters :
+            List<List<Object>> params = new ArrayList<>();
+            for (Object id : ids) {
+                List<Object> curParams = new ArrayList<>();
+                curParams.add(id);
+                params.add(curParams);
+            }
 
-        // Parameters :
-        List<List<Object>> params = new ArrayList<>();
-        for (Object id : ids) {
-            List<Object> curParams = new ArrayList<>();
-            curParams.add(id);
-            params.add(curParams);
+            getQueryTarget().executeUpdate(sql, params, null);
         }
-
-        getQueryTarget().executeUpdate(sql, params, null);
+        if (where != null) {
+            String sql = getQueryTarget().getConfig().getDialect().sqlForDeleteWhere(table, where);
+            getQueryTarget().executeUpdate(sql, Arrays.asList(params), null);
+        }
     }
 }
