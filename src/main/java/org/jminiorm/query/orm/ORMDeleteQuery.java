@@ -13,7 +13,7 @@ public class ORMDeleteQuery<T> extends AbstractORMQuery<T> implements IORMDelete
 
     private List<Object> ids = new ArrayList<>();
     private String where;
-    private List<Object> params;
+    private List<Object> params = new ArrayList<>();
 
     public ORMDeleteQuery(IQueryTarget target) {
         super(target);
@@ -64,7 +64,7 @@ public class ORMDeleteQuery<T> extends AbstractORMQuery<T> implements IORMDelete
                     .execute();
         }
         if (where != null) {
-            getQueryTarget().delete(table).where(where, params).execute();
+            getQueryTarget().delete(table).where(where, params.toArray()).execute();
         }
     }
 }
