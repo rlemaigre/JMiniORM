@@ -7,4 +7,8 @@ public class SybaseASASQLDialect extends GenericSQLDialect {
         return SetNullParameterMethod.SETNULL;
     }
 
+    protected String sqlForAutoIncrement() {
+        return "DEFAULT AUTOINCREMENT";
+    }
+
 }
