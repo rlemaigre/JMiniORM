@@ -194,7 +194,7 @@ public class GenericSQLDialect implements ISQLDialect {
     protected String sqlForIndex(Index index, String table) {
         String name = index.getName();
         if (name == null || name.equals("")) {
-            name = index.getColumns().replaceAll(" ", "").replaceAll(",", "_");
+            name = table + "__" + index.getColumns().replaceAll(" ", "").replaceAll(",", "_");
         }
         String sql = "CREATE " + (index.isUnique() ? "UNIQUE " : "") + "INDEX " + name + " ON " +
                 identifier(table) + " (" +
