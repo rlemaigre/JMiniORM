@@ -2,6 +2,8 @@ package org.jminiorm;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -156,12 +158,32 @@ public class Bean {
 		Bean bean = (Bean) o;
 		return Objects.equals(shortText, bean.shortText) && Objects.equals(longText, bean.longText)
 				&& Objects.equals(date, bean.date) && Objects.equals(localDate, bean.localDate)
-				&& Objects.equals(localDateTime, bean.localDateTime) && Objects.equals(someInt, bean.someInt)
+				// Precision limitation into timestamp in H2
+				&& Objects.equals(localDateTime.truncatedTo(ChronoUnit.MILLIS), bean.localDateTime.truncatedTo(ChronoUnit.MILLIS)) && Objects.equals(someInt, bean.someInt)
 				&& Arrays.equals(bytes, bean.bytes) && Objects.equals(subBeans, bean.subBeans)
 				&& Objects.equals(notStored, bean.notStored) && Objects.equals(someBoolean, bean.someBoolean)
 				&& Objects.equals(testNameEnum, bean.testNameEnum) && Objects.equals(testOrdinalEnum, bean.testOrdinalEnum);
 	}
 
 	public static class ListSubBeanJsonAttributeConverter extends JsonAttributeConverter<List<SubBean>> {
+	}
+
+	@Override
+	public String toString() {
+		return "Bean{" +
+				"id=" + id +
+				", shortText='" + shortText + '\'' +
+				", longText='" + longText + '\'' +
+				", date=" + date +
+				", localDate=" + localDate +
+				", localDateTime=" + localDateTime +
+				", someInt=" + someInt +
+				", someBoolean=" + someBoolean +
+				", bytes=" + Arrays.toString(bytes) +
+				", testOrdinalEnum=" + testOrdinalEnum +
+				", testNameEnum=" + testNameEnum +
+				", subBeans=" + subBeans +
+				", notStored='" + notStored + '\'' +
+				'}';
 	}
 }

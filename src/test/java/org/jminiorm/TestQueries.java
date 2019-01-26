@@ -104,9 +104,11 @@ public class TestQueries {
         b1.setSubBeans(Arrays.asList(new SubBean(1), new SubBean(2)));
         b1.setTestNameEnum(EnumerationTest.FIRST);
         b1.setTestOrdinalEnum(EnumerationTest.SECOND);
+        System.out.println("Created : " + b1);
         db.insert(b1);
         assertNotNull(b1.getId());
         Bean b2 = db.select(Bean.class).one();
+        System.out.println("Read in database : " + b2);
         assertTrue(b1.compareWithoutId(b2));
         assertNotSame(b1, b2);
 
