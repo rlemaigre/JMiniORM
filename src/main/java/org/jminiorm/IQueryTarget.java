@@ -1,10 +1,5 @@
 package org.jminiorm;
 
-import java.sql.Connection;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
 import org.jminiorm.exception.DBException;
 import org.jminiorm.query.generic.IGenericDeleteQuery;
 import org.jminiorm.query.generic.IGenericInsertQuery;
@@ -14,6 +9,11 @@ import org.jminiorm.query.orm.IORMDeleteQuery;
 import org.jminiorm.query.orm.IORMInsertQuery;
 import org.jminiorm.query.orm.IORMSelectQuery;
 import org.jminiorm.query.orm.IORMUpdateQuery;
+
+import java.sql.Connection;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 public interface IQueryTarget {
 
@@ -45,7 +45,7 @@ public interface IQueryTarget {
     /**
      * Begins a generic select query.
      *
-     * @param sql The whole SQL, except limit and offset.
+     * @param sql    The whole SQL, except limit and offset.
      * @param params
      * @return
      */
@@ -192,6 +192,15 @@ public interface IQueryTarget {
     <T> void createTable(Class<T> clazz) throws DBException;
 
     /**
+     * Drops the table for the given JPA annotated class.
+     *
+     * @param clazz
+     * @param <T>
+     * @throws DBException
+     */
+    <T> void dropTable(Class<T> clazz) throws DBException;
+
+    /**
      * Executes an arbitrary SQL statement that returns nothing (UPDATE, DELETE, INSERT, CREATE TABLE, etc.) when other
      * provided methods are not sufficient.
      *
@@ -224,8 +233,8 @@ public interface IQueryTarget {
      * @return
      * @throws DBException
      */
-    List<Map<String,Object>> executeQuery(String sql, List<Object> params,
-            Map<String,Class<?>> typeOverrides) throws DBException;
+    List<Map<String, Object>> executeQuery(String sql, List<Object> params,
+                                           Map<String, Class<?>> typeOverrides) throws DBException;
 
     /**
      * Returns a connection to the current database. Close, commit and rollback shouldn't be called on this connection.

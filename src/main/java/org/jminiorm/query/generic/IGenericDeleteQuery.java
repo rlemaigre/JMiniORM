@@ -42,6 +42,15 @@ public interface IGenericDeleteQuery extends IGenericQuery {
     IGenericDeleteQuery addMany(List<Object> ids);
 
     /**
+     * Sets the where clause and returns this.
+     *
+     * @param sql
+     * @param params
+     * @return this
+     */
+    IGenericDeleteQuery where(String sql, Object... params);
+
+    /**
      * Executes the (batch) statement.
      */
     void execute() throws DBException;

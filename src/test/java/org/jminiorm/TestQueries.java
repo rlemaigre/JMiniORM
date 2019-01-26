@@ -78,7 +78,7 @@ public class TestQueries {
 
     protected void testQueriesOnDatabase(IDatabase db) throws Exception {
         // Table creation :
-        db.sql("drop table if exists beans");
+        db.dropTable(Bean.class);
         db.createTable(Bean.class);
 
         // ORM queries :
@@ -89,7 +89,7 @@ public class TestQueries {
     }
 
     private void testORMQueries(IDatabase db) throws Exception {
-        db.sql("truncate table beans");
+        db.delete(Bean.class).where("1=1");
 
         // Insert :
         Bean b1 = new Bean();
@@ -126,7 +126,7 @@ public class TestQueries {
                 new Bean("b1"),
                 new Bean("b2"),
                 new Bean("b3")));
-        Map<String,Bean> resultAsIndexedObject = RSUtils.index(db.select(Bean.class).list(), "shortText");
+        Map<String, Bean> resultAsIndexedObject = RSUtils.index(db.select(Bean.class).list(), "shortText");
         assertEquals(3, resultAsIndexedObject.size());
         assertEquals("b1", resultAsIndexedObject.get("b1").getShortText());
     }
@@ -143,7 +143,7 @@ public class TestQueries {
         assertEquals(new Integer(3), countInteger);
         String countString = db.select("select count(*) from beans").asPrimitive(String.class).one();
         assertEquals("3", countString);
-        Map<String,Map<String,Object>> resultAsIndexedMaps = RSUtils.index(db.select("select * from beans").asMap()
+        Map<String, Map<String, Object>> resultAsIndexedMaps = RSUtils.index(db.select("select * from beans").asMap()
                 .list(), "short_text");
         assertEquals(3, resultAsIndexedMaps.size());
         assertEquals("b1", resultAsIndexedMaps.get("b1").get("short_text"));
@@ -154,7 +154,7 @@ public class TestQueries {
         Bean b = new Bean();
         b.setLocalDate(LocalDate.now());
         db.insert(b);
-        Map<String,Object> data = db.select("select localDate from beans").asMap().one();
+        Map<String, Object> data = db.select("select localDate from beans").asMap().one();
         assertEquals(LocalDate.now(), data.get("localDate"));
     }
 

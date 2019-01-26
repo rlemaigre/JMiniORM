@@ -5,12 +5,15 @@ import org.jminiorm.exception.DBException;
 import org.jminiorm.mapping.ColumnMapping;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 public class ORMDeleteQuery<T> extends AbstractORMQuery<T> implements IORMDeleteQuery<T> {
 
     private List<Object> ids = new ArrayList<>();
+    private String where;
+    private List<Object> params = new ArrayList<>();
 
     public ORMDeleteQuery(IQueryTarget target) {
         super(target);
@@ -42,17 +45,26 @@ public class ORMDeleteQuery<T> extends AbstractORMQuery<T> implements IORMDelete
     }
 
     @Override
-    public void execute() throws DBException {
-        if (!ids.isEmpty()) {
-            // The table to delete rows from :
-            String table = getMapping().getTable();
+    public IORMDeleteQuery<T> where(String where, Object... params) {
+        this.where = where;
+        this.params = Arrays.asList(params);
+        return this;
+    }
 
-            // Delete rows :
+    @Override
+    public void execute() throws DBException {
+        // The table to delete rows from :
+        String table = getMapping().getTable();
+
+        if (!ids.isEmpty()) {
             ColumnMapping idColumnMapping = getMapping().getIdColumnMapping();
             getQueryTarget().delete(table)
                     .idColumn(idColumnMapping.getColumn())
                     .addMany(ids)
                     .execute();
+        }
+        if (where != null) {
+            getQueryTarget().delete(table).where(where, params.toArray()).execute();
         }
     }
 }

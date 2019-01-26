@@ -39,6 +39,15 @@ public interface IORMDeleteQuery<T> extends IORMQuery<T> {
     IORMDeleteQuery<T> addMany(Collection<T> objs);
 
     /**
+     * Sets the where clause and returns this.
+     *
+     * @param where
+     * @param params
+     * @return this
+     */
+    IORMDeleteQuery<T> where(String where, Object... params);
+
+    /**
      * Deletes the objects collected so far.
      */
     void execute() throws DBException;

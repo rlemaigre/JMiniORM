@@ -1,28 +1,12 @@
 package org.jminiorm;
 
+import org.jminiorm.exception.DBException;
+import org.jminiorm.query.generic.*;
+import org.jminiorm.query.orm.*;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-
-import org.jminiorm.exception.DBException;
-import org.jminiorm.query.generic.GenericDeleteQuery;
-import org.jminiorm.query.generic.GenericInsertQuery;
-import org.jminiorm.query.generic.GenericRawQuery;
-import org.jminiorm.query.generic.GenericSelectQuery;
-import org.jminiorm.query.generic.GenericUpdateQuery;
-import org.jminiorm.query.generic.IGenericDeleteQuery;
-import org.jminiorm.query.generic.IGenericInsertQuery;
-import org.jminiorm.query.generic.IGenericSelectQuery;
-import org.jminiorm.query.generic.IGenericUpdateQuery;
-import org.jminiorm.query.orm.IORMDeleteQuery;
-import org.jminiorm.query.orm.IORMInsertQuery;
-import org.jminiorm.query.orm.IORMSelectQuery;
-import org.jminiorm.query.orm.IORMUpdateQuery;
-import org.jminiorm.query.orm.ORMCreateTableQuery;
-import org.jminiorm.query.orm.ORMDeleteQuery;
-import org.jminiorm.query.orm.ORMInsertQuery;
-import org.jminiorm.query.orm.ORMSelectQuery;
-import org.jminiorm.query.orm.ORMUpdateQuery;
 
 public abstract class AbstractQueryTarget implements IQueryTarget {
 
@@ -48,13 +32,13 @@ public abstract class AbstractQueryTarget implements IQueryTarget {
 
     @Override
     public <T> void insert(T obj) throws DBException {
-        insert((Class<T>)obj.getClass()).addOne(obj).execute();
+        insert((Class<T>) obj.getClass()).addOne(obj).execute();
     }
 
     @Override
     public <T> void insert(Collection<T> objs) throws DBException {
         if (objs.isEmpty()) return;
-        insert((Class<T>)objs.iterator().next().getClass()).addMany(objs).execute();
+        insert((Class<T>) objs.iterator().next().getClass()).addMany(objs).execute();
     }
 
     @Override
@@ -69,13 +53,13 @@ public abstract class AbstractQueryTarget implements IQueryTarget {
 
     @Override
     public <T> void update(T obj) throws DBException {
-        update((Class<T>)obj.getClass()).addOne(obj).execute();
+        update((Class<T>) obj.getClass()).addOne(obj).execute();
     }
 
     @Override
     public <T> void update(Collection<T> objs) throws DBException {
         if (objs.isEmpty()) return;
-        update((Class<T>)objs.iterator().next().getClass()).addMany(objs).execute();
+        update((Class<T>) objs.iterator().next().getClass()).addMany(objs).execute();
     }
 
     @Override
@@ -95,13 +79,13 @@ public abstract class AbstractQueryTarget implements IQueryTarget {
 
     @Override
     public <T> void delete(T obj) throws DBException {
-        delete((Class<T>)obj.getClass()).addOne(obj).execute();
+        delete((Class<T>) obj.getClass()).addOne(obj).execute();
     }
 
     @Override
     public <T> void delete(Collection<T> objs) throws DBException {
         if (objs.isEmpty()) return;
-        delete((Class<T>)objs.iterator().next().getClass()).addMany(objs).execute();
+        delete((Class<T>) objs.iterator().next().getClass()).addMany(objs).execute();
     }
 
     @Override
@@ -115,6 +99,11 @@ public abstract class AbstractQueryTarget implements IQueryTarget {
     }
 
     @Override
+    public <T> void dropTable(Class<T> clazz) throws DBException {
+        new ORMDropTableQuery<T>(this).forClass(clazz).execute();
+    }
+
+    @Override
     public void sql(String sql, Object... params) throws DBException {
         new GenericRawQuery(this).sql(sql, params).execute();
     }
@@ -125,8 +114,8 @@ public abstract class AbstractQueryTarget implements IQueryTarget {
     }
 
     @Override
-    public List<Map<String,Object>> executeQuery(String sql, List<Object> params,
-            Map<String,Class<?>> typeOverrides) throws DBException {
+    public List<Map<String, Object>> executeQuery(String sql, List<Object> params,
+                                                  Map<String, Class<?>> typeOverrides) throws DBException {
         return getConfig().getStatementExecutor().executeQuery(this, sql, params, typeOverrides);
     }
 }
