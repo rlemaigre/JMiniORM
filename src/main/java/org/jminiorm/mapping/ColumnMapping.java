@@ -1,6 +1,7 @@
 package org.jminiorm.mapping;
 
 import javax.persistence.AttributeConverter;
+import javax.persistence.EnumType;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 
@@ -151,5 +152,4 @@ public class ColumnMapping {
             throw new RuntimeException(e);
         }
     }
-
 }

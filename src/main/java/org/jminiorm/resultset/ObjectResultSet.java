@@ -1,6 +1,7 @@
 package org.jminiorm.resultset;
 
 import org.jminiorm.IQueryTarget;
+import org.jminiorm.attributeconverter.AttributeConverterUtils;
 import org.jminiorm.mapping.ColumnMapping;
 import org.jminiorm.mapping.ORMapping;
 
@@ -13,7 +14,7 @@ public class ObjectResultSet<T> extends AbstractResultSet<T> implements IObjectR
     private Class<T> targetClass;
 
     public ObjectResultSet(IQueryTarget queryTarget, String sql, List<Object> params,
-                           Class<T> targetClass) {
+            Class<T> targetClass) {
         super(queryTarget, sql, params);
         this.targetClass = targetClass;
     }
@@ -40,9 +41,9 @@ public class ObjectResultSet<T> extends AbstractResultSet<T> implements IObjectR
         Map<String, Class<?>> typeMappings = new HashMap<>();
         for (ColumnMapping columnMapping : getMapping().getColumnMappings()) {
             Class<?> propertyType;
-            if (columnMapping.getConverter() != null)
-                propertyType = String.class;
-            else
+            if (columnMapping.getConverter() != null) {
+                propertyType = AttributeConverterUtils.getConverterDatabaseType(columnMapping.getConverter());
+            } else
                 propertyType = columnMapping.getPropertyDescriptor().getPropertyType();
             typeMappings.put(columnMapping.getColumn(), propertyType);
         }

@@ -1,5 +1,7 @@
 package org.jminiorm;
 
+import org.jminiorm.attributeconverter.EnumNameAttributeConverter;
+import org.jminiorm.attributeconverter.EnumOrdinalAttributeConverter;
 import org.jminiorm.mapping.ColumnMapping;
 import org.jminiorm.mapping.JPAORMapping;
 import org.jminiorm.mapping.ORMapping;
@@ -13,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TestJPAMapping {
 
     @Test
-    public void testJPAMapping() throws Exception {
+    public void testJPAMapping() {
         ORMapping mapping = new JPAORMapping(User.class);
 
         assertEquals(mapping.getJavaClass(), User.class);
@@ -24,7 +26,7 @@ public class TestJPAMapping {
         assertEquals("list", i.getColumns());
 
         List<ColumnMapping> cols = mapping.getColumnMappings();
-        assertEquals(3, cols.size());
+        assertEquals(5, cols.size());
 
         ColumnMapping idColumnMapping = mapping.getIdColumnMapping();
         assertTrue(idColumnMapping.isId());
@@ -54,6 +56,11 @@ public class TestJPAMapping {
         assertNull(sometextColumnMapping.getScale());
         assertTrue(sometextColumnMapping.isNullable());
 
+        ColumnMapping enumNameColumnMapping = mapping.getColumnMappingByColumn("name");
+        assertEquals(EnumNameAttributeConverter.class, enumNameColumnMapping.getConverter().getClass());
+
+        ColumnMapping enumOrdinalColumnMapping = mapping.getColumnMappingByColumn("ordinal");
+        assertEquals(EnumOrdinalAttributeConverter.class, enumOrdinalColumnMapping.getConverter().getClass());
     }
 
     /**
@@ -71,6 +78,10 @@ public class TestJPAMapping {
                 false, precision = 1, scale = 2, updatable = false)
         private String login;
         private String sometext;
+        @Enumerated(EnumType.STRING)
+        private EnumerationTest name;
+        @Enumerated(EnumType.ORDINAL)
+        private EnumerationTest ordinal;
 
         public User() {
         }
@@ -98,8 +109,23 @@ public class TestJPAMapping {
         public void setSometext(String sometext) {
             this.sometext = sometext;
         }
-    }
 
+        public EnumerationTest getOrdinal() {
+            return ordinal;
+        }
+
+        public void setOrdinal(EnumerationTest ordinal) {
+            this.ordinal = ordinal;
+        }
+
+        public EnumerationTest getName() {
+            return name;
+        }
+
+        public void setName(EnumerationTest name) {
+            this.name = name;
+        }
+    }
 }
 
 

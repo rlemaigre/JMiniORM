@@ -1,5 +1,8 @@
 package org.jminiorm.mapping;
 
+import org.jminiorm.attributeconverter.EnumNameAttributeConverter;
+import org.jminiorm.attributeconverter.EnumOrdinalAttributeConverter;
+
 import javax.persistence.*;
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -58,12 +61,29 @@ public class JPAORMapping extends ORMapping {
             Lob lobAnn = field.getAnnotation(Lob.class);
             columnMapping.setId(idAnn != null);
             columnMapping.setGenerated(generatedValueAnn != null);
-            try {
-                columnMapping.setConverter(convertAnn != null ? (AttributeConverter) convertAnn.converter()
-                        .newInstance() : null);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+
+            Enumerated enumerated = field.getAnnotation(Enumerated.class);
+            if (enumerated != null && convertAnn == null) {
+                Class<? extends Enum> enumClass = (Class<? extends Enum>) field.getType();
+                switch (enumerated.value()) {
+                case ORDINAL:
+                    columnMapping.setConverter(new EnumOrdinalAttributeConverter(enumClass));
+                    break;
+                case STRING:
+                    columnMapping.setConverter(new EnumNameAttributeConverter(enumClass));
+                    break;
+                }
+            } else {
+
+                try {
+                    columnMapping.setConverter(convertAnn != null ? (AttributeConverter) convertAnn.converter()
+                                                                                                   .newInstance() :
+                            null);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
             }
+
             if (columnAnn != null) {
                 columnMapping.setColumn(columnAnn.name().equals("") ? descriptor.getName() : columnAnn.name());
                 columnMapping.setColumnDefinition(columnAnn.columnDefinition().equals("") ? null : columnAnn
@@ -84,6 +104,7 @@ public class JPAORMapping extends ORMapping {
                 columnMapping.setUpdatable(true);
                 columnMapping.setPrecision(null);
             }
+
             columnMappings.add(columnMapping);
         }
         setColumnMappings(columnMappings);

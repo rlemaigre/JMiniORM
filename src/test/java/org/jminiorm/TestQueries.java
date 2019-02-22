@@ -1,5 +1,12 @@
 package org.jminiorm;
 
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Map;
+
 import org.h2.tools.Server;
 import org.jminiorm.executor.BatchStatementExecutor;
 import org.jminiorm.executor.DefaultStatementExecutor;
@@ -7,13 +14,6 @@ import org.jminiorm.utils.RSUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -102,10 +102,15 @@ public class TestQueries {
         b1.setLongText("long text");
         b1.setBytes("some bytes".getBytes(StandardCharsets.UTF_8));
         b1.setSubBeans(Arrays.asList(new SubBean(1), new SubBean(2)));
+        b1.setTestNameEnum(EnumerationTest.FIRST);
+        b1.setTestOrdinalEnum(EnumerationTest.SECOND);
+        System.out.println("Created : " + b1);
         db.insert(b1);
         assertNotNull(b1.getId());
         Bean b2 = db.select(Bean.class).one();
+        System.out.println("Read in database : " + b2);
         assertTrue(b1.compareWithoutId(b2));
+        assertNotSame(b1, b2);
 
         // Update :
         b2.setShortText("a new short text");

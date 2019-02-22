@@ -1,13 +1,11 @@
 package org.jminiorm.dialect;
 
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.jminiorm.attributeconverter.AttributeConverterUtils;
 import org.jminiorm.exception.DBException;
 import org.jminiorm.mapping.ColumnMapping;
 import org.jminiorm.mapping.Index;
 import org.jminiorm.mapping.ORMapping;
 
-import javax.persistence.AttributeConverter;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -124,15 +122,7 @@ public class GenericSQLDialect implements ISQLDialect {
     protected String sqlForColumnType(ColumnMapping columnMapping) {
         Class<?> javaType;
         if (columnMapping.getConverter() != null) {
-            Class<?> converterClass = columnMapping.getConverter().getClass();
-            try {
-                JavaType converterType = new ObjectMapper().getTypeFactory().constructType(converterClass);
-                JavaType t = new ObjectMapper().getTypeFactory().findTypeParameters(converterType,
-                        AttributeConverter.class)[1];
-                javaType = t.getRawClass();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            javaType = AttributeConverterUtils.getConverterDatabaseType(columnMapping.getConverter());
         } else
             javaType = columnMapping.getPropertyDescriptor().getPropertyType();
         Integer length = columnMapping.getLength();
