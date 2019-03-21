@@ -115,7 +115,7 @@ public class GenericSQLDialect implements ISQLDialect {
             sb.append(columnMapping.getColumnDefinition());
         else {
             sb.append(sqlForColumnType(columnMapping)).append(" ");
-            if (!columnMapping.isNullable())
+            if (!columnMapping.isNullable() || columnMapping.isId())
                 sb.append("NOT NULL ");
             else
                 sb.append("NULL ");

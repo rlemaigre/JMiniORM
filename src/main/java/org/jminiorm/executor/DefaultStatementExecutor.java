@@ -1,15 +1,11 @@
 package org.jminiorm.executor;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.jminiorm.IQueryTarget;
 import org.jminiorm.exception.DBException;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The default implementation of IStatementExecutor.
@@ -41,7 +37,8 @@ public class DefaultStatementExecutor extends AbstractStatementExecutor {
             }
             return generatedKeys;
         } catch (SQLException e) {
-            throw new DBException(e);
+            // throw new DBException(e);
+            throw new DBException(sql + "\n" + e);
         } finally {
             try {
                 if (con != null) target.releaseConnection(con);
