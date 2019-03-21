@@ -10,21 +10,23 @@ import java.util.List;
  */
 public interface ISQLDialect {
 
-    String sqlForDelete(String table, String idColumn);
+    String sqlForDelete(String schema, String table, String idColumn);
 
-    String sqlForDeleteWhere(String table, String where);
+    String sqlForDeleteWhere(String schema, String table, String where);
 
-    String sqlForInsert(String table, List<String> columns);
+    String sqlForInsert(String schema, String table, List<String> columns);
 
-    String sqlForUpdate(String table, String idColumn, List<String> columns);
+    String sqlForUpdate(String schema, String table, String idColumn, List<String> columns);
 
     String sqlForSelect(String sql, Integer limit, Integer offset);
 
-    String sqlForSelect(List<String> columns, String table, String where, String orderBy);
+    String sqlForSelect(String schema, List<String> columns, String table, String where, String orderBy);
 
     String sqlForCreateTable(ORMapping mapping);
 
     String sqlForDropTable(ORMapping mapping);
+
+    String sqlForCreateSchema(String schema);
 
     List<String> sqlForCreateIndexes(ORMapping mapping);
 

@@ -10,6 +10,14 @@ import java.util.List;
 public interface IGenericDeleteQuery extends IGenericQuery {
 
     /**
+     * Sets the schema.
+     *
+     * @param schema
+     * @return
+     */
+    IGenericDeleteQuery schema(String schema);
+
+    /**
      * Sets the table.
      *
      * @param table

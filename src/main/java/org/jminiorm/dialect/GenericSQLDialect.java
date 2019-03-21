@@ -20,41 +20,41 @@ import java.util.List;
 public class GenericSQLDialect implements ISQLDialect {
 
     @Override
-    public final String sqlForDelete(String table, String idColumn) {
-        return sqlForDeleteIdEscaped(identifier(table), identifier(idColumn));
+    public final String sqlForDelete(String schema, String table, String idColumn) {
+        return sqlForDeleteIdEscaped(quoteIdentifier(schema), identifier(table), identifier(idColumn));
     }
 
-    protected String sqlForDeleteIdEscaped(String table, String idColumn) {
-        return "DELETE FROM " + table + "\n" +
+    protected String sqlForDeleteIdEscaped(String schema, String table, String idColumn) {
+        return "DELETE FROM " + schemaPrefix(schema) + table + "\n" +
                 "WHERE " + idColumn + " = ?";
     }
 
-    public final String sqlForDeleteWhere(String table, String where) {
-        return sqlForDeleteWhereIdEscaped(identifier(table), where);
+    public final String sqlForDeleteWhere(String schema, String table, String where) {
+        return sqlForDeleteWhereIdEscaped(quoteIdentifier(schema), identifier(table), where);
     }
 
-    protected String sqlForDeleteWhereIdEscaped(String table, String where) {
-        return "DELETE FROM " + table + "\n" +
+    protected String sqlForDeleteWhereIdEscaped(String schema, String table, String where) {
+        return "DELETE FROM " + schemaPrefix(schema) + table + "\n" +
                 "WHERE " + where;
     }
 
     @Override
-    public final String sqlForInsert(String table, List<String> columns) {
-        return sqlForInsertIdEscaped(identifier(table), identifiers(columns));
+    public final String sqlForInsert(String schema, String table, List<String> columns) {
+        return sqlForInsertIdEscaped(quoteIdentifier(schema), identifier(table), identifiers(columns));
     }
 
-    protected String sqlForInsertIdEscaped(String table, List<String> columns) {
-        return "INSERT INTO " + table + " (" + String.join(", ", columns) + ")\n" +
+    protected String sqlForInsertIdEscaped(String schema, String table, List<String> columns) {
+        return "INSERT INTO " + schemaPrefix(schema) + table + " (" + String.join(", ", columns) + ")\n" +
                 "VALUES (" + String.join(", ", questionMarks(columns.size())) + ")";
     }
 
     @Override
-    public final String sqlForUpdate(String table, String idColumn, List<String> columns) {
-        return sqlForUpdateIdEscaped(identifier(table), identifier(idColumn), identifiers(columns));
+    public final String sqlForUpdate(String schema, String table, String idColumn, List<String> columns) {
+        return sqlForUpdateIdEscaped(quoteIdentifier(schema), identifier(table), identifier(idColumn), identifiers(columns));
     }
 
-    protected String sqlForUpdateIdEscaped(String table, String idColumn, List<String> columns) {
-        return "UPDATE " + table + "\n" +
+    protected String sqlForUpdateIdEscaped(String schema, String table, String idColumn, List<String> columns) {
+        return "UPDATE " + schemaPrefix(schema) + table + "\n" +
                 "SET " + String.join(" = ?, ", columns) + " = ?\n" +
                 "WHERE " + idColumn + " = ?";
     }
@@ -69,26 +69,32 @@ public class GenericSQLDialect implements ISQLDialect {
     }
 
     @Override
-    public final String sqlForSelect(List<String> columns, String table, String where, String orderBy) {
-        return sqlForSelectIdEscaped(identifiers(columns), identifier(table), where, orderBy);
+    public final String sqlForSelect(String schema, List<String> columns, String table, String where, String orderBy) {
+        return sqlForSelectIdEscaped(quoteIdentifier(schema), identifiers(columns), identifier(table), where, orderBy);
     }
 
-    public String sqlForSelectIdEscaped(List<String> columns, String table, String where, String orderBy) {
+    protected String sqlForSelectIdEscaped(String schema, List<String> columns, String table, String where, String orderBy) {
         return "SELECT " + String.join(", ", columns) + "\n" +
-                "FROM " + table + "\n" +
+                "FROM " + schemaPrefix(schema) + table + "\n" +
                 (where == null ? "" : ("WHERE " + where + "\n")) +
                 (orderBy == null ? "" : ("ORDER BY " + orderBy + "\n"));
     }
 
+
+    @Override
+    public String sqlForCreateSchema(String schema) {
+        return "CREATE SCHEMA IF NOT EXISTS " + identifier(schema, true);
+    }
+
     @Override
     public String sqlForDropTable(ORMapping mapping) {
-        return "DROP TABLE IF EXISTS " + identifier(mapping.getTable());
+        return "DROP TABLE IF EXISTS " + identifier(mapping.getSchema(), mapping.getTable());
     }
 
     @Override
     public String sqlForCreateTable(ORMapping mapping) {
         StringBuilder sb = new StringBuilder();
-        sb.append("CREATE TABLE ").append(identifier(mapping.getTable())).append(" (");
+        sb.append("CREATE TABLE ").append(identifier(mapping.getSchema(), mapping.getTable())).append(" (");
         List<String> columns = new ArrayList<>();
         for (ColumnMapping columnMapping : mapping.getColumnMappings()) {
             columns.add(sqlForColumnDefinition(columnMapping));
@@ -176,18 +182,18 @@ public class GenericSQLDialect implements ISQLDialect {
     public List<String> sqlForCreateIndexes(ORMapping mapping) {
         List<String> sqls = new ArrayList<>();
         for (Index index : mapping.getIndexes()) {
-            sqls.add(sqlForIndex(index, mapping.getTable()));
+            sqls.add(sqlForIndex(mapping.getSchema(), index, mapping.getTable()));
         }
         return sqls;
     }
 
-    protected String sqlForIndex(Index index, String table) {
+    protected String sqlForIndex(String schema, Index index, String table) {
         String name = index.getName();
         if (name == null || name.equals("")) {
             name = table + "__" + index.getColumns().replaceAll(" ", "").replaceAll(",", "_");
         }
         String sql = "CREATE " + (index.isUnique() ? "UNIQUE " : "") + "INDEX " + name + " ON " +
-                identifier(table) + " (" +
+                identifier(schema, table) + " (" +
                 index.getColumns() +
                 ")";
         return sql;
@@ -226,13 +232,34 @@ public class GenericSQLDialect implements ISQLDialect {
      * @param identifier
      * @return
      */
-    protected String identifier(String identifier) {
+    protected String identifier(String identifier, boolean acceptNone) {
+        if (acceptNone && (identifier == null || identifier.isEmpty())) return identifier;
         return quoteIdentifier(escapeIdentifier(identifier));
     }
 
     /**
+     * Escapes and quotes the identifier.
+     *
+     * @param identifier
+     * @return
+     */
+    protected String identifier(String identifier) {
+        return identifier(identifier, false);
+    }
+
+    /**
+     * Escapes and quotes the table identifier.
+     *
+     * @param identifier
+     * @return
+     */
+    protected String identifier(String schema, String identifier) {
+        return schemaPrefix(quoteIdentifier(schema)) + quoteIdentifier(escapeIdentifier(identifier));
+    }
+
+    /**
      * Quotes the identifier. Does nothing by default, so that you can leave identifiers unquoted in your statements as
-     * well without having case-sensistivity problems with some databases.
+     * well without having case-sensitivity problems with some databases.
      *
      * @param identifier
      * @return
@@ -258,6 +285,10 @@ public class GenericSQLDialect implements ISQLDialect {
                     "Overrides escapeIdentifier in your SQL dialect if you need a different behavior.");
         else
             return identifier;
+    }
+
+    protected String schemaPrefix(String schema) {
+        return (schema == null || schema.isEmpty()) ? "" : schema + ".";
     }
 
     @Override

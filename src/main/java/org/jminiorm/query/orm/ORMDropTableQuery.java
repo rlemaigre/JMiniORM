@@ -16,6 +16,8 @@ public class ORMDropTableQuery<T> extends AbstractORMQuery<T> implements IORMDro
 
     @Override
     public void execute() throws DBException {
+        verifySchemaExistence();
+
         String sql = getQueryTarget().getConfig().getDialect().sqlForDropTable(getMapping());
         getQueryTarget().sql(sql);
     }

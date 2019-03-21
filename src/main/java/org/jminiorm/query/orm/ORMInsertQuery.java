@@ -1,14 +1,10 @@
 package org.jminiorm.query.orm;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.jminiorm.IQueryTarget;
 import org.jminiorm.exception.DBException;
 import org.jminiorm.mapping.ColumnMapping;
+
+import java.util.*;
 
 public class ORMInsertQuery<T> extends AbstractORMQuery<T> implements IORMInsertQuery<T> {
 
@@ -61,7 +57,7 @@ public class ORMInsertQuery<T> extends AbstractORMQuery<T> implements IORMInsert
 
 			// Insert rows :
 			ColumnMapping idColumnMapping = getMapping().hasId() ? getMapping().getIdColumnMapping() : null;
-			getQueryTarget().insert(table)
+			getQueryTarget().insert(table).schema(getMapping().getSchema())
 					.generatedColumn(
 							idColumnMapping != null && idColumnMapping.isGenerated() ? idColumnMapping.getColumn()
 									: null)

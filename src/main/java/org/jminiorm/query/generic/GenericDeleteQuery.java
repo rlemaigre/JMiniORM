@@ -9,6 +9,7 @@ import java.util.List;
 
 public class GenericDeleteQuery extends AbstractGenericQuery implements IGenericDeleteQuery {
 
+    private String schema;
     private String table;
     private String idColumn;
     private List<Object> ids = new ArrayList<>();
@@ -17,6 +18,12 @@ public class GenericDeleteQuery extends AbstractGenericQuery implements IGeneric
 
     public GenericDeleteQuery(IQueryTarget target) {
         super(target);
+    }
+
+    @Override
+    public IGenericDeleteQuery schema(String schema) {
+        this.schema = schema;
+        return this;
     }
 
     @Override
@@ -54,7 +61,7 @@ public class GenericDeleteQuery extends AbstractGenericQuery implements IGeneric
     public void execute() throws DBException {
         if (!ids.isEmpty()) {
             // SQL :
-            String sql = getQueryTarget().getConfig().getDialect().sqlForDelete(table, idColumn);
+            String sql = getQueryTarget().getConfig().getDialect().sqlForDelete(schema, table, idColumn);
 
             // Parameters :
             List<List<Object>> params = new ArrayList<>();
@@ -67,7 +74,7 @@ public class GenericDeleteQuery extends AbstractGenericQuery implements IGeneric
             getQueryTarget().executeUpdate(sql, params, null);
         }
         if (where != null) {
-            String sql = getQueryTarget().getConfig().getDialect().sqlForDeleteWhere(table, where);
+            String sql = getQueryTarget().getConfig().getDialect().sqlForDeleteWhere(schema, table, where);
             getQueryTarget().executeUpdate(sql, Arrays.asList(params), null);
         }
     }

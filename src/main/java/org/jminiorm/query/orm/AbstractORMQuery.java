@@ -31,4 +31,11 @@ public abstract class AbstractORMQuery<T> extends AbstractQuery implements IORMQ
         return getQueryTarget().getConfig().getORMappingProvider().getORMapping(getTargetClass());
     }
 
+    protected void verifySchemaExistence() {
+        String schema = getMapping().getSchema();
+        if (schema != null && !schema.isEmpty()) {
+            String sql = getQueryTarget().getConfig().getDialect().sqlForCreateSchema(schema);
+            getQueryTarget().sql(sql);
+        }
+    }
 }
