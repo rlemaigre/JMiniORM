@@ -1,15 +1,16 @@
 package org.jminiorm.query.generic;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import org.jminiorm.IQueryTarget;
 import org.jminiorm.exception.DBException;
 import org.jminiorm.query.AbstractQuery;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 public class GenericUpdateQuery extends AbstractQuery implements IGenericUpdateQuery {
 
+    private String schema;
     private String table;
     private String idColumn;
     private List<Map<String,Object>> values = new ArrayList<>();
@@ -19,13 +20,19 @@ public class GenericUpdateQuery extends AbstractQuery implements IGenericUpdateQ
     }
 
     @Override
+    public IGenericUpdateQuery schema(String schema) {
+        this.schema = schema;
+        return this;
+    }
+
+    @Override
     public IGenericUpdateQuery table(String table) {
         this.table = table;
         return this;
     }
 
     @Override
-    public GenericUpdateQuery idColumn(String idColumn) {
+    public IGenericUpdateQuery idColumn(String idColumn) {
         this.idColumn = idColumn;
         return this;
     }
@@ -51,7 +58,7 @@ public class GenericUpdateQuery extends AbstractQuery implements IGenericUpdateQ
         columns.remove(idColumn);
 
         // SQL :
-        String sql = getQueryTarget().getConfig().getDialect().sqlForUpdate(table, idColumn, columns);
+        String sql = getQueryTarget().getConfig().getDialect().sqlForUpdate(schema, table, idColumn, columns);
 
         // Parameters :
         List<List<Object>> params = new ArrayList<>();

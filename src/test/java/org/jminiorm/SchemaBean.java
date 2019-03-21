@@ -11,8 +11,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-@Table(name = "beans", indexes = { @Index(name = "shortTextIndex", columnList = "short_text") })
-public class Bean {
+@Table(name = "beans", schema = "custom", indexes = { @Index(name = "shortTextIndex", columnList = "short_text") })
+public class SchemaBean {
 
 	@Id
 	@GeneratedValue
@@ -37,10 +37,10 @@ public class Bean {
 	@Transient
 	private String notStored;
 
-	public Bean() {
+	public SchemaBean() {
 	}
 
-	public Bean(String shortText) {
+	public SchemaBean(String shortText) {
 		this.shortText = shortText;
 	}
 
@@ -153,7 +153,7 @@ public class Bean {
 			return true;
 		if (o == null || getClass() != o.getClass())
 			return false;
-		Bean bean = (Bean) o;
+		SchemaBean bean = (SchemaBean) o;
 		return Objects.equals(shortText, bean.shortText) && Objects.equals(longText, bean.longText)
 				&& Objects.equals(date, bean.date) && Objects.equals(localDate, bean.localDate)
 				// Precision limitation into timestamp in H2

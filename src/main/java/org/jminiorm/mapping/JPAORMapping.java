@@ -26,6 +26,7 @@ public class JPAORMapping extends ORMapping {
         // Table and indexes :
         Table tableAnn = clazz.getAnnotation(Table.class);
         if (tableAnn != null) {
+            setSchema(tableAnn.schema());
             setTable(tableAnn.name());
             List<Index> indexes = new ArrayList<>();
             javax.persistence.Index[] indexesAnn = tableAnn.indexes();

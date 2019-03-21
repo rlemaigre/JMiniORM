@@ -55,16 +55,17 @@ public class ORMDeleteQuery<T> extends AbstractORMQuery<T> implements IORMDelete
     public void execute() throws DBException {
         // The table to delete rows from :
         String table = getMapping().getTable();
+        String schema = getMapping().getSchema();
 
         if (!ids.isEmpty()) {
             ColumnMapping idColumnMapping = getMapping().getIdColumnMapping();
-            getQueryTarget().delete(table)
+            getQueryTarget().delete(table).schema(schema)
                     .idColumn(idColumnMapping.getColumn())
                     .addMany(ids)
                     .execute();
         }
         if (where != null) {
-            getQueryTarget().delete(table).where(where, params.toArray()).execute();
+            getQueryTarget().delete(table).schema(schema).where(where, params.toArray()).execute();
         }
     }
 }

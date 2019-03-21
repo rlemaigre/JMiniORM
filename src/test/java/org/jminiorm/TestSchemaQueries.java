@@ -17,7 +17,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TestQueries {
+public class TestSchemaQueries {
 
     private static Server tcpServer;
 
@@ -78,8 +78,8 @@ public class TestQueries {
 
     protected void testQueriesOnDatabase(IDatabase db) throws Exception {
         // Table creation :
-        db.dropTable(Bean.class);
-        db.createTable(Bean.class);
+        db.dropTable(SchemaBean.class);
+        db.createTable(SchemaBean.class);
 
         // ORM queries :
         testORMQueries(db);
@@ -89,10 +89,10 @@ public class TestQueries {
     }
 
     private void testORMQueries(IDatabase db) throws Exception {
-        db.delete(Bean.class).where("1=1");
+        db.delete(SchemaBean.class).where("1=1");
 
         // Insert :
-        Bean b1 = new Bean();
+        SchemaBean b1 = new SchemaBean();
         b1.setLocalDate(LocalDate.now());
         b1.setLocalDateTime(LocalDateTime.now());
         b1.setDate(new Date());
@@ -107,7 +107,7 @@ public class TestQueries {
         System.out.println("Created : " + b1);
         db.insert(b1);
         assertNotNull(b1.getId());
-        Bean b2 = db.select(Bean.class).one();
+        SchemaBean b2 = db.select(SchemaBean.class).one();
         System.out.println("Read in database : " + b2);
         assertTrue(b1.compareWithoutId(b2));
         assertNotSame(b1, b2);
@@ -115,48 +115,48 @@ public class TestQueries {
         // Update :
         b2.setShortText("a new short text");
         db.update(b2);
-        Bean b3 = db.select(Bean.class).id(b2.getId()).one();
+        SchemaBean b3 = db.select(SchemaBean.class).id(b2.getId()).one();
         assertTrue(b2.compareWithoutId(b3));
 
         // Delete :
         db.delete(b3);
-        assertEquals(0, db.select(Bean.class).list().size());
+        assertEquals(0, db.select(SchemaBean.class).list().size());
 
         // ORM select :
-        db.sql("truncate table beans");
+        db.sql("truncate table custom.beans");
         db.insert(Arrays.asList(
-                new Bean("b1"),
-                new Bean("b2"),
-                new Bean("b3")));
-        Map<String, Bean> resultAsIndexedObject = RSUtils.index(db.select(Bean.class).list(), "shortText");
+                new SchemaBean("b1"),
+                new SchemaBean("b2"),
+                new SchemaBean("b3")));
+        Map<String, SchemaBean> resultAsIndexedObject = RSUtils.index(db.select(SchemaBean.class).list(), "shortText");
         assertEquals(3, resultAsIndexedObject.size());
         assertEquals("b1", resultAsIndexedObject.get("b1").getShortText());
     }
 
     private void testGenericQueries(IDatabase db) throws Exception {
-        db.sql("truncate table beans");
+        db.sql("truncate table custom.beans");
         db.insert(Arrays.asList(
-                new Bean("b1"),
-                new Bean("b2"),
-                new Bean("b3")));
-        Long countLong = db.select("select count(*) from beans").asPrimitive(Long.class).one();
+                new SchemaBean("b1"),
+                new SchemaBean("b2"),
+                new SchemaBean("b3")));
+        Long countLong = db.select("select count(*) from custom.beans").asPrimitive(Long.class).one();
         assertEquals(new Long(3), countLong);
-        Integer countInteger = db.select("select count(*) from beans").asPrimitive(Integer.class).one();
+        Integer countInteger = db.select("select count(*) from custom.beans").asPrimitive(Integer.class).one();
         assertEquals(new Integer(3), countInteger);
-        String countString = db.select("select count(*) from beans").asPrimitive(String.class).one();
+        String countString = db.select("select count(*) from custom.beans").asPrimitive(String.class).one();
         assertEquals("3", countString);
-        Map<String, Map<String, Object>> resultAsIndexedMaps = RSUtils.index(db.select("select * from beans").asMap()
+        Map<String, Map<String, Object>> resultAsIndexedMaps = RSUtils.index(db.select("select * from custom.beans").asMap()
                 .list(), "short_text");
         assertEquals(3, resultAsIndexedMaps.size());
         assertEquals("b1", resultAsIndexedMaps.get("b1").get("short_text"));
     }
 
     private void testLocalDate(IDatabase db) throws Exception {
-        db.sql("truncate table beans");
-        Bean b = new Bean();
+        db.sql("truncate table custom.beans");
+        SchemaBean b = new SchemaBean();
         b.setLocalDate(LocalDate.now());
         db.insert(b);
-        Map<String, Object> data = db.select("select localDate from beans").asMap().one();
+        Map<String, Object> data = db.select("select localDate from custom.beans").asMap().one();
         assertEquals(LocalDate.now(), data.get("localDate"));
     }
 

@@ -1,21 +1,28 @@
 package org.jminiorm.query.generic;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import org.jminiorm.IQueryTarget;
 import org.jminiorm.exception.DBException;
 import org.jminiorm.query.AbstractQuery;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 public class GenericInsertQuery extends AbstractQuery implements IGenericInsertQuery {
 
+    private String schema;
     private String table;
     private String generatedColumn;
     private List<Map<String,Object>> values = new ArrayList<>();
 
     public GenericInsertQuery(IQueryTarget target) {
         super(target);
+    }
+
+    @Override
+    public IGenericInsertQuery schema(String schema) {
+        this.schema = schema;
+        return this;
     }
 
     @Override
@@ -50,7 +57,7 @@ public class GenericInsertQuery extends AbstractQuery implements IGenericInsertQ
         List<String> columns = new ArrayList<>(values.get(0).keySet());
 
         // SQL :
-        String sql = getQueryTarget().getConfig().getDialect().sqlForInsert(table, columns);
+        String sql = getQueryTarget().getConfig().getDialect().sqlForInsert(schema, table, columns);
 
         // Parameters :
         List<List<Object>> params = new ArrayList<>();

@@ -58,7 +58,7 @@ public class ORMUpdateQuery<T> extends AbstractORMQuery<T> implements IORMUpdate
             }
 
             // Update rows :
-            getQueryTarget().update(table)
+            getQueryTarget().update(table).schema(getMapping().getSchema())
                     .idColumn(idColumnMapping.getColumn())
                     .addMany(rows)
                     .execute();

@@ -1,123 +1,133 @@
 package org.jminiorm.mapping;
 
-import java.util.List;
-
 import org.jminiorm.utils.CaseInsensitiveMap;
+
+import java.util.List;
 
 /**
  * Represents the mapping between a Java class and a database table.
  */
 public class ORMapping {
 
-	private Class<?> javaClass;
-	private String table;
-	private List<Index> indexes;
-	private List<ColumnMapping> columnMappings;
-	private CaseInsensitiveMap<ColumnMapping> columnMappingsIndexedByProperty;
-	private CaseInsensitiveMap<ColumnMapping> columnMappingsIndexedByColumn;
-	private ColumnMapping idColumnMapping;
-	private Boolean hasId;
+    private Class<?> javaClass;
+    private String schema;
+    private String table;
+    private List<Index> indexes;
+    private List<ColumnMapping> columnMappings;
+    private CaseInsensitiveMap<ColumnMapping> columnMappingsIndexedByProperty;
+    private CaseInsensitiveMap<ColumnMapping> columnMappingsIndexedByColumn;
+    private ColumnMapping idColumnMapping;
+    private Boolean hasId;
 
-	public ORMapping() {
-	}
+    public ORMapping() {
+    }
 
-	public Class<?> getJavaClass() {
-		return javaClass;
-	}
+    public Class<?> getJavaClass() {
+        return javaClass;
+    }
 
-	public void setJavaClass(Class<?> javaClass) {
-		this.javaClass = javaClass;
-	}
+    public void setJavaClass(Class<?> javaClass) {
+        this.javaClass = javaClass;
+    }
 
-	public String getTable() {
-		return table;
-	}
 
-	public void setTable(String table) {
-		this.table = table;
-	}
+    public String getSchema() {
+        return schema;
+    }
 
-	public List<Index> getIndexes() {
-		return indexes;
-	}
+    public void setSchema(String schema) {
+        this.schema = schema;
+    }
 
-	public void setIndexes(List<Index> indexes) {
-		this.indexes = indexes;
-	}
+    public String getTable() {
+        return table;
+    }
 
-	public List<ColumnMapping> getColumnMappings() {
-		return columnMappings;
-	}
+    public void setTable(String table) {
+        this.table = table;
+    }
 
-	public void setColumnMappings(List<ColumnMapping> columnMappings) {
-		this.columnMappings = columnMappings;
-	}
+    public List<Index> getIndexes() {
+        return indexes;
+    }
 
-	/**
-	 * Returns the column mapping for the given property. Case doesn't matter.
-	 *
-	 * @param property
-	 * @return
-	 */
-	public ColumnMapping getColumnMappingByProperty(String property) {
-		if (columnMappingsIndexedByProperty == null) {
-			columnMappingsIndexedByProperty = createColumnMappingsIndexedByProperty();
-		}
-		return columnMappingsIndexedByProperty.get(property);
-	}
+    public void setIndexes(List<Index> indexes) {
+        this.indexes = indexes;
+    }
 
-	protected CaseInsensitiveMap<ColumnMapping> createColumnMappingsIndexedByProperty() {
-		CaseInsensitiveMap<ColumnMapping> mappings = new CaseInsensitiveMap<>();
-		for (ColumnMapping mapping : getColumnMappings()) {
-			mappings.put(mapping.getPropertyDescriptor().getName(), mapping);
-		}
-		return mappings;
-	}
+    public List<ColumnMapping> getColumnMappings() {
+        return columnMappings;
+    }
 
-	/**
-	 * Returns the column mapping for the given column. Case doesn't matter.
-	 *
-	 * @param column
-	 * @return
-	 */
-	public ColumnMapping getColumnMappingByColumn(String column) {
-		if (columnMappingsIndexedByColumn == null) {
-			columnMappingsIndexedByColumn = createColumnMappingsIndexedByColumn();
-		}
-		return columnMappingsIndexedByColumn.get(column);
-	}
+    public void setColumnMappings(List<ColumnMapping> columnMappings) {
+        this.columnMappings = columnMappings;
+    }
 
-	protected CaseInsensitiveMap<ColumnMapping> createColumnMappingsIndexedByColumn() {
-		CaseInsensitiveMap<ColumnMapping> mappings = new CaseInsensitiveMap<>();
-		for (ColumnMapping mapping : getColumnMappings()) {
-			mappings.put(mapping.getColumn(), mapping);
-		}
-		return mappings;
-	}
+    /**
+     * Returns the column mapping for the given property. Case doesn't matter.
+     *
+     * @param property
+     * @return
+     */
+    public ColumnMapping getColumnMappingByProperty(String property) {
+        if (columnMappingsIndexedByProperty == null) {
+            columnMappingsIndexedByProperty = createColumnMappingsIndexedByProperty();
+        }
+        return columnMappingsIndexedByProperty.get(property);
+    }
 
-	/**
-	 * Returns the column mapping for the property marked as id.
-	 *
-	 * @return
-	 */
-	public ColumnMapping getIdColumnMapping() {
-		if (idColumnMapping == null) {
-			for (ColumnMapping mapping : getColumnMappings()) {
-				if (mapping.isId()) {
-					idColumnMapping = mapping;
-					break;
-				}
-			}
-			if (idColumnMapping == null)
-				throw new RuntimeException("No ID column defined in class " + getJavaClass().getName());
-		}
-		return idColumnMapping;
-	}
+    protected CaseInsensitiveMap<ColumnMapping> createColumnMappingsIndexedByProperty() {
+        CaseInsensitiveMap<ColumnMapping> mappings = new CaseInsensitiveMap<>();
+        for (ColumnMapping mapping : getColumnMappings()) {
+            mappings.put(mapping.getPropertyDescriptor().getName(), mapping);
+        }
+        return mappings;
+    }
 
-	public Boolean hasId() {
-		if (hasId == null) {
-			hasId = getColumnMappings().stream().anyMatch(ColumnMapping::isId);
-		}
-		return hasId;
-	}
+    /**
+     * Returns the column mapping for the given column. Case doesn't matter.
+     *
+     * @param column
+     * @return
+     */
+    public ColumnMapping getColumnMappingByColumn(String column) {
+        if (columnMappingsIndexedByColumn == null) {
+            columnMappingsIndexedByColumn = createColumnMappingsIndexedByColumn();
+        }
+        return columnMappingsIndexedByColumn.get(column);
+    }
+
+    protected CaseInsensitiveMap<ColumnMapping> createColumnMappingsIndexedByColumn() {
+        CaseInsensitiveMap<ColumnMapping> mappings = new CaseInsensitiveMap<>();
+        for (ColumnMapping mapping : getColumnMappings()) {
+            mappings.put(mapping.getColumn(), mapping);
+        }
+        return mappings;
+    }
+
+    /**
+     * Returns the column mapping for the property marked as id.
+     *
+     * @return
+     */
+    public ColumnMapping getIdColumnMapping() {
+        if (idColumnMapping == null) {
+            for (ColumnMapping mapping : getColumnMappings()) {
+                if (mapping.isId()) {
+                    idColumnMapping = mapping;
+                    break;
+                }
+            }
+            if (idColumnMapping == null)
+                throw new RuntimeException("No ID column defined in class " + getJavaClass().getName());
+        }
+        return idColumnMapping;
+    }
+
+    public Boolean hasId() {
+        if (hasId == null) {
+            hasId = getColumnMappings().stream().anyMatch(ColumnMapping::isId);
+        }
+        return hasId;
+    }
 }

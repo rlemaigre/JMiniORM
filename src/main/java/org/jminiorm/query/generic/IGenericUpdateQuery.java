@@ -11,6 +11,14 @@ import java.util.Map;
 public interface IGenericUpdateQuery extends IGenericQuery {
 
     /**
+     * Sets the schema.
+     *
+     * @param schema
+     * @return
+     */
+    IGenericUpdateQuery schema(String schema);
+
+    /**
      * Sets the table and the primary key column.
      *
      * @param table
