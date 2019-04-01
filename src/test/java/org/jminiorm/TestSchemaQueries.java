@@ -63,18 +63,18 @@ public class TestSchemaQueries {
         testQueriesOnDatabase(db);
     }
 
-    // @Test
-    // public void testPostgreSQL() throws Exception {
-    // Database db;
-    // IDatabaseConfig config;
-    // config = new DatabaseConfig.Builder()
-    // .dataSource("jdbc:postgresql://localhost/jminiorm", "jminiorm", "jminiorm")
-    // .statementExecutor(new DefaultStatementExecutor())
-    // .dialect(new PostgreSQLDialect())
-    // .build();
-    // db = new Database(config);
-    // testQueriesOnDatabase(db);
-    // }
+//    @Test
+//    public void testPostgreSQL() throws Exception {
+//        Database db;
+//        IDatabaseConfig config;
+//        config = new DatabaseConfig.Builder()
+//                .dataSource("jdbc:postgresql://localhost/jminiorm", "jminiorm", "jminiorm")
+//                .statementExecutor(new DefaultStatementExecutor())
+//                .dialect(new PostgreSQLDialect())
+//                .build();
+//        db = new Database(config);
+//        testQueriesOnDatabase(db);
+//    }
 
     protected void testQueriesOnDatabase(IDatabase db) throws Exception {
         // Table creation :

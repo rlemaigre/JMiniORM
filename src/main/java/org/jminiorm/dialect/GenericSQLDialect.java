@@ -80,10 +80,9 @@ public class GenericSQLDialect implements ISQLDialect {
                 (orderBy == null ? "" : ("ORDER BY " + orderBy + "\n"));
     }
 
-
     @Override
     public String sqlForCreateSchema(String schema) {
-        return "CREATE SCHEMA IF NOT EXISTS " + identifier(schema, true);
+        return "CREATE SCHEMA IF NOT EXISTS " + identifier(schema, false);
     }
 
     @Override

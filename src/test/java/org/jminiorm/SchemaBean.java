@@ -20,10 +20,13 @@ public class SchemaBean {
 	@Column(name = "short_text", length = 16)
 	private String shortText;
 	private String longText;
+	@Column(name = "the_date")
 	private Date date;
 	private LocalDate localDate;
 	private LocalDateTime localDateTime;
 	private Integer someInt;
+	// solution for a database without support of BOOLEAN
+	// @Column(columnDefinition = "INTEGER")
 	private Boolean someBoolean;
 	private byte[] bytes;
 	@Enumerated(EnumType.ORDINAL)

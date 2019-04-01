@@ -12,6 +12,12 @@ public class SybaseASASQLDialect extends GenericSQLDialect {
     }
 
     @Override
+    public String sqlForCreateSchema(String schema) {
+        // SybaseASA does not support the common concept of schema, however a schema is auto-created par user, with an identical name
+        return null;
+    }
+
+    @Override
     public String sqlForSelect(String sql, Integer limit, Integer offset) {
         String expr = "";
         if (limit != null)
