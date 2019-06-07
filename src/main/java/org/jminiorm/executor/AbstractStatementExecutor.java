@@ -96,43 +96,48 @@ public abstract class AbstractStatementExecutor implements IStatementExecutor {
             Class<?> type)
             throws DBException {
         try {
+            Object result;
             if (type == Object.class)
-                return rs.getObject(columnIndex);
+                result = rs.getObject(columnIndex);
             else if (type == String.class)
-                return rs.getString(columnIndex);
+                result = rs.getString(columnIndex);
             else if (type == Integer.class || type == int.class)
-                return rs.getInt(columnIndex);
+                result = rs.getInt(columnIndex);
             else if (type == BigDecimal.class)
-                return rs.getBigDecimal(columnIndex);
+                result = rs.getBigDecimal(columnIndex);
             else if (type == Boolean.class || type == boolean.class)
-                return rs.getBoolean(columnIndex);
+                result = rs.getBoolean(columnIndex);
             else if (type == Byte[].class || type == byte[].class)
-                return rs.getBytes(columnIndex);
+                result = rs.getBytes(columnIndex);
             else if (type == Date.class) {
                 Timestamp timestamp = rs.getTimestamp(columnIndex);
-                return timestamp == null ? null : new Date(timestamp.getTime());
+                result = timestamp == null ? null : new Date(timestamp.getTime());
             } else if (type == Double.class || type == double.class)
-                return rs.getDouble(columnIndex);
+                result = rs.getDouble(columnIndex);
             else if (type == Float.class || type == float.class)
-                return rs.getFloat(columnIndex);
+                result = rs.getFloat(columnIndex);
             else if (type == Long.class || type == long.class)
-                return rs.getLong(columnIndex);
+                result = rs.getLong(columnIndex);
             else if (type == Short.class || type == short.class)
-                return rs.getShort(columnIndex);
+                result = rs.getShort(columnIndex);
             else if (type == LocalDate.class) {
                 Date d = (Date)getObject(target, rs, metaData, columnIndex, Date.class);
-                if (d == null) return null;
+                if (d == null) result = null;
                 else {
-                    return d.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                    result = d.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
                 }
             } else if (type == LocalDateTime.class) {
                 Date d = (Date)getObject(target, rs, metaData, columnIndex, Date.class);
-                if (d == null) return null;
+                if (d == null) result = null;
                 else {
-                    return d.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+                    result = d.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
                 }
             } else
-                return rs.getObject(columnIndex, type);
+                result = rs.getObject(columnIndex, type);
+            if (rs.wasNull())
+                return null;
+            else
+                return result;
         } catch (SQLException e) {
             throw new DBException(e);
         }
