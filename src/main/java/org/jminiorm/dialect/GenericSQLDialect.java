@@ -233,7 +233,7 @@ public class GenericSQLDialect implements ISQLDialect {
      */
     protected String identifier(String identifier, boolean acceptNone) {
         if (acceptNone && (identifier == null || identifier.isEmpty())) return identifier;
-        return quoteIdentifier(escapeIdentifier(identifier));
+        return quoteIdentifier(identifier);
     }
 
     /**
@@ -253,7 +253,7 @@ public class GenericSQLDialect implements ISQLDialect {
      * @return
      */
     protected String identifier(String schema, String identifier) {
-        return schemaPrefix(quoteIdentifier(schema)) + quoteIdentifier(escapeIdentifier(identifier));
+        return schemaPrefix(quoteIdentifier(schema)) + quoteIdentifier(identifier);
     }
 
     /**
@@ -265,25 +265,6 @@ public class GenericSQLDialect implements ISQLDialect {
      */
     protected String quoteIdentifier(String identifier) {
         return identifier;
-    }
-
-    /**
-     * To avoid SQL injection attacks, the default implementation simply throws an Exception if there is a special
-     * character in the identifier. Only letters, numbers, dots and underscores are allowed. Override if there is a safe
-     * mechanism to escape special characters in your database and if you need special characters. You may also keep the
-     * current behavior but whitelist some identifiers.
-     *
-     * @param identifier
-     * @return
-     * @throws DBException
-     */
-    protected String escapeIdentifier(String identifier) {
-        if (!identifier.matches("^[a-zA-Z0-9_.]+$"))
-            throw new RuntimeException("Special character found in identifier '" + identifier + "'. To prevent SQL " +
-                    "injection attacks, only letters, numbers, dots and underscores are allowed in identifiers. " +
-                    "Overrides escapeIdentifier in your SQL dialect if you need a different behavior.");
-        else
-            return identifier;
     }
 
     protected String schemaPrefix(String schema) {
