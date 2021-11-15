@@ -1,13 +1,12 @@
 package org.jminiorm.executor;
 
+import org.jminiorm.IQueryTarget;
+import org.jminiorm.dialect.SetNullParameterMethod;
+import org.jminiorm.exception.DBException;
+import org.jminiorm.utils.CaseInsensitiveMap;
+
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.sql.Types;
+import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -16,16 +15,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.jminiorm.IQueryTarget;
-import org.jminiorm.dialect.SetNullParameterMethod;
-import org.jminiorm.exception.DBException;
-import org.jminiorm.utils.CaseInsensitiveMap;
-
 public abstract class AbstractStatementExecutor implements IStatementExecutor {
 
     @Override
-    public List<Map<String,Object>> executeQuery(IQueryTarget target, String sql, List<Object> params,
-            Map<String,Class<?>> typeOverrides) throws DBException {
+    public List<Map<String, Object>> executeQuery(IQueryTarget target, String sql, List<Object> params,
+                                                  Map<String, Class<?>> typeOverrides) throws DBException {
         CaseInsensitiveMap<Class<?>> caseInsensitiveTypeOverrides = new CaseInsensitiveMap<>(typeOverrides);
         Connection con = null;
         PreparedStatement stmt = null;
@@ -38,10 +32,10 @@ public abstract class AbstractStatementExecutor implements IStatementExecutor {
             rs = stmt.executeQuery();
 
             // Convert ResultSet to a list of maps :
-            List<Map<String,Object>> rows = new ArrayList<>();
+            List<Map<String, Object>> rows = new ArrayList<>();
             ResultSetMetaData metaData = rs.getMetaData();
             while (rs.next()) {
-                Map<String,Object> row = new CaseInsensitiveMap<>();
+                Map<String, Object> row = new CaseInsensitiveMap<>();
                 for (int i = 1; i <= metaData.getColumnCount(); i++) {
                     String colName = metaData.getColumnName(i);
                     int jdbcType = metaData.getColumnType(i);
@@ -84,7 +78,7 @@ public abstract class AbstractStatementExecutor implements IStatementExecutor {
     /**
      * The method tries to use the JDBC 4.0 methods as much as possible, only using JDBC 4.1 getObject() as a last
      * resort, because it's not supported by some drivers (notably Sybase JConnect 7.07).
-     * 
+     *
      * @param rs
      * @param metaData
      * @param columnIndex
@@ -93,7 +87,7 @@ public abstract class AbstractStatementExecutor implements IStatementExecutor {
      * @throws DBException
      */
     protected Object getObject(IQueryTarget target, ResultSet rs, ResultSetMetaData metaData, int columnIndex,
-            Class<?> type)
+                               Class<?> type)
             throws DBException {
         try {
             Object result;
@@ -121,13 +115,14 @@ public abstract class AbstractStatementExecutor implements IStatementExecutor {
             else if (type == Short.class || type == short.class)
                 result = rs.getShort(columnIndex);
             else if (type == LocalDate.class) {
-                Date d = (Date)getObject(target, rs, metaData, columnIndex, Date.class);
+                Date d = (Date) getObject(target, rs, metaData, columnIndex, Date.class);
                 if (d == null) result = null;
                 else {
-                    result = d.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                    // Ensures that 01/01/1001 in database gets converted to 01/01/1001 localdate.
+                    result = new java.sql.Date(d.getTime()).toLocalDate();
                 }
             } else if (type == LocalDateTime.class) {
-                Date d = (Date)getObject(target, rs, metaData, columnIndex, Date.class);
+                Date d = (Date) getObject(target, rs, metaData, columnIndex, Date.class);
                 if (d == null) result = null;
                 else {
                     result = d.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
@@ -152,32 +147,32 @@ public abstract class AbstractStatementExecutor implements IStatementExecutor {
                 else
                     stmt.setObject(columnIndex, null);
             } else if (param instanceof String)
-                stmt.setString(columnIndex, (String)param);
+                stmt.setString(columnIndex, (String) param);
             else if (param instanceof Integer)
-                stmt.setInt(columnIndex, (Integer)param);
+                stmt.setInt(columnIndex, (Integer) param);
             else if (param instanceof BigDecimal)
-                stmt.setBigDecimal(columnIndex, (BigDecimal)param);
+                stmt.setBigDecimal(columnIndex, (BigDecimal) param);
             else if (param instanceof Boolean)
-                stmt.setBoolean(columnIndex, (Boolean)param);
+                stmt.setBoolean(columnIndex, (Boolean) param);
             else if (param instanceof byte[])
-                stmt.setBytes(columnIndex, (byte[])param);
+                stmt.setBytes(columnIndex, (byte[]) param);
             else if (param instanceof Date) {
-                Timestamp timestamp = new Timestamp(((Date)param).getTime());
+                Timestamp timestamp = new Timestamp(((Date) param).getTime());
                 stmt.setTimestamp(columnIndex, timestamp);
             } else if (param instanceof Double)
-                stmt.setDouble(columnIndex, (Double)param);
+                stmt.setDouble(columnIndex, (Double) param);
             else if (param instanceof Float)
-                stmt.setFloat(columnIndex, (Float)param);
+                stmt.setFloat(columnIndex, (Float) param);
             else if (param instanceof Long)
-                stmt.setLong(columnIndex, (Long)param);
+                stmt.setLong(columnIndex, (Long) param);
             else if (param instanceof Short)
-                stmt.setShort(columnIndex, (Short)param);
+                stmt.setShort(columnIndex, (Short) param);
             else if (param instanceof LocalDate) {
-                LocalDate ld = (LocalDate)param;
+                LocalDate ld = (LocalDate) param;
                 Timestamp timestamp = Timestamp.valueOf(ld.atStartOfDay());
                 stmt.setTimestamp(columnIndex, timestamp);
             } else if (param instanceof LocalDateTime) {
-                Timestamp timestamp = Timestamp.valueOf((LocalDateTime)param);
+                Timestamp timestamp = Timestamp.valueOf((LocalDateTime) param);
                 stmt.setTimestamp(columnIndex, timestamp);
             } else
                 stmt.setObject(columnIndex, param);
@@ -188,7 +183,7 @@ public abstract class AbstractStatementExecutor implements IStatementExecutor {
 
     /**
      * Returns the index of the generated column in the generated keys result set.
-     * 
+     *
      * @param rs
      * @param generatedColumn
      * @return
