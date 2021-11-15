@@ -9,7 +9,6 @@ import java.math.BigDecimal;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -125,7 +124,8 @@ public abstract class AbstractStatementExecutor implements IStatementExecutor {
                 Date d = (Date) getObject(target, rs, metaData, columnIndex, Date.class);
                 if (d == null) result = null;
                 else {
-                    result = d.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+                    // Ensures that 01/01/1001 in database gets converted to 01/01/1001 localdate.
+                    result = new java.sql.Timestamp(d.getTime()).toLocalDateTime();
                 }
             } else
                 result = rs.getObject(columnIndex, type);
@@ -169,10 +169,11 @@ public abstract class AbstractStatementExecutor implements IStatementExecutor {
                 stmt.setShort(columnIndex, (Short) param);
             else if (param instanceof LocalDate) {
                 LocalDate ld = (LocalDate) param;
-                Timestamp timestamp = Timestamp.valueOf(ld.atStartOfDay());
-                stmt.setTimestamp(columnIndex, timestamp);
+                java.sql.Date d = java.sql.Date.valueOf(ld);
+                stmt.setDate(columnIndex, d);
             } else if (param instanceof LocalDateTime) {
-                Timestamp timestamp = Timestamp.valueOf((LocalDateTime) param);
+                LocalDateTime ldt = (LocalDateTime) param;
+                Timestamp timestamp = Timestamp.valueOf(ldt);
                 stmt.setTimestamp(columnIndex, timestamp);
             } else
                 stmt.setObject(columnIndex, param);
