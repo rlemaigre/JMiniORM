@@ -1,9 +1,10 @@
 package org.jminiorm.mapping;
 
 import javax.persistence.AttributeConverter;
-import javax.persistence.EnumType;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * Represents the mapping between a java property and a database column.
@@ -145,11 +146,33 @@ public class ColumnMapping {
      */
     public void writeProperty(Object bean, Object value) {
         try {
-            getPropertyDescriptor().getWriteMethod().invoke(bean,
-                    converter == null ? value : converter.convertToEntityAttribute(value)
-            );
-        } catch (IllegalAccessException | InvocationTargetException e) {
+            Object converted = converter == null ? value : converter.convertToEntityAttribute(value);
+            Method setter = getPropertyDescriptor().getWriteMethod();
+            if (setter != null) {
+                setter.invoke(bean,
+                        converted
+                );
+            } else {
+                String name = getPropertyDescriptor().getName();
+                Field f = getField(bean.getClass(), name);
+                f.setAccessible(true);
+                f.set(bean, converted);
+            }
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchFieldException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private static Field getField(Class mClass, String fieldName) throws NoSuchFieldException {
+        try {
+            return mClass.getDeclaredField(fieldName);
+        } catch (NoSuchFieldException e) {
+            Class superClass = mClass.getSuperclass();
+            if (superClass == null) {
+                throw e;
+            } else {
+                return getField(superClass, fieldName);
+            }
         }
     }
 }
