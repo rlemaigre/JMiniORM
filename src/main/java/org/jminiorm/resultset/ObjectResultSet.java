@@ -6,10 +6,11 @@ import org.jminiorm.mapping.ColumnMapping;
 import org.jminiorm.mapping.ORMapping;
 
 import java.lang.reflect.Constructor;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.sql.Types;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.*;
 
 public class ObjectResultSet<T> extends AbstractResultSet<T> implements IObjectResultSet<T> {
 
@@ -25,7 +26,12 @@ public class ObjectResultSet<T> extends AbstractResultSet<T> implements IObjectR
     protected T castRow(Map<String, Object> row) {
         try {
             Constructor<?> constructor = targetClass.getConstructors()[0];
-            List<Object> args = Collections.nCopies(constructor.getParameterCount(), null);
+            List<Object> args = new ArrayList<>();
+            Class<?>[] parameterTypes = constructor.getParameterTypes();
+            for (int i = 0; i < parameterTypes.length; i++) {
+                Class<?> parameterType = parameterTypes[i];
+                args.set(i, canonicalValue(parameterType));
+            }
             constructor.newInstance(args.toArray());
             T obj = targetClass.newInstance();
             for (ColumnMapping columnMapping : getMapping().getColumnMappings()) {
@@ -35,6 +41,21 @@ public class ObjectResultSet<T> extends AbstractResultSet<T> implements IObjectR
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    protected Object canonicalValue(Class<?> clazz) {
+        if (clazz == Long.class || clazz == Integer.class || clazz == Short.class || clazz == Double.class || clazz == Float.class)
+            return 0;
+        else if (clazz == BigDecimal.class)
+            return BigDecimal.ZERO;
+        else if (clazz == LocalDate.class)
+            return LocalDate.now();
+        else if (clazz == LocalDateTime.class)
+            return LocalDateTime.now();
+        else if (clazz == Boolean.class)
+            return false;
+        else
+            return null;
     }
 
     protected ORMapping getMapping() {
