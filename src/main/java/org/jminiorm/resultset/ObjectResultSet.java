@@ -27,10 +27,8 @@ public class ObjectResultSet<T> extends AbstractResultSet<T> implements IObjectR
         try {
             Constructor<?> constructor = targetClass.getConstructors()[0];
             List<Object> args = new ArrayList<>();
-            Class<?>[] parameterTypes = constructor.getParameterTypes();
-            for (int i = 0; i < parameterTypes.length; i++) {
-                Class<?> parameterType = parameterTypes[i];
-                args.set(i, canonicalValue(parameterType));
+            for (Class<?> parameterType : constructor.getParameterTypes()) {
+                args.add(canonicalValue(parameterType));
             }
             constructor.newInstance(args.toArray());
             T obj = targetClass.newInstance();
