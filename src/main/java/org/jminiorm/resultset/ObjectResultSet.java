@@ -30,8 +30,7 @@ public class ObjectResultSet<T> extends AbstractResultSet<T> implements IObjectR
             for (Class<?> parameterType : constructor.getParameterTypes()) {
                 args.add(canonicalValue(parameterType));
             }
-            constructor.newInstance(args.toArray());
-            T obj = targetClass.newInstance();
+            T obj = (T) constructor.newInstance(args.toArray());
             for (ColumnMapping columnMapping : getMapping().getColumnMappings()) {
                 columnMapping.writeProperty(obj, row.get(columnMapping.getColumn()));
             }
