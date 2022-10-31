@@ -44,6 +44,8 @@ public class ObjectResultSet<T> extends AbstractResultSet<T> implements IObjectR
     protected Object canonicalValue(Class<?> clazz) {
         if (clazz == Long.class || clazz == Integer.class || clazz == Short.class || clazz == Double.class || clazz == Float.class)
             return 0;
+        else if (clazz == String.class)
+            return "";
         else if (clazz == BigDecimal.class)
             return BigDecimal.ZERO;
         else if (clazz == LocalDate.class)
