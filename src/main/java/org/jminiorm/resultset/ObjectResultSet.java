@@ -41,7 +41,8 @@ public class ObjectResultSet<T> extends AbstractResultSet<T> implements IObjectR
     }
 
     protected Object canonicalValue(Class<?> clazz) {
-        if (clazz == Long.class || clazz == Integer.class || clazz == Short.class || clazz == Double.class || clazz == Float.class)
+        if (clazz == Long.class || clazz == Integer.class || clazz == Short.class || clazz == Double.class || clazz == Float.class ||
+                clazz == int.class || clazz == long.class ||clazz == float.class || clazz == double.class || clazz == short.class)
             return 0;
         else if (clazz == String.class)
             return "";
@@ -51,7 +52,7 @@ public class ObjectResultSet<T> extends AbstractResultSet<T> implements IObjectR
             return LocalDate.now();
         else if (clazz == LocalDateTime.class)
             return LocalDateTime.now();
-        else if (clazz == Boolean.class)
+        else if (clazz == Boolean.class || clazz == boolean.class)
             return false;
         else
             return null;
