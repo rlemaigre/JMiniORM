@@ -5,6 +5,8 @@ import org.jminiorm.attributeconverter.AttributeConverterUtils;
 import org.jminiorm.mapping.ColumnMapping;
 import org.jminiorm.mapping.ORMapping;
 
+import java.lang.reflect.Constructor;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +24,9 @@ public class ObjectResultSet<T> extends AbstractResultSet<T> implements IObjectR
     @Override
     protected T castRow(Map<String, Object> row) {
         try {
+            Constructor<?> constructor = targetClass.getConstructors()[0];
+            List<Object> args = Collections.nCopies(constructor.getParameterCount(), null);
+            constructor.newInstance(args.toArray());
             T obj = targetClass.newInstance();
             for (ColumnMapping columnMapping : getMapping().getColumnMappings()) {
                 columnMapping.writeProperty(obj, row.get(columnMapping.getColumn()));
