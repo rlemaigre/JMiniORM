@@ -32,7 +32,7 @@ public class ObjectResultSet<T> extends AbstractResultSet<T> implements IObjectR
             }
             T obj = (T) constructor.newInstance(args.toArray());
             for (ColumnMapping columnMapping : getMapping().getColumnMappings()) {
-                columnMapping.writeProperty(obj, row.get(columnMapping.getColumn()));
+                columnMapping.writeProperty(obj, row.get(columnMapping.getColumn().replace("\"", "")));
             }
             return obj;
         } catch (Exception e) {
