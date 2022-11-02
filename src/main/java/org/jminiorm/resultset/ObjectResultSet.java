@@ -25,7 +25,7 @@ public class ObjectResultSet<T> extends AbstractResultSet<T> implements IObjectR
     @Override
     protected T castRow(Map<String, Object> row) {
         try {
-            Constructor<?> constructor = targetClass.getConstructors()[0];
+            Constructor<?> constructor = Arrays.stream(targetClass.getConstructors()).min(Comparator.comparing(Constructor::getParameterCount)).get();
             List<Object> args = new ArrayList<>();
             for (Class<?> parameterType : constructor.getParameterTypes()) {
                 args.add(canonicalValue(parameterType));
