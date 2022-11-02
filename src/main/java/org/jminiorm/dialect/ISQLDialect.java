@@ -10,13 +10,13 @@ import java.util.List;
  */
 public interface ISQLDialect {
 
-    String sqlForDelete(String schema, String table, String idColumn);
+    String sqlForDelete(String schema, String table, List<String> idColumns);
 
     String sqlForDeleteWhere(String schema, String table, String where);
 
     String sqlForInsert(String schema, String table, List<String> columns);
 
-    String sqlForUpdate(String schema, String table, String idColumn, List<String> columns);
+    String sqlForUpdate(String schema, String table, List<String> idColumns, List<String> columns);
 
     String sqlForSelect(String sql, Integer limit, Integer offset);
 

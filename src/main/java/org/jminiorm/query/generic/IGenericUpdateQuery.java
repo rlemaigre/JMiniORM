@@ -35,6 +35,11 @@ public interface IGenericUpdateQuery extends IGenericQuery {
     IGenericUpdateQuery idColumn(String idColumn);
 
     /**
+     * Sets the columns containing the id.
+     */
+    IGenericUpdateQuery idColumns(String... idColumns);
+
+    /**
      * Add one map of columns to update and their corresponding values. The map must contain the value for the idColumn
      * key.
      *

@@ -4,15 +4,13 @@ import org.jminiorm.IQueryTarget;
 import org.jminiorm.exception.DBException;
 import org.jminiorm.query.AbstractQuery;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class GenericUpdateQuery extends AbstractQuery implements IGenericUpdateQuery {
 
     private String schema;
     private String table;
-    private String idColumn;
+    private List<String> idColumns;
     private List<Map<String,Object>> values = new ArrayList<>();
 
     public GenericUpdateQuery(IQueryTarget target) {
@@ -33,7 +31,13 @@ public class GenericUpdateQuery extends AbstractQuery implements IGenericUpdateQ
 
     @Override
     public IGenericUpdateQuery idColumn(String idColumn) {
-        this.idColumn = idColumn;
+        this.idColumns = Collections.singletonList(idColumn);
+        return this;
+    }
+
+    @Override
+    public IGenericUpdateQuery idColumns(String... idColumns) {
+        this.idColumns = Arrays.asList(idColumns);
         return this;
     }
 
@@ -55,10 +59,10 @@ public class GenericUpdateQuery extends AbstractQuery implements IGenericUpdateQ
 
         // Columns (x in "SET x = ...") :
         List<String> columns = new ArrayList<>(values.get(0).keySet());
-        columns.remove(idColumn);
+        columns.removeAll(idColumns);
 
         // SQL :
-        String sql = getQueryTarget().getConfig().getDialect().sqlForUpdate(schema, table, idColumn, columns);
+        String sql = getQueryTarget().getConfig().getDialect().sqlForUpdate(schema, table, idColumns, columns);
 
         // Parameters :
         List<List<Object>> params = new ArrayList<>();
@@ -67,7 +71,9 @@ public class GenericUpdateQuery extends AbstractQuery implements IGenericUpdateQ
             for (String col : columns) {
                 curParams.add(val.get(col));
             }
-            curParams.add(val.get(idColumn));
+            for (String col : idColumns) {
+                curParams.add(val.get(col));
+            }
             params.add(curParams);
         }
 

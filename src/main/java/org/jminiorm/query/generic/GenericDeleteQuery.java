@@ -5,14 +5,15 @@ import org.jminiorm.exception.DBException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class GenericDeleteQuery extends AbstractGenericQuery implements IGenericDeleteQuery {
 
     private String schema;
     private String table;
-    private String idColumn;
-    private List<Object> ids = new ArrayList<>();
+    private List<String> idColumns;
+    private List<List<Object>> ids = new ArrayList<>();
     private String where;
     private List<Object> params;
 
@@ -34,19 +35,32 @@ public class GenericDeleteQuery extends AbstractGenericQuery implements IGeneric
 
     @Override
     public IGenericDeleteQuery idColumn(String idColumn) {
-        this.idColumn = idColumn;
+        this.idColumns = Collections.singletonList(idColumn);
         return this;
     }
 
     @Override
-    public IGenericDeleteQuery addOne(Object id) {
-        ids.add(id);
+    public IGenericDeleteQuery idColumns(String... idColumns) {
+        this.idColumns = Arrays.asList(idColumns);
+        return this;
+    }
+
+    @Override
+    public IGenericDeleteQuery addOne(Object... id) {
+        ids.add(Arrays.asList(id));
         return this;
     }
 
     @Override
     public IGenericDeleteQuery addMany(List<Object> ids) {
-        this.ids.addAll(ids);
+        ids.forEach(id -> {
+            if (id instanceof List) {
+                addOne(((List<?>) id).toArray());
+            }
+            else {
+                addOne(id);
+            }
+        });
         return this;
     }
 
@@ -60,18 +74,8 @@ public class GenericDeleteQuery extends AbstractGenericQuery implements IGeneric
     @Override
     public void execute() throws DBException {
         if (!ids.isEmpty()) {
-            // SQL :
-            String sql = getQueryTarget().getConfig().getDialect().sqlForDelete(schema, table, idColumn);
-
-            // Parameters :
-            List<List<Object>> params = new ArrayList<>();
-            for (Object id : ids) {
-                List<Object> curParams = new ArrayList<>();
-                curParams.add(id);
-                params.add(curParams);
-            }
-
-            getQueryTarget().executeUpdate(sql, params, null);
+            String sql = getQueryTarget().getConfig().getDialect().sqlForDelete(schema, table, idColumns);
+            getQueryTarget().executeUpdate(sql, ids, null);
         }
         if (where != null) {
             String sql = getQueryTarget().getConfig().getDialect().sqlForDeleteWhere(schema, table, where);

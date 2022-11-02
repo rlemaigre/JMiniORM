@@ -1,7 +1,9 @@
 package org.jminiorm.mapping;
 
+import org.jminiorm.exception.DBException;
 import org.jminiorm.utils.CaseInsensitiveMap;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,7 +18,7 @@ public class ORMapping {
     private List<ColumnMapping> columnMappings;
     private CaseInsensitiveMap<ColumnMapping> columnMappingsIndexedByProperty;
     private CaseInsensitiveMap<ColumnMapping> columnMappingsIndexedByColumn;
-    private ColumnMapping idColumnMapping;
+    private List<ColumnMapping> idColumnMappings;
     private Boolean hasId;
 
     public ORMapping() {
@@ -106,22 +108,26 @@ public class ORMapping {
     }
 
     /**
-     * Returns the column mapping for the property marked as id.
-     *
-     * @return
+     * Returns the column mappings for the properties marked as id.
      */
-    public ColumnMapping getIdColumnMapping() {
-        if (idColumnMapping == null) {
+    public List<ColumnMapping> getIdColumnMappings() {
+        if (idColumnMappings == null) {
+            idColumnMappings = new ArrayList<>();
             for (ColumnMapping mapping : getColumnMappings()) {
                 if (mapping.isId()) {
-                    idColumnMapping = mapping;
+                    idColumnMappings.add( mapping);
                     break;
                 }
             }
-            if (idColumnMapping == null)
+            if (idColumnMappings.isEmpty())
                 throw new RuntimeException("No ID column defined in class " + getJavaClass().getName());
         }
-        return idColumnMapping;
+        return idColumnMappings;
+    }
+
+    public ColumnMapping getIdColumnMapping() {
+        if (getIdColumnMappings().size() > 1) throw new DBException("More than one ID column.");
+        return getIdColumnMappings().get(0);
     }
 
     public Boolean hasId() {
