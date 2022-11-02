@@ -1,5 +1,6 @@
 package org.jminiorm.query.orm;
 
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import org.jminiorm.IQueryTarget;
 import org.jminiorm.exception.DBException;
 import org.jminiorm.mapping.ColumnMapping;
