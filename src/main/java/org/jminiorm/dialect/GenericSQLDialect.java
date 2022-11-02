@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * An implementation that tries to be compatible with most databases. Subclass as needed to provide support for specific
@@ -20,13 +21,13 @@ import java.util.List;
 public class GenericSQLDialect implements ISQLDialect {
 
     @Override
-    public final String sqlForDelete(String schema, String table, String idColumn) {
-        return sqlForDeleteIdEscaped(quoteIdentifier(schema), identifier(table), identifier(idColumn));
+    public final String sqlForDelete(String schema, String table, List<String> idColumns) {
+        return sqlForDeleteIdEscaped(quoteIdentifier(schema), identifier(table), identifiers(idColumns));
     }
 
-    protected String sqlForDeleteIdEscaped(String schema, String table, String idColumn) {
+    protected String sqlForDeleteIdEscaped(String schema, String table, List<String> idColumns) {
         return "DELETE FROM " + schemaPrefix(schema) + table + "\n" +
-                "WHERE " + idColumn + " = ?";
+                "WHERE " + idColumns.stream().map(c -> c + " = ?").collect(Collectors.joining(" AND "));
     }
 
     public final String sqlForDeleteWhere(String schema, String table, String where) {
@@ -49,14 +50,16 @@ public class GenericSQLDialect implements ISQLDialect {
     }
 
     @Override
-    public final String sqlForUpdate(String schema, String table, String idColumn, List<String> columns) {
-        return sqlForUpdateIdEscaped(quoteIdentifier(schema), identifier(table), identifier(idColumn), identifiers(columns));
+    public final String sqlForUpdate(String schema, String table, List<String> idColumns, List<String> columns) {
+        return sqlForUpdateIdEscaped(quoteIdentifier(schema), identifier(table),
+                identifiers(idColumns),
+                identifiers(columns));
     }
 
-    protected String sqlForUpdateIdEscaped(String schema, String table, String idColumn, List<String> columns) {
+    protected String sqlForUpdateIdEscaped(String schema, String table, List<String> idColumns, List<String> columns) {
         return "UPDATE " + schemaPrefix(schema) + table + "\n" +
                 "SET " + String.join(" = ?, ", columns) + " = ?\n" +
-                "WHERE " + idColumn + " = ?";
+                "WHERE " + idColumns.stream().map(c -> c + " = ?").collect(Collectors.joining(" AND "));
     }
 
     @Override
@@ -101,7 +104,7 @@ public class GenericSQLDialect implements ISQLDialect {
         sb.append(String.join(", ", columns));
         if (mapping.getColumnMappings().stream().anyMatch(ColumnMapping::isId)) {
             sb.append(", ");
-            sb.append(sqlForPrimaryKey(mapping, mapping.getIdColumnMapping()));
+            sb.append(sqlForPrimaryKey(mapping, mapping.getIdColumnMappings()));
         }
         sb.append(")");
         return sb.toString();
@@ -172,9 +175,9 @@ public class GenericSQLDialect implements ISQLDialect {
         return "AUTO_INCREMENT";
     }
 
-    protected String sqlForPrimaryKey(ORMapping mapping, ColumnMapping idColumnMapping) {
+    protected String sqlForPrimaryKey(ORMapping mapping, List<ColumnMapping> idColumnMappings) {
         return "CONSTRAINT " + identifier(mapping.getTable() + "_pk") + " PRIMARY KEY ("
-                + identifier(idColumnMapping.getColumn()) + ")";
+                + String.join(", ", identifiers(idColumnMappings.stream().map(ColumnMapping::getColumn).collect(Collectors.toList()))) + ")";
     }
 
     @Override

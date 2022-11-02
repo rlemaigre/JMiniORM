@@ -4,14 +4,11 @@ import org.jminiorm.IQueryTarget;
 import org.jminiorm.exception.DBException;
 import org.jminiorm.mapping.ColumnMapping;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class ORMDeleteQuery<T> extends AbstractORMQuery<T> implements IORMDeleteQuery<T> {
 
-    private List<Object> ids = new ArrayList<>();
+    private List<List<Object>> ids = new ArrayList<>();
     private String where;
     private List<Object> params = new ArrayList<>();
 
@@ -25,21 +22,21 @@ public class ORMDeleteQuery<T> extends AbstractORMQuery<T> implements IORMDelete
     }
 
     @Override
-    public IORMDeleteQuery<T> id(Object id) {
-        ids.add(id);
+    public IORMDeleteQuery<T> id(Object... id) {
+        ids.add(Arrays.asList(id));
         return this;
     }
 
     @Override
     public IORMDeleteQuery<T> addOne(T obj) {
-        ids.add(getMapping().getIdColumnMapping().readProperty(obj));
+        id(getMapping().getIdColumnMappings().stream().map(cm -> cm.readProperty(obj)).toArray());
         return this;
     }
 
     @Override
     public IORMDeleteQuery<T> addMany(Collection<T> objs) {
         for (T obj : objs) {
-            ids.add(getMapping().getIdColumnMapping().readProperty(obj));
+            addOne(obj);
         }
         return this;
     }
@@ -61,7 +58,7 @@ public class ORMDeleteQuery<T> extends AbstractORMQuery<T> implements IORMDelete
             ColumnMapping idColumnMapping = getMapping().getIdColumnMapping();
             getQueryTarget().delete(table).schema(schema)
                     .idColumn(idColumnMapping.getColumn())
-                    .addMany(ids)
+                    .addMany((List)ids)
                     .execute();
         }
         if (where != null) {

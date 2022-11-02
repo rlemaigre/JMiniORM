@@ -20,7 +20,7 @@ public interface IORMDeleteQuery<T> extends IORMQuery<T> {
      * @param id
      * @return
      */
-    IORMDeleteQuery<T> id(Object id);
+    IORMDeleteQuery<T> id(Object... id);
 
     /**
      * Add an object to those to be deleted.

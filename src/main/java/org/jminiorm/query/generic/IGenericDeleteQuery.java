@@ -34,12 +34,17 @@ public interface IGenericDeleteQuery extends IGenericQuery {
     IGenericDeleteQuery idColumn(String idColumn);
 
     /**
+     * Sets the columns containing the ids.
+     */
+    IGenericDeleteQuery idColumns(String... idColumns);
+
+    /**
      * Add one id.
      *
      * @param id
      * @return
      */
-    IGenericDeleteQuery addOne(Object id);
+    IGenericDeleteQuery addOne(Object... id);
 
     /**
      * Add many ids.

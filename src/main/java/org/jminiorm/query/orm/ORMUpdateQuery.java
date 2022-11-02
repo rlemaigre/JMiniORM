@@ -5,6 +5,7 @@ import org.jminiorm.exception.DBException;
 import org.jminiorm.mapping.ColumnMapping;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ORMUpdateQuery<T> extends AbstractORMQuery<T> implements IORMUpdateQuery<T> {
 
@@ -37,21 +38,11 @@ public class ORMUpdateQuery<T> extends AbstractORMQuery<T> implements IORMUpdate
             // The table to update :
             String table = getMapping().getTable();
 
-            // The column mappings for all updatable columns other than the id :
-            List<ColumnMapping> relevantColumnMappings = new ArrayList<>();
-            for (ColumnMapping columnMapping : getMapping().getColumnMappings()) {
-                if (!columnMapping.isId() && columnMapping.isUpdatable()) {
-                    relevantColumnMappings.add(columnMapping);
-                }
-            }
-
             // The maps column => value to update :
-            ColumnMapping idColumnMapping = getMapping().getIdColumnMapping();
             List<Map<String, Object>> rows = new ArrayList<>();
             for (T obj : objs) {
                 Map<String, Object> row = new HashMap<>();
-                row.put(idColumnMapping.getColumn(), idColumnMapping.readProperty(obj));
-                for (ColumnMapping columnMapping : relevantColumnMappings) {
+                for (ColumnMapping columnMapping : getMapping().getColumnMappings()) {
                     row.put(columnMapping.getColumn(), columnMapping.readProperty(obj));
                 }
                 rows.add(row);
@@ -59,7 +50,7 @@ public class ORMUpdateQuery<T> extends AbstractORMQuery<T> implements IORMUpdate
 
             // Update rows :
             getQueryTarget().update(table).schema(getMapping().getSchema())
-                    .idColumn(idColumnMapping.getColumn())
+                    .idColumns(getMapping().getIdColumnMappings().stream().map(ColumnMapping::getColumn).toArray(String[]::new))
                     .addMany(rows)
                     .execute();
         }
